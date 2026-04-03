@@ -20,7 +20,8 @@ final readonly class CreateRefundRequest implements JsonSerializable
         public string $paymentId,
         public ?string $webhookUrl = null,
         public ?array $customFields = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>

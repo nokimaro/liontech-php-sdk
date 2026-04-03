@@ -12,10 +12,14 @@ it('creates API error response', function (): void {
         details: ['detail1', 'detail2'],
     );
 
-    expect($error->code)->toBe(504);
-    expect($error->description)->toBe('Token expired');
-    expect($error->traceId)->toBe('trace_123');
-    expect($error->details)->toBe(['detail1', 'detail2']);
+    expect($error->code)
+        ->toBe(504);
+    expect($error->description)
+        ->toBe('Token expired');
+    expect($error->traceId)
+        ->toBe('trace_123');
+    expect($error->details)
+        ->toBe(['detail1', 'detail2']);
 });
 
 it('creates API error response from array', function (): void {
@@ -28,9 +32,12 @@ it('creates API error response from array', function (): void {
 
     $error = ApiErrorResponse::fromArray($data);
 
-    expect($error->code)->toBe(513);
-    expect($error->description)->toBe('Currency mismatch');
-    expect($error->traceId)->toBe('trace_456');
+    expect($error->code)
+        ->toBe(513);
+    expect($error->description)
+        ->toBe('Currency mismatch');
+    expect($error->traceId)
+        ->toBe('trace_456');
 });
 
 it('handles missing optional fields', function (): void {
@@ -41,8 +48,12 @@ it('handles missing optional fields', function (): void {
 
     $error = ApiErrorResponse::fromArray($data);
 
-    expect($error->code)->toBe(500);
-    expect($error->description)->toBe('Internal error');
-    expect($error->traceId)->toBeNull();
-    expect($error->details)->toBe([]);
+    expect($error->code)
+        ->toBe(500);
+    expect($error->description)
+        ->toBe('Internal error');
+    expect($error->traceId)
+        ->toBeNull();
+    expect($error->details)
+        ->toBe([]);
 });

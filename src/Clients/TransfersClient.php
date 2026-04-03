@@ -6,13 +6,14 @@ namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\Http\HttpClient;
 
-final class TransfersClient
+final readonly class TransfersClient
 {
-    private const TRANSFERS_PATH = '/api/v1/merchant/transfers';
+    private const string TRANSFERS_PATH = '/api/v1/merchant/transfers';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Create a new transfer.

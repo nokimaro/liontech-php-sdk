@@ -7,8 +7,8 @@ namespace LionTech\SDK;
 use LionTech\SDK\Clients\AuthClient;
 use LionTech\SDK\Clients\BalancesClient;
 use LionTech\SDK\Clients\OrdersClient;
-use LionTech\SDK\Clients\PayoutsClient;
 use LionTech\SDK\Clients\PaymentsClient;
+use LionTech\SDK\Clients\PayoutsClient;
 use LionTech\SDK\Clients\RefundsClient;
 use LionTech\SDK\Clients\SignatureClient;
 use LionTech\SDK\Clients\TokensClient;
@@ -20,15 +20,25 @@ use LionTech\SDK\Http\HttpClient;
 final class LionTechSDK
 {
     private readonly HttpClient $httpClient;
+
     private readonly HttpClient $secureHttpClient;
+
     private ?AuthClient $authClient = null;
+
     private ?OrdersClient $ordersClient = null;
+
     private ?PaymentsClient $paymentsClient = null;
+
     private ?RefundsClient $refundsClient = null;
+
     private ?PayoutsClient $payoutsClient = null;
+
     private ?TokensClient $tokensClient = null;
+
     private ?BalancesClient $balancesClient = null;
+
     private ?TransfersClient $transfersClient = null;
+
     private ?SignatureClient $signatureClient = null;
 
     /**
@@ -120,7 +130,8 @@ final class LionTechSDK
      */
     public function webhookVerifier(?string $publicKeyPem = null): WebhookSignatureVerifier
     {
-        $pem = $publicKeyPem ?? $this->signature()->getPublicKey();
+        $pem = $publicKeyPem ?? $this->signature()
+            ->getPublicKey();
 
         return new WebhookSignatureVerifier($pem);
     }
@@ -131,7 +142,8 @@ final class LionTechSDK
      */
     public function cardEncryptor(?string $publicKeyPem = null): CardEncryptor
     {
-        $pem = $publicKeyPem ?? $this->signature()->getPublicKey();
+        $pem = $publicKeyPem ?? $this->signature()
+            ->getPublicKey();
 
         return new CardEncryptor($pem);
     }

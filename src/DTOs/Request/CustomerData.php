@@ -39,7 +39,8 @@ final readonly class CustomerData implements JsonSerializable
         public ?string $neighborhood = null,
         public ?\DateTimeImmutable $birthdate = null,
         public ?BrowserData $browserData = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
@@ -96,11 +97,11 @@ final readonly class CustomerData implements JsonSerializable
             $data['neighborhood'] = $this->neighborhood;
         }
 
-        if ($this->birthdate !== null) {
+        if ($this->birthdate instanceof \DateTimeImmutable) {
             $data['birthdate'] = $this->birthdate->format('Y-m-d');
         }
 
-        if ($this->browserData !== null) {
+        if ($this->browserData instanceof \LionTech\SDK\DTOs\Request\BrowserData) {
             $data['browserData'] = $this->browserData->jsonSerialize();
         }
 

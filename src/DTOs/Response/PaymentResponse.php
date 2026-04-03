@@ -49,7 +49,8 @@ final readonly class PaymentResponse
         public ?array $items = null,
         public ?string $txnId = null,
         public ?string $rrn = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -59,7 +60,10 @@ final readonly class PaymentResponse
         return new self(
             paymentId: $data['paymentId'],
             orderId: $data['orderId'] ?? null,
-            amount: isset($data['amount']) ? Money::fromArray($data['amount']) : new Money('0', \LionTech\SDK\ValueObjects\Currency::USD),
+            amount: isset($data['amount']) ? Money::fromArray($data['amount']) : new Money(
+                '0',
+                \LionTech\SDK\ValueObjects\Currency::USD
+            ),
             convAmount: isset($data['convAmount']) ? Money::fromArray($data['convAmount']) : null,
             status: PaymentStatus::from($data['status']['value'] ?? $data['status'] ?? 'OPERATION'),
             paymentMethod: isset($data['paymentMethod']) ? PaymentData::fromArray($data['paymentMethod']) : null,
@@ -70,7 +74,9 @@ final readonly class PaymentResponse
             backLink: $data['backLink'] ?? null,
             webhookUrl: $data['webhookUrl'] ?? null,
             customFields: $data['customFields'] ?? null,
-            createdAt: isset($data['createdAt']) ? new \DateTimeImmutable($data['createdAt']) : new \DateTimeImmutable(),
+            createdAt: isset($data['createdAt']) ? new \DateTimeImmutable(
+                $data['createdAt']
+            ) : new \DateTimeImmutable(),
             description: $data['description'] ?? null,
             items: $data['items'] ?? null,
             txnId: $data['txnId'] ?? null,

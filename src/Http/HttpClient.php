@@ -7,22 +7,25 @@ namespace LionTech\SDK\Http;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use LionTech\SDK\Exceptions\ApiExceptionMapper;
-use LionTech\SDK\Exceptions\Auth\TokenExpiredException;
 use LionTech\SDK\Exceptions\Transport\TransportException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 final class HttpClient
 {
     private readonly ClientInterface $client;
+
     private readonly RequestFactoryInterface $requestFactory;
+
     private readonly StreamFactoryInterface $streamFactory;
+
     private readonly string $baseUrl;
+
     private ?string $accessToken = null;
+
     private ?ResponseMiddleware $responseMiddleware = null;
 
     public function __construct(
@@ -58,8 +61,6 @@ final class HttpClient
 
     /**
      * @param array<string, mixed> $data
-     * @throws TransportException
-     * @throws TokenExpiredException
      */
     public function get(string $path, array $data = []): ResponseInterface
     {
@@ -69,10 +70,6 @@ final class HttpClient
         return $this->send($request);
     }
 
-    /**
-     * @throws TransportException
-     * @throws TokenExpiredException
-     */
     public function post(string $path, mixed $data = null): ResponseInterface
     {
         $request = $this->buildJsonRequest('POST', $path, $data);
@@ -80,10 +77,6 @@ final class HttpClient
         return $this->send($request);
     }
 
-    /**
-     * @throws TransportException
-     * @throws TokenExpiredException
-     */
     public function put(string $path, mixed $data = null): ResponseInterface
     {
         $request = $this->buildJsonRequest('PUT', $path, $data);
@@ -91,10 +84,6 @@ final class HttpClient
         return $this->send($request);
     }
 
-    /**
-     * @throws TransportException
-     * @throws TokenExpiredException
-     */
     public function delete(string $path, array $data = []): ResponseInterface
     {
         $url = $this->buildUrl($path, $data);
@@ -103,10 +92,6 @@ final class HttpClient
         return $this->send($this->applyHeaders($request));
     }
 
-    /**
-     * @throws TransportException
-     * @throws TokenExpiredException
-     */
     private function send(RequestInterface $request): ResponseInterface
     {
         try {
@@ -116,7 +101,7 @@ final class HttpClient
         }
 
         // Apply response middleware if set
-        if ($this->responseMiddleware !== null) {
+        if ($this->responseMiddleware instanceof \LionTech\SDK\Http\ResponseMiddleware) {
             $response = ($this->responseMiddleware)($response);
         }
 
@@ -133,10 +118,15 @@ final class HttpClient
     {
         $url = $this->buildUrl($path);
         $request = $this->requestFactory->createRequest($method, $url);
-        $request = $this->applyHeaders($request, ['Content-Type' => 'application/json']);
+        $request = $this->applyHeaders($request, [
+            'Content-Type' => 'application/json',
+        ]);
 
         if ($data !== null) {
-            $json = $data instanceof \JsonSerializable ? json_encode($data, JSON_THROW_ON_ERROR) : json_encode($data, JSON_THROW_ON_ERROR);
+            $json = $data instanceof \JsonSerializable ? json_encode($data, JSON_THROW_ON_ERROR) : json_encode(
+                $data,
+                JSON_THROW_ON_ERROR
+            );
             $request = $request->withBody($this->streamFactory->createStream($json));
         }
 
@@ -167,7 +157,7 @@ final class HttpClient
     {
         $url = $this->baseUrl . $path;
 
-        if (!empty($query)) {
+        if ($query !== []) {
             $url .= '?' . http_build_query($query);
         }
 

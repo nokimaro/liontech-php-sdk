@@ -8,13 +8,14 @@ use LionTech\SDK\DTOs\Request\CreateRefundRequest;
 use LionTech\SDK\DTOs\Response\RefundResponse;
 use LionTech\SDK\Http\HttpClient;
 
-final class RefundsClient
+final readonly class RefundsClient
 {
-    private const REFUNDS_PATH = '/api/v1/merchant/refunds';
+    private const string REFUNDS_PATH = '/api/v1/merchant/refunds';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Create a new refund with a PSP-generated ID.

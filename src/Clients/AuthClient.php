@@ -8,13 +8,14 @@ use LionTech\SDK\DTOs\Request\RefreshTokenRequest;
 use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
 use LionTech\SDK\Http\HttpClient;
 
-final class AuthClient
+final readonly class AuthClient
 {
-    private const TOKEN_REFRESH_PATH = '/api/v1/merchant/auth/tokens/refresh';
+    private const string TOKEN_REFRESH_PATH = '/api/v1/merchant/auth/tokens/refresh';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Refresh access and refresh tokens.

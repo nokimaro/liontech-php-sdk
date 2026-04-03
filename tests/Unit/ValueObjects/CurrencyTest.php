@@ -22,6 +22,7 @@ it('has correct symbol for GBP', function (): void {
 
 it('is always fiat', function (): void {
     foreach (Currency::cases() as $currency) {
-        expect($currency->isFiat())->toBeTrue();
+        expect($currency->isFiat())
+            ->toBeTrue();
     }
 });

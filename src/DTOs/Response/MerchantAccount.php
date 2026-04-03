@@ -17,7 +17,8 @@ final readonly class MerchantAccount
         public \DateTimeImmutable $createdAt,
         public \DateTimeImmutable $updatedAt,
         public \DateTimeImmutable $validOn,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data

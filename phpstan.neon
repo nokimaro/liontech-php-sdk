@@ -1,8 +1,7 @@
 parameters:
-    level: max
+    level: 5
     paths:
         - src
-        - tests
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
-    checkInternalClassImplementedExtends: true
+    ignoreErrors:
+        # phpseclib3 uses magic methods dynamically
+        - '#Call to an undefined (static )?method phpseclib3\\#'

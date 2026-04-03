@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Example: Basic SDK Setup and Order Creation
- * 
+ *
  * This example demonstrates how to:
  * 1. Initialize the SDK
  * 2. Create an order
@@ -30,20 +30,17 @@ $sdk = new LionTechSDK([
 // Create an order
 $orderRequest = new CreateOrderRequest(
     amount: new Money('100.00', Currency::USD),
-    customer: new CustomerData(
-        email: 'customer@example.com',
-        fullName: 'John Doe',
-        ip: '192.168.1.1',
-    ),
+    customer: new CustomerData(email: 'customer@example.com', fullName: 'John Doe', ip: '192.168.1.1'),
     autoApprove: true,
-    successUrl: 'https://your-site.com/success',
     declineUrl: 'https://your-site.com/decline',
+    successUrl: 'https://your-site.com/success',
     webhookUrl: 'https://your-site.com/webhook',
     description: 'Order #12345',
 );
 
 try {
-    $order = $sdk->orders()->create($orderRequest);
+    $order = $sdk->orders()
+        ->create($orderRequest);
 
     echo "Order created successfully!\n";
     echo "Order ID: {$order->orderId}\n";
@@ -55,7 +52,8 @@ try {
     }
 
     // Retrieve the order
-    $retrievedOrder = $sdk->orders()->get($order->orderId);
+    $retrievedOrder = $sdk->orders()
+        ->get($order->orderId);
     echo "\nRetrieved order: {$retrievedOrder->orderId}\n";
 } catch (\Exception $e) {
     echo "Error: {$e->getMessage()}\n";

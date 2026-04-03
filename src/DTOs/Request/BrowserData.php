@@ -31,7 +31,8 @@ final readonly class BrowserData implements JsonSerializable
         public ?string $userAgent = null,
         public ?int $windowHeight = null,
         public ?int $windowWidth = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>

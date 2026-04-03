@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\Exceptions\Auth;
 
-use LionTech\SDK\Exceptions\SdkException;
-
 class TokenExpiredException extends AuthenticationException
 {
     public function __construct(

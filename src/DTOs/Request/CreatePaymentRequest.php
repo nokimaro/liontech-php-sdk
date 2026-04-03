@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LionTech\SDK\DTOs\Request;
 
 use JsonSerializable;
-use LionTech\SDK\Enums\PaymentMethodType;
 use LionTech\SDK\ValueObjects\Money;
 use LionTech\SDK\ValueObjects\PaymentData;
 
@@ -34,7 +33,8 @@ final readonly class CreatePaymentRequest implements JsonSerializable
         public ?string $description = null,
         public ?array $customFields = null,
         public ?array $options = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
@@ -47,7 +47,7 @@ final readonly class CreatePaymentRequest implements JsonSerializable
             'autoApprove' => $this->autoApprove,
         ];
 
-        if ($this->customer !== null) {
+        if ($this->customer instanceof \LionTech\SDK\DTOs\Request\CustomerData) {
             $data['customer'] = $this->customer->jsonSerialize();
         }
 

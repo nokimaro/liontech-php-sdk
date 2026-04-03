@@ -11,7 +11,8 @@ final readonly class Money implements JsonSerializable
     public function __construct(
         public string $amount,
         public Currency $currency,
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $amount, string $currencyCode): self
     {
@@ -23,10 +24,7 @@ final readonly class Money implements JsonSerializable
      */
     public static function fromArray(array $data): self
     {
-        return new self(
-            amount: $data['value'],
-            currency: Currency::from($data['currency']),
-        );
+        return new self(amount: $data['value'], currency: Currency::from($data['currency']));
     }
 
     /**

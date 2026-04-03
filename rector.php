@@ -7,17 +7,8 @@ use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 
 return RectorConfig::configure()
-    ->withPaths([
-        __DIR__ . '/src',
-        __DIR__ . '/tests',
-        __DIR__ . '/examples',
-    ])
-    ->withSets([
-        LevelSetList::UP_TO_PHP_83,
-        SetList::TYPE_DECLARATION,
-        SetList::CODE_QUALITY,
-        SetList::DEAD_CODE,
-    ])
+    ->withPaths([__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/examples'])
+    ->withSets([LevelSetList::UP_TO_PHP_83, SetList::TYPE_DECLARATION, SetList::CODE_QUALITY, SetList::DEAD_CODE])
     ->withSkip([
         // Add files to skip
     ]);

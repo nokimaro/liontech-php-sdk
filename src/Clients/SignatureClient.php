@@ -6,13 +6,14 @@ namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\Http\HttpClient;
 
-final class SignatureClient
+final readonly class SignatureClient
 {
-    private const SIGNATURE_KEY_PATH = '/signature-key';
+    private const string SIGNATURE_KEY_PATH = '/signature-key';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Get the signature public key for webhook verification.

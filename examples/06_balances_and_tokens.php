@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Example: Balances and Saved Payment Methods
- * 
+ *
  * This example demonstrates how to:
  * 1. Retrieve account balances
  * 2. List saved payment methods
@@ -25,7 +25,8 @@ try {
     echo "Account Balances:\n";
     echo str_repeat('-', 50) . "\n";
 
-    $balances = $sdk->balances()->list();
+    $balances = $sdk->balances()
+        ->list();
 
     foreach ($balances as $account) {
         echo "Account ID: {$account->accountId}\n";
@@ -39,7 +40,8 @@ try {
     echo "\nSaved Payment Methods:\n";
     echo str_repeat('-', 50) . "\n";
 
-    $tokens = $sdk->tokens()->list(accountId: 'acc_123');
+    $tokens = $sdk->tokens()
+        ->list(accountId: 'acc_123');
 
     foreach ($tokens as $token) {
         echo "Token ID: {$token->tokenId}\n";
@@ -47,7 +49,7 @@ try {
         echo "Display: {$token->displayValue}\n";
         echo "Card Type: {$token->cardType}\n";
         echo "Expiration: {$token->cardExp}\n";
-        echo "Requires CVV: " . ($token->cardRequiresCvv ? 'Yes' : 'No') . "\n";
+        echo 'Requires CVV: ' . ($token->cardRequiresCvv ? 'Yes' : 'No') . "\n";
         echo str_repeat('-', 50) . "\n";
     }
 

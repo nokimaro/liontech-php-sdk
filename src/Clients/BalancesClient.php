@@ -7,13 +7,14 @@ namespace LionTech\SDK\Clients;
 use LionTech\SDK\DTOs\Response\MerchantAccount;
 use LionTech\SDK\Http\HttpClient;
 
-final class BalancesClient
+final readonly class BalancesClient
 {
-    private const BALANCES_PATH = '/api/v1/merchant/balances';
+    private const string BALANCES_PATH = '/api/v1/merchant/balances';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * List balances by currency.

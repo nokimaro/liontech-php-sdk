@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Example: Token Refresh
- * 
+ *
  * This example demonstrates how to:
  * 1. Refresh access tokens
  * 2. Apply new tokens to the SDK
@@ -26,7 +26,8 @@ $refreshRequest = new RefreshTokenRequest(
 
 try {
     // Refresh tokens and automatically apply them to the SDK
-    $response = $sdk->auth()->refreshAndApply($refreshRequest);
+    $response = $sdk->auth()
+        ->refreshAndApply($refreshRequest);
 
     echo "Tokens refreshed successfully!\n";
     echo "New Access Token: {$response->accessToken}\n";

@@ -10,7 +10,8 @@ final readonly class SbpData implements JsonSerializable
 {
     public function __construct(
         public string $bank,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{bank: string}

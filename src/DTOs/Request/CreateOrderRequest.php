@@ -32,7 +32,8 @@ final readonly class CreateOrderRequest implements JsonSerializable
         public ?\DateTimeImmutable $expireAt = null,
         public ?string $description = null,
         public ?array $options = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
@@ -44,7 +45,7 @@ final readonly class CreateOrderRequest implements JsonSerializable
             'autoApprove' => $this->autoApprove,
         ];
 
-        if ($this->customer !== null) {
+        if ($this->customer instanceof \LionTech\SDK\DTOs\Request\CustomerData) {
             $data['customer'] = $this->customer->jsonSerialize();
         }
 
@@ -64,7 +65,7 @@ final readonly class CreateOrderRequest implements JsonSerializable
             $data['webhookUrl'] = $this->webhookUrl;
         }
 
-        if ($this->expireAt !== null) {
+        if ($this->expireAt instanceof \DateTimeImmutable) {
             $data['expireAt'] = $this->expireAt->format('Y-m-d\TH:i:s\Z');
         }
 

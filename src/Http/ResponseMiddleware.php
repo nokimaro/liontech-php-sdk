@@ -12,7 +12,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class ResponseMiddleware
 {
-    /** @var callable(ResponseInterface): ResponseInterface */
+    /**
+     * @var callable(ResponseInterface): ResponseInterface
+     */
     private $handler;
 
     public function __construct(callable $handler)

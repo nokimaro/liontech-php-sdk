@@ -11,7 +11,8 @@ final readonly class MerchantTokensRefreshResponse
         public \DateTimeImmutable $accessTokenExpireAt,
         public string $refreshToken,
         public \DateTimeImmutable $refreshTokenExpireAt,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data

@@ -7,24 +7,22 @@ namespace LionTech\SDK\Clients;
 use LionTech\SDK\DTOs\Response\SavedPaymentMethod;
 use LionTech\SDK\Http\HttpClient;
 
-final class TokensClient
+final readonly class TokensClient
 {
-    private const TOKENS_PATH = '/api/v1/merchant/tokens';
+    private const string TOKENS_PATH = '/api/v1/merchant/tokens';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * List saved payment tokens.
      *
      * @return array<int, SavedPaymentMethod>
      */
-    public function list(
-        ?string $accountId = null,
-        ?string $email = null,
-        ?string $phone = null,
-    ): array {
+    public function list(?string $accountId = null, ?string $email = null, ?string $phone = null): array
+    {
         $query = array_filter([
             'accountId' => $accountId,
             'email' => $email,

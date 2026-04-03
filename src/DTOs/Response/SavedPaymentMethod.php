@@ -13,7 +13,8 @@ final readonly class SavedPaymentMethod
         public string $cardType,
         public string $cardExp,
         public bool $cardRequiresCvv,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data

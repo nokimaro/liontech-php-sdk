@@ -21,12 +21,18 @@ it('creates order response from array', function (): void {
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->orderId)->toBe('ord_123');
-    expect($response->amount)->toBeInstanceOf(Money::class);
-    expect($response->amount->amount)->toBe('100.00');
-    expect($response->amount->currency)->toBe(Currency::USD);
-    expect($response->status)->toBe(OrderStatus::CREATED);
-    expect($response->autoApprove)->toBeTrue();
+    expect($response->orderId)
+        ->toBe('ord_123');
+    expect($response->amount)
+        ->toBeInstanceOf(Money::class);
+    expect($response->amount->amount)
+        ->toBe('100.00');
+    expect($response->amount->currency)
+        ->toBe(Currency::USD);
+    expect($response->status)
+        ->toBe(OrderStatus::CREATED);
+    expect($response->autoApprove)
+        ->toBeTrue();
 });
 
 it('creates order response with status as string', function (): void {
@@ -42,7 +48,8 @@ it('creates order response with status as string', function (): void {
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->status)->toBe(OrderStatus::PAID);
+    expect($response->status)
+        ->toBe(OrderStatus::PAID);
 });
 
 it('creates order response with status as object', function (): void {
@@ -60,7 +67,8 @@ it('creates order response with status as object', function (): void {
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->status)->toBe(OrderStatus::REFUNDED);
+    expect($response->status)
+        ->toBe(OrderStatus::REFUNDED);
 });
 
 it('handles optional fields', function (): void {
@@ -76,18 +84,28 @@ it('handles optional fields', function (): void {
         'successUrl' => 'https://example.com/success',
         'declineUrl' => 'https://example.com/decline',
         'webhookUrl' => 'https://example.com/webhook',
-        'customFields' => ['order_number' => '12345'],
+        'customFields' => [
+            'order_number' => '12345',
+        ],
         'description' => 'Test order',
     ];
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->payUrl)->toBe('https://pay.example.com/123');
-    expect($response->successUrl)->toBe('https://example.com/success');
-    expect($response->declineUrl)->toBe('https://example.com/decline');
-    expect($response->webhookUrl)->toBe('https://example.com/webhook');
-    expect($response->customFields)->toBe(['order_number' => '12345']);
-    expect($response->description)->toBe('Test order');
+    expect($response->payUrl)
+        ->toBe('https://pay.example.com/123');
+    expect($response->successUrl)
+        ->toBe('https://example.com/success');
+    expect($response->declineUrl)
+        ->toBe('https://example.com/decline');
+    expect($response->webhookUrl)
+        ->toBe('https://example.com/webhook');
+    expect($response->customFields)
+        ->toBe([
+            'order_number' => '12345',
+        ]);
+    expect($response->description)
+        ->toBe('Test order');
 });
 
 it('is immutable', function (): void {
@@ -104,5 +122,6 @@ it('is immutable', function (): void {
     $response = OrderResponse::fromArray($data);
     $reflection = new ReflectionClass($response);
 
-    expect($reflection->isReadOnly())->toBeTrue();
+    expect($reflection->isReadOnly())
+        ->toBeTrue();
 });

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Example: Refund Processing
- * 
+ *
  * This example demonstrates how to:
  * 1. Create a refund
  * 2. Retrieve refund information
@@ -31,7 +31,8 @@ $refundRequest = new CreateRefundRequest(
 );
 
 try {
-    $refund = $sdk->refunds()->create($refundRequest);
+    $refund = $sdk->refunds()
+        ->create($refundRequest);
 
     echo "Refund created!\n";
     echo "Refund ID: {$refund->refundId}\n";
@@ -40,11 +41,13 @@ try {
     echo "Status: {$refund->status->value}\n";
 
     // Retrieve the refund
-    $retrievedRefund = $sdk->refunds()->get($refund->refundId);
+    $retrievedRefund = $sdk->refunds()
+        ->get($refund->refundId);
     echo "\nRetrieved refund: {$retrievedRefund->refundId}\n";
 
     // List all refunds for the payment
-    $refunds = $sdk->payments()->getRefunds('pay_123');
+    $refunds = $sdk->payments()
+        ->getRefunds('pay_123');
     echo "\nTotal refunds for payment: " . count($refunds) . "\n";
 
     foreach ($refunds as $r) {

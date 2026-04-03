@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Example: Payment with Encrypted Card Data
- * 
+ *
  * This example demonstrates how to:
  * 1. Encrypt card data
  * 2. Create a payment
@@ -53,7 +53,8 @@ $paymentRequest = new CreatePaymentRequest(
 );
 
 try {
-    $payment = $sdk->payments()->create($paymentRequest);
+    $payment = $sdk->payments()
+        ->create($paymentRequest);
 
     echo "Payment created!\n";
     echo "Payment ID: {$payment->paymentId}\n";

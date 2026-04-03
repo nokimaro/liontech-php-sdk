@@ -42,7 +42,8 @@ final readonly class OrderResponse
         public bool $autoApprove = true,
         public ?string $description = null,
         public ?array $items = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data

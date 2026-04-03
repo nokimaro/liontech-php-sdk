@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\Helpers;
 
+use phpseclib3\Crypt\Common\PublicKey;
 use phpseclib3\Crypt\RSA;
-use phpseclib3\Crypt\RSA\PublicKey;
 
-final class WebhookSignatureVerifier
+final readonly class WebhookSignatureVerifier
 {
-    private const SIGNATURE_HEADER = 'X-Payload-Signature';
+    private const string SIGNATURE_HEADER = 'X-Payload-Signature';
 
-    private readonly PublicKey $publicKey;
+    private PublicKey $publicKey;
 
     public function __construct(string $publicKeyPem)
     {

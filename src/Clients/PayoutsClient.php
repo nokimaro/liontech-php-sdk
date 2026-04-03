@@ -8,13 +8,14 @@ use LionTech\SDK\DTOs\Request\CreatePayoutRequest;
 use LionTech\SDK\DTOs\Response\PayoutResponse;
 use LionTech\SDK\Http\HttpClient;
 
-final class PayoutsClient
+final readonly class PayoutsClient
 {
-    private const PAYOUTS_PATH = '/api/v1/merchant/payouts';
+    private const string PAYOUTS_PATH = '/api/v1/merchant/payouts';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Create a payout with a merchant-provided ID.

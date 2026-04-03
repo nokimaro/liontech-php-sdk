@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Example: Webhook Signature Verification
- * 
+ *
  * This example demonstrates how to:
  * 1. Verify webhook signatures
  * 2. Process webhook payloads securely
@@ -32,7 +32,7 @@ try {
         $data = json_decode($payload, true);
 
         echo "Webhook signature verified successfully!\n";
-        echo "Payload: " . json_encode($data, JSON_PRETTY_PRINT) . "\n";
+        echo 'Payload: ' . json_encode($data, JSON_PRETTY_PRINT) . "\n";
 
         // Process the payment status update
         // Example: Update your database with the payment status

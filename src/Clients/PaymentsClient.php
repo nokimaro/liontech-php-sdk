@@ -9,13 +9,14 @@ use LionTech\SDK\DTOs\Response\PaymentResponse;
 use LionTech\SDK\DTOs\Response\RefundResponse;
 use LionTech\SDK\Http\HttpClient;
 
-final class PaymentsClient
+final readonly class PaymentsClient
 {
-    private const PAYMENTS_PATH = '/api/v1/merchant/payments';
+    private const string PAYMENTS_PATH = '/api/v1/merchant/payments';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Create a new payment with a PSP-generated ID.

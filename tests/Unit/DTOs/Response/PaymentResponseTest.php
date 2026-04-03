@@ -20,11 +20,16 @@ it('creates payment response from array', function (): void {
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->paymentId)->toBe('pay_123');
-    expect($response->amount)->toBeInstanceOf(Money::class);
-    expect($response->amount->amount)->toBe('100.00');
-    expect($response->amount->currency)->toBe(Currency::USD);
-    expect($response->status)->toBe(PaymentStatus::RECONCILED);
+    expect($response->paymentId)
+        ->toBe('pay_123');
+    expect($response->amount)
+        ->toBeInstanceOf(Money::class);
+    expect($response->amount->amount)
+        ->toBe('100.00');
+    expect($response->amount->currency)
+        ->toBe(Currency::USD);
+    expect($response->status)
+        ->toBe(PaymentStatus::RECONCILED);
 });
 
 it('identifies redirect action', function (): void {
@@ -44,8 +49,10 @@ it('identifies redirect action', function (): void {
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->requiresRedirect())->toBeTrue();
-    expect($response->getRedirectUrl())->toBe('https://acs.example.com/3ds');
+    expect($response->requiresRedirect())
+        ->toBeTrue();
+    expect($response->getRedirectUrl())
+        ->toBe('https://acs.example.com/3ds');
 });
 
 it('identifies no redirect action', function (): void {
@@ -61,8 +68,10 @@ it('identifies no redirect action', function (): void {
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->requiresRedirect())->toBeFalse();
-    expect($response->getRedirectUrl())->toBeNull();
+    expect($response->requiresRedirect())
+        ->toBeFalse();
+    expect($response->getRedirectUrl())
+        ->toBeNull();
 });
 
 it('checks if payment is final', function (): void {
@@ -78,8 +87,10 @@ it('checks if payment is final', function (): void {
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->isFinal())->toBeTrue();
-    expect($response->isSuccessful())->toBeTrue();
+    expect($response->isFinal())
+        ->toBeTrue();
+    expect($response->isSuccessful())
+        ->toBeTrue();
 });
 
 it('checks if payment is declined', function (): void {
@@ -95,9 +106,12 @@ it('checks if payment is declined', function (): void {
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->isFinal())->toBeTrue();
-    expect($response->isSuccessful())->toBeFalse();
-    expect($response->status->isDeclined())->toBeTrue();
+    expect($response->isFinal())
+        ->toBeTrue();
+    expect($response->isSuccessful())
+        ->toBeFalse();
+    expect($response->status->isDeclined())
+        ->toBeTrue();
 });
 
 it('is immutable', function (): void {
@@ -114,5 +128,6 @@ it('is immutable', function (): void {
     $response = PaymentResponse::fromArray($data);
     $reflection = new ReflectionClass($response);
 
-    expect($reflection->isReadOnly())->toBeTrue();
+    expect($reflection->isReadOnly())
+        ->toBeTrue();
 });

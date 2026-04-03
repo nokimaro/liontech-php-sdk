@@ -8,13 +8,14 @@ use LionTech\SDK\DTOs\Request\CreateOrderRequest;
 use LionTech\SDK\DTOs\Response\OrderResponse;
 use LionTech\SDK\Http\HttpClient;
 
-final class OrdersClient
+final readonly class OrdersClient
 {
-    private const ORDERS_PATH = '/api/v1/merchant/orders';
+    private const string ORDERS_PATH = '/api/v1/merchant/orders';
 
     public function __construct(
-        private readonly HttpClient $httpClient,
-    ) {}
+        private HttpClient $httpClient,
+    ) {
+    }
 
     /**
      * Create a new order with a PSP-generated ID.

@@ -11,7 +11,8 @@ final readonly class EncryptedCardData implements JsonSerializable
     public function __construct(
         public string $encryptedCardData,
         public ?string $cardHolder = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{encryptedCardData: string, cardHolder?: string}

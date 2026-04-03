@@ -15,21 +15,15 @@ class ApiExceptionMapper
 {
     /**
      * Map HTTP response to appropriate exception.
-     *
-     * @throws AuthenticationException
-     * @throws TokenExpiredException
-     * @throws ValidationException
-     * @throws ConflictException
-     * @throws TransportException
      */
     public static function map(ResponseInterface $response): never
     {
         $statusCode = $response->getStatusCode();
         $body = (string) $response->getBody();
         $errorData = json_decode($body, true) ?: [];
-        $apiError = !empty($errorData) ? ApiErrorResponse::fromArray($errorData) : null;
+        $apiError = empty($errorData) ? null : ApiErrorResponse::fromArray($errorData);
 
-        $message = $apiError?->description ?? match ($statusCode) {
+        $message = $apiError->description ?? match ($statusCode) {
             400 => 'Bad Request',
             401 => 'Unauthorized',
             403 => 'Forbidden',

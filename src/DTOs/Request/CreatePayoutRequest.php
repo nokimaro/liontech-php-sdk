@@ -25,7 +25,8 @@ final readonly class CreatePayoutRequest implements JsonSerializable
         public ?string $orderId = null,
         public ?string $webhookUrl = null,
         public ?array $customFields = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
@@ -37,7 +38,7 @@ final readonly class CreatePayoutRequest implements JsonSerializable
             'paymentData' => $this->paymentData->jsonSerialize(),
         ];
 
-        if ($this->customer !== null) {
+        if ($this->customer instanceof \LionTech\SDK\DTOs\Request\CustomerData) {
             $data['customer'] = $this->customer->jsonSerialize();
         }
 

@@ -10,7 +10,8 @@ final readonly class RefreshTokenRequest implements JsonSerializable
 {
     public function __construct(
         public string $refreshToken,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{refreshToken: string}

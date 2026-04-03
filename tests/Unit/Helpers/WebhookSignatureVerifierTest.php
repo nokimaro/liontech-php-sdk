@@ -13,7 +13,8 @@ it('can be instantiated with valid RSA public key', function (): void {
 
     $verifier = new WebhookSignatureVerifier($publicKeyPem);
 
-    expect($verifier)->toBeInstanceOf(WebhookSignatureVerifier::class);
+    expect($verifier)
+        ->toBeInstanceOf(WebhookSignatureVerifier::class);
 });
 
 it('verifies valid signature', function (): void {
@@ -32,7 +33,8 @@ it('verifies valid signature', function (): void {
         'X-Payload-Signature' => $signatureBase64,
     ];
 
-    expect($verifier->verify($headers, $payload))->toBeTrue();
+    expect($verifier->verify($headers, $payload))
+        ->toBeTrue();
 });
 
 it('rejects invalid signature', function (): void {
@@ -47,7 +49,8 @@ it('rejects invalid signature', function (): void {
         'X-Payload-Signature' => base64_encode('invalid_signature'),
     ];
 
-    expect($verifier->verify($headers, 'test payload'))->toBeFalse();
+    expect($verifier->verify($headers, 'test payload'))
+        ->toBeFalse();
 });
 
 it('returns false when signature header is missing', function (): void {
@@ -62,5 +65,6 @@ it('returns false when signature header is missing', function (): void {
         'Content-Type' => 'application/json',
     ];
 
-    expect($verifier->verify($headers, 'test payload'))->toBeFalse();
+    expect($verifier->verify($headers, 'test payload'))
+        ->toBeFalse();
 });

@@ -14,7 +14,8 @@ class ApiErrorResponse
         public readonly string $description,
         public readonly ?string $traceId = null,
         public readonly array $details = [],
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data
