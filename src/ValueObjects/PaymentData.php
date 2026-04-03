@@ -7,6 +7,7 @@ namespace LionTech\SDK\ValueObjects;
 use JsonSerializable;
 use LionTech\SDK\DTOs\Request\SbpData;
 use LionTech\SDK\Enums\PaymentMethodType;
+use LionTech\SDK\Json;
 
 final readonly class PaymentData implements JsonSerializable
 {
@@ -27,25 +28,29 @@ final readonly class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param array{type: string, object: array{encryptedCardData: string, cardHolder?: string}|array{bank: string}} $data
+     * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self
     {
-        $type = PaymentMethodType::from($data['type']);
+        $typeValue = $data['type'];
+        $type = PaymentMethodType::from(is_string($typeValue) ? $typeValue : 'card');
+
+        /** @var array<string, mixed> $objectData */
+        $objectData = $data['object'];
 
         $object = match ($type) {
             PaymentMethodType::CARD => new EncryptedCardData(
-                encryptedCardData: $data['object']['encryptedCardData'],
-                cardHolder: $data['object']['cardHolder'] ?? null,
+                encryptedCardData: Json::getString($objectData, 'encryptedCardData'),
+                cardHolder: Json::getNullableString($objectData, 'cardHolder'),
             ),
-            PaymentMethodType::SBP => new SbpData(bank: $data['object']['bank']),
+            PaymentMethodType::SBP => new SbpData(bank: Json::getString($objectData, 'bank')),
         };
 
         return new self(type: $type, object: $object);
     }
 
     /**
-     * @return array{type: string, object: array}
+     * @return array{type: string, object: array<string, mixed>}
      */
     public function jsonSerialize(): array
     {

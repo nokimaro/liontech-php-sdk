@@ -1,7 +1,9 @@
 parameters:
-    level: 5
+    level: max
     paths:
         - src
+    excludePaths:
+        - tests/*
     ignoreErrors:
-        # phpseclib3 uses magic methods dynamically
+        # phpseclib3 uses magic methods and dynamic class loading
         - '#Call to an undefined (static )?method phpseclib3\\#'

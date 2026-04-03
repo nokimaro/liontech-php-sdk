@@ -20,10 +20,14 @@ class ApiExceptionMapper
     {
         $statusCode = $response->getStatusCode();
         $body = (string) $response->getBody();
-        $errorData = json_decode($body, true) ?: [];
+        /** @var mixed $rawErrorData */
+        $rawErrorData = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        /** @var array<string, mixed> $errorData */
+        $errorData = is_array($rawErrorData) ? $rawErrorData : [];
+
         $apiError = empty($errorData) ? null : ApiErrorResponse::fromArray($errorData);
 
-        $message = $apiError->description ?? match ($statusCode) {
+        $message = $apiError instanceof \LionTech\SDK\Exceptions\ApiErrorResponse ? $apiError->description : match ($statusCode) {
             400 => 'Bad Request',
             401 => 'Unauthorized',
             403 => 'Forbidden',

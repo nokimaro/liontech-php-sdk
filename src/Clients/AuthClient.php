@@ -7,6 +7,7 @@ namespace LionTech\SDK\Clients;
 use LionTech\SDK\DTOs\Request\RefreshTokenRequest;
 use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class AuthClient
 {
@@ -23,7 +24,7 @@ final readonly class AuthClient
     public function refreshTokens(RefreshTokenRequest $request): MerchantTokensRefreshResponse
     {
         $response = $this->httpClient->post(self::TOKEN_REFRESH_PATH, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return MerchantTokensRefreshResponse::fromArray($data);
     }

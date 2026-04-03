@@ -6,6 +6,7 @@ namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\DTOs\Response\MerchantAccount;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class BalancesClient
 {
@@ -24,10 +25,12 @@ final readonly class BalancesClient
     public function list(): array
     {
         $response = $this->httpClient->get(self::BALANCES_PATH);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
+
+        $items = Json::assertArrayOfArrays($data['items'] ?? $data['accounts'] ?? []);
 
         $accounts = [];
-        foreach ($data['items'] ?? $data['accounts'] ?? [] as $item) {
+        foreach ($items as $item) {
             $accounts[] = MerchantAccount::fromArray($item);
         }
 

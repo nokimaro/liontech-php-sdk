@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class SignatureClient
 {
@@ -21,8 +22,8 @@ final readonly class SignatureClient
     public function getPublicKey(): string
     {
         $response = $this->httpClient->get(self::SIGNATURE_KEY_PATH);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
-        return $data['pem'];
+        return Json::getString($data, 'pem');
     }
 }

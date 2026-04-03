@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class TransfersClient
 {
@@ -19,21 +20,24 @@ final readonly class TransfersClient
      * Create a new transfer.
      *
      * @param array<string, mixed> $data Transfer data
+     * @return array<string, mixed>
      */
     public function create(array $data): array
     {
         $response = $this->httpClient->post(self::TRANSFERS_PATH, $data);
 
-        return json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        return Json::decode((string) $response->getBody());
     }
 
     /**
      * Get transfer information.
+     *
+     * @return array<string, mixed>
      */
     public function get(string $transferId): array
     {
         $response = $this->httpClient->get(self::TRANSFERS_PATH . '/' . $transferId);
 
-        return json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        return Json::decode((string) $response->getBody());
     }
 }

@@ -7,6 +7,7 @@ namespace LionTech\SDK\Clients;
 use LionTech\SDK\DTOs\Request\CreateRefundRequest;
 use LionTech\SDK\DTOs\Response\RefundResponse;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class RefundsClient
 {
@@ -23,7 +24,7 @@ final readonly class RefundsClient
     public function create(CreateRefundRequest $request): RefundResponse
     {
         $response = $this->httpClient->post(self::REFUNDS_PATH, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return RefundResponse::fromArray($data);
     }
@@ -34,7 +35,7 @@ final readonly class RefundsClient
     public function createWithId(string $refundId, CreateRefundRequest $request): RefundResponse
     {
         $response = $this->httpClient->put(self::REFUNDS_PATH . '/' . $refundId, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return RefundResponse::fromArray($data);
     }
@@ -45,7 +46,7 @@ final readonly class RefundsClient
     public function get(string $refundId): RefundResponse
     {
         $response = $this->httpClient->get(self::REFUNDS_PATH . '/' . $refundId);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return RefundResponse::fromArray($data);
     }

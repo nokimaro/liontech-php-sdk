@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\Exceptions;
 
-class ApiErrorResponse
+use LionTech\SDK\Json;
+
+final readonly class ApiErrorResponse
 {
     /**
      * @param array<string, mixed> $details
      */
     public function __construct(
-        public readonly int $code,
-        public readonly string $description,
-        public readonly ?string $traceId = null,
-        public readonly array $details = [],
+        public int $code,
+        public string $description,
+        public ?string $traceId = null,
+        public array $details = [],
     ) {
     }
 
@@ -23,10 +25,10 @@ class ApiErrorResponse
     public static function fromArray(array $data): self
     {
         return new self(
-            code: $data['code'] ?? 0,
-            description: $data['description'] ?? 'Unknown error',
-            traceId: $data['traceId'] ?? null,
-            details: $data['details'] ?? [],
+            code: Json::getInt($data, 'code'),
+            description: Json::getString($data, 'description', 'Unknown error'),
+            traceId: Json::getNullableString($data, 'traceId'),
+            details: Json::getNullableArray($data, 'details') ?? [],
         );
     }
 }

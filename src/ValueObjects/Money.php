@@ -20,11 +20,17 @@ final readonly class Money implements JsonSerializable
     }
 
     /**
-     * @param array{value: string, currency: string} $data
+     * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self
     {
-        return new self(amount: $data['value'], currency: Currency::from($data['currency']));
+        $value = $data['value'];
+        $currency = $data['currency'];
+
+        return new self(
+            amount: is_string($value) ? $value : (is_numeric($value) ? (string) $value : '0'),
+            currency: Currency::from(is_string($currency) ? $currency : 'USD'),
+        );
     }
 
     /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\DTOs\Response;
 
+use LionTech\SDK\Json;
+
 final readonly class MerchantTokensRefreshResponse
 {
     public function __construct(
@@ -20,10 +22,10 @@ final readonly class MerchantTokensRefreshResponse
     public static function fromArray(array $data): self
     {
         return new self(
-            accessToken: $data['accessToken'],
-            accessTokenExpireAt: new \DateTimeImmutable($data['accessTokenExpireAt']),
-            refreshToken: $data['refreshToken'],
-            refreshTokenExpireAt: new \DateTimeImmutable($data['refreshTokenExpireAt']),
+            accessToken: Json::getString($data, 'accessToken'),
+            accessTokenExpireAt: new \DateTimeImmutable(Json::getString($data, 'accessTokenExpireAt')),
+            refreshToken: Json::getString($data, 'refreshToken'),
+            refreshTokenExpireAt: new \DateTimeImmutable(Json::getString($data, 'refreshTokenExpireAt')),
         );
     }
 }

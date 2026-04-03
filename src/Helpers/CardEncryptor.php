@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\Helpers;
 
+use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
 final readonly class CardEncryptor
@@ -13,7 +14,9 @@ final readonly class CardEncryptor
     public function __construct(
         private string $publicKeyPem
     ) {
-        $this->rsa = RSA::loadKey($this->publicKeyPem);
+        $key = PublicKeyLoader::load($this->publicKeyPem);
+        assert($key instanceof RSA);
+        $this->rsa = $key;
         $this->rsa->setEncryptionMode(RSA::ENCRYPTION_OAEP);
         $this->rsa->setHash('sha256');
         $this->rsa->setMGFHash('sha256');
@@ -29,6 +32,7 @@ final readonly class CardEncryptor
     {
         $json = json_encode($cardData, JSON_THROW_ON_ERROR);
         $encrypted = $this->rsa->encrypt($json);
+        assert(is_string($encrypted));
 
         return base64_encode($encrypted);
     }

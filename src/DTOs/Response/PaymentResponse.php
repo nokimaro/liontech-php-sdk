@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LionTech\SDK\DTOs\Response;
 
 use LionTech\SDK\Enums\PaymentStatus;
+use LionTech\SDK\Json;
 use LionTech\SDK\ValueObjects\Money;
 use LionTech\SDK\ValueObjects\PaymentData;
 
@@ -57,30 +58,53 @@ final readonly class PaymentResponse
      */
     public static function fromArray(array $data): self
     {
+        /** @var array<string, mixed>|string $statusRaw */
+        $statusRaw = $data['status'];
+        $statusValue = is_array($statusRaw)
+            ? Json::getString($statusRaw, 'value')
+            : Json::getString($data, 'status');
+
+        /** @var array<string, mixed>|null $amountRaw */
+        $amountRaw = $data['amount'] ?? null;
+        $amount = is_array($amountRaw) ? Money::fromArray($amountRaw) : new Money(
+            '0',
+            \LionTech\SDK\ValueObjects\Currency::USD
+        );
+
+        /** @var array<string, mixed>|null $convAmountRaw */
+        $convAmountRaw = $data['convAmount'] ?? null;
+        $convAmount = is_array($convAmountRaw) ? Money::fromArray($convAmountRaw) : null;
+
+        /** @var array<string, mixed>|null $paymentMethodRaw */
+        $paymentMethodRaw = $data['paymentMethod'] ?? null;
+        $paymentMethod = is_array($paymentMethodRaw) ? PaymentData::fromArray($paymentMethodRaw) : null;
+
+        /** @var array<string, mixed>|null $additionalActionRaw */
+        $additionalActionRaw = $data['additionalAction'] ?? null;
+        $additionalAction = is_array($additionalActionRaw) ? $additionalActionRaw : null;
+
         return new self(
-            paymentId: $data['paymentId'],
-            orderId: $data['orderId'] ?? null,
-            amount: isset($data['amount']) ? Money::fromArray($data['amount']) : new Money(
-                '0',
-                \LionTech\SDK\ValueObjects\Currency::USD
-            ),
-            convAmount: isset($data['convAmount']) ? Money::fromArray($data['convAmount']) : null,
-            status: PaymentStatus::from($data['status']['value'] ?? $data['status'] ?? 'OPERATION'),
-            paymentMethod: isset($data['paymentMethod']) ? PaymentData::fromArray($data['paymentMethod']) : null,
-            paymentData: $data['paymentData'] ?? null,
-            paymentToken: $data['paymentToken'] ?? null,
-            additionalAction: $data['additionalAction'] ?? null,
-            autoApprove: $data['autoApprove'] ?? true,
-            backLink: $data['backLink'] ?? null,
-            webhookUrl: $data['webhookUrl'] ?? null,
-            customFields: $data['customFields'] ?? null,
-            createdAt: isset($data['createdAt']) ? new \DateTimeImmutable(
-                $data['createdAt']
-            ) : new \DateTimeImmutable(),
-            description: $data['description'] ?? null,
-            items: $data['items'] ?? null,
-            txnId: $data['txnId'] ?? null,
-            rrn: $data['rrn'] ?? null,
+            paymentId: Json::getString($data, 'paymentId'),
+            orderId: Json::getNullableString($data, 'orderId'),
+            amount: $amount,
+            convAmount: $convAmount,
+            status: PaymentStatus::from($statusValue),
+            paymentMethod: $paymentMethod,
+            paymentData: Json::getNullableArray($data, 'paymentData'),
+            paymentToken: Json::getNullableArray($data, 'paymentToken'),
+            additionalAction: $additionalAction,
+            autoApprove: Json::getBool($data, 'autoApprove', true),
+            backLink: Json::getNullableString($data, 'backLink'),
+            webhookUrl: Json::getNullableString($data, 'webhookUrl'),
+            customFields: Json::getNullableArray($data, 'customFields'),
+            createdAt: isset($data['createdAt']) ? new \DateTimeImmutable(Json::getString(
+                $data,
+                'createdAt'
+            )) : new \DateTimeImmutable(),
+            description: Json::getNullableString($data, 'description'),
+            items: isset($data['items']) && is_array($data['items']) ? array_values($data['items']) : null,
+            txnId: Json::getNullableString($data, 'txnId'),
+            rrn: Json::getNullableString($data, 'rrn'),
         );
     }
 
@@ -92,7 +116,13 @@ final readonly class PaymentResponse
 
     public function getRedirectUrl(): ?string
     {
-        return $this->requiresRedirect() ? ($this->additionalAction['value'] ?? null) : null;
+        if (! $this->requiresRedirect()) {
+            return null;
+        }
+
+        $value = $this->additionalAction['value'] ?? null;
+
+        return is_string($value) ? $value : null;
     }
 
     public function isFinal(): bool

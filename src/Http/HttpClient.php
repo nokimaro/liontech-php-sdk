@@ -60,7 +60,7 @@ final class HttpClient
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<string, string|int|float|bool|null> $data
      */
     public function get(string $path, array $data = []): ResponseInterface
     {
@@ -84,6 +84,9 @@ final class HttpClient
         return $this->send($request);
     }
 
+    /**
+     * @param array<string, string> $data
+     */
     public function delete(string $path, array $data = []): ResponseInterface
     {
         $url = $this->buildUrl($path, $data);
@@ -101,7 +104,7 @@ final class HttpClient
         }
 
         // Apply response middleware if set
-        if ($this->responseMiddleware instanceof \LionTech\SDK\Http\ResponseMiddleware) {
+        if ($this->responseMiddleware instanceof ResponseMiddleware) {
             $response = ($this->responseMiddleware)($response);
         }
 
@@ -133,6 +136,9 @@ final class HttpClient
         return $request;
     }
 
+    /**
+     * @param array<string, string> $additionalHeaders
+     */
     private function applyHeaders(RequestInterface $request, array $additionalHeaders = []): RequestInterface
     {
         $headers = array_merge([
@@ -151,7 +157,7 @@ final class HttpClient
     }
 
     /**
-     * @param array<string, mixed> $query
+     * @param array<string, string|int|float|bool|null> $query
      */
     private function buildUrl(string $path, array $query = []): string
     {

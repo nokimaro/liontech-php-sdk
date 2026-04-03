@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LionTech\SDK\DTOs\Response;
 
 use LionTech\SDK\Enums\PayoutStatus;
+use LionTech\SDK\Json;
 use LionTech\SDK\ValueObjects\Money;
 
 final readonly class PayoutResponse
@@ -42,23 +43,38 @@ final readonly class PayoutResponse
      */
     public static function fromArray(array $data): self
     {
+        /** @var array<string, mixed>|string $statusRaw */
+        $statusRaw = $data['status'];
+        $statusValue = is_array($statusRaw)
+            ? Json::getString($statusRaw, 'value')
+            : Json::getString($data, 'status');
+
+        /** @var array<string, mixed>|null $amountRaw */
+        $amountRaw = $data['amount'] ?? null;
+        $amount = is_array($amountRaw) ? Money::fromArray($amountRaw) : new Money(
+            '0',
+            \LionTech\SDK\ValueObjects\Currency::USD
+        );
+
+        /** @var array<string, mixed>|null $convAmountRaw */
+        $convAmountRaw = $data['convAmount'] ?? null;
+        $convAmount = is_array($convAmountRaw) ? Money::fromArray($convAmountRaw) : null;
+
         return new self(
-            payoutId: $data['payoutId'],
-            orderId: $data['orderId'] ?? null,
-            amount: isset($data['amount']) ? Money::fromArray($data['amount']) : new Money(
-                '0',
-                \LionTech\SDK\ValueObjects\Currency::USD
-            ),
-            convAmount: isset($data['convAmount']) ? Money::fromArray($data['convAmount']) : null,
-            status: PayoutStatus::from($data['status']['value'] ?? $data['status'] ?? 'PENDING'),
-            paymentMethod: $data['paymentMethod'] ?? null,
-            webhookUrl: $data['webhookUrl'] ?? null,
-            customFields: $data['customFields'] ?? null,
-            createdAt: isset($data['createdAt']) ? new \DateTimeImmutable(
-                $data['createdAt']
-            ) : new \DateTimeImmutable(),
-            txnId: $data['txnId'] ?? null,
-            rrn: $data['rrn'] ?? null,
+            payoutId: Json::getString($data, 'payoutId'),
+            orderId: Json::getNullableString($data, 'orderId'),
+            amount: $amount,
+            convAmount: $convAmount,
+            status: PayoutStatus::from($statusValue),
+            paymentMethod: Json::getNullableArray($data, 'paymentMethod'),
+            webhookUrl: Json::getNullableString($data, 'webhookUrl'),
+            customFields: Json::getNullableArray($data, 'customFields'),
+            createdAt: isset($data['createdAt']) ? new \DateTimeImmutable(Json::getString(
+                $data,
+                'createdAt'
+            )) : new \DateTimeImmutable(),
+            txnId: Json::getNullableString($data, 'txnId'),
+            rrn: Json::getNullableString($data, 'rrn'),
         );
     }
 

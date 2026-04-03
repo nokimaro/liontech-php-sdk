@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LionTech\SDK\DTOs\Response;
 
 use LionTech\SDK\Enums\OrderStatus;
+use LionTech\SDK\Json;
 use LionTech\SDK\ValueObjects\Money;
 
 final readonly class OrderResponse
@@ -50,22 +51,37 @@ final readonly class OrderResponse
      */
     public static function fromArray(array $data): self
     {
+        /** @var array<string, mixed>|string $statusRaw */
+        $statusRaw = $data['status'];
+        $statusValue = is_array($statusRaw)
+            ? Json::getString($statusRaw, 'value')
+            : Json::getString($data, 'status');
+
+        /** @var array<string, mixed> $amountData */
+        $amountData = $data['amount'];
+        /** @var array<string, mixed>|null $convAmountData */
+        $convAmountData = $data['convAmount'] ?? null;
+        /** @var array<string, mixed>|null $paidAmountData */
+        $paidAmountData = $data['paidAmount'] ?? null;
+
         return new self(
-            orderId: $data['orderId'],
-            amount: Money::fromArray($data['amount']),
-            convAmount: isset($data['convAmount']) ? Money::fromArray($data['convAmount']) : null,
-            paidAmount: isset($data['paidAmount']) ? Money::fromArray($data['paidAmount']) : null,
-            status: OrderStatus::from($data['status']['value'] ?? $data['status']),
-            payUrl: $data['payUrl'] ?? null,
-            successUrl: $data['successUrl'] ?? null,
-            declineUrl: $data['declineUrl'] ?? null,
-            webhookUrl: $data['webhookUrl'] ?? null,
-            customFields: $data['customFields'] ?? null,
-            createdAt: new \DateTimeImmutable($data['createdAt']),
-            expireAt: isset($data['expireAt']) ? new \DateTimeImmutable($data['expireAt']) : null,
-            autoApprove: $data['autoApprove'] ?? true,
-            description: $data['description'] ?? null,
-            items: $data['items'] ?? null,
+            orderId: Json::getString($data, 'orderId'),
+            amount: Money::fromArray($amountData),
+            convAmount: $convAmountData !== null ? Money::fromArray($convAmountData) : null,
+            paidAmount: $paidAmountData !== null ? Money::fromArray($paidAmountData) : null,
+            status: OrderStatus::from($statusValue),
+            payUrl: Json::getNullableString($data, 'payUrl'),
+            successUrl: Json::getNullableString($data, 'successUrl'),
+            declineUrl: Json::getNullableString($data, 'declineUrl'),
+            webhookUrl: Json::getNullableString($data, 'webhookUrl'),
+            customFields: Json::getNullableArray($data, 'customFields'),
+            createdAt: new \DateTimeImmutable(Json::getString($data, 'createdAt')),
+            expireAt: Json::getNullableString($data, 'expireAt') !== null
+                ? new \DateTimeImmutable(Json::getString($data, 'expireAt'))
+                : null,
+            autoApprove: Json::getBool($data, 'autoApprove', true),
+            description: Json::getNullableString($data, 'description'),
+            items: isset($data['items']) && is_array($data['items']) ? array_values($data['items']) : null,
         );
     }
 }

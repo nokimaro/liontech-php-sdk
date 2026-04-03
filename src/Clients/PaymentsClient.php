@@ -8,6 +8,7 @@ use LionTech\SDK\DTOs\Request\CreatePaymentRequest;
 use LionTech\SDK\DTOs\Response\PaymentResponse;
 use LionTech\SDK\DTOs\Response\RefundResponse;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class PaymentsClient
 {
@@ -24,7 +25,7 @@ final readonly class PaymentsClient
     public function create(CreatePaymentRequest $request): PaymentResponse
     {
         $response = $this->httpClient->post(self::PAYMENTS_PATH, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return PaymentResponse::fromArray($data);
     }
@@ -35,7 +36,7 @@ final readonly class PaymentsClient
     public function createWithId(string $paymentId, CreatePaymentRequest $request): PaymentResponse
     {
         $response = $this->httpClient->put(self::PAYMENTS_PATH . '/' . $paymentId, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return PaymentResponse::fromArray($data);
     }
@@ -46,7 +47,7 @@ final readonly class PaymentsClient
     public function get(string $paymentId): PaymentResponse
     {
         $response = $this->httpClient->get(self::PAYMENTS_PATH . '/' . $paymentId);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return PaymentResponse::fromArray($data);
     }
@@ -57,7 +58,7 @@ final readonly class PaymentsClient
     public function confirm(string $paymentId): PaymentResponse
     {
         $response = $this->httpClient->post(self::PAYMENTS_PATH . '/' . $paymentId . '/confirm');
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return PaymentResponse::fromArray($data);
     }
@@ -70,10 +71,12 @@ final readonly class PaymentsClient
     public function getRefunds(string $paymentId): array
     {
         $response = $this->httpClient->get(self::PAYMENTS_PATH . '/' . $paymentId . '/refunds');
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
+
+        $items = Json::assertArrayOfArrays($data['items'] ?? $data);
 
         $refunds = [];
-        foreach ($data['items'] ?? $data as $item) {
+        foreach ($items as $item) {
             $refunds[] = RefundResponse::fromArray($item);
         }
 

@@ -7,6 +7,7 @@ namespace LionTech\SDK\Clients;
 use LionTech\SDK\DTOs\Request\CreatePayoutRequest;
 use LionTech\SDK\DTOs\Response\PayoutResponse;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class PayoutsClient
 {
@@ -23,7 +24,7 @@ final readonly class PayoutsClient
     public function createWithId(string $payoutId, CreatePayoutRequest $request): PayoutResponse
     {
         $response = $this->httpClient->put(self::PAYOUTS_PATH . '/' . $payoutId, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return PayoutResponse::fromArray($data);
     }
@@ -34,7 +35,7 @@ final readonly class PayoutsClient
     public function get(string $payoutId): PayoutResponse
     {
         $response = $this->httpClient->get(self::PAYOUTS_PATH . '/' . $payoutId);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return PayoutResponse::fromArray($data);
     }

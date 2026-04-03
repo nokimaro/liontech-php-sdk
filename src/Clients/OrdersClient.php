@@ -7,6 +7,7 @@ namespace LionTech\SDK\Clients;
 use LionTech\SDK\DTOs\Request\CreateOrderRequest;
 use LionTech\SDK\DTOs\Response\OrderResponse;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class OrdersClient
 {
@@ -23,7 +24,7 @@ final readonly class OrdersClient
     public function create(CreateOrderRequest $request): OrderResponse
     {
         $response = $this->httpClient->post(self::ORDERS_PATH, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return OrderResponse::fromArray($data);
     }
@@ -34,7 +35,7 @@ final readonly class OrdersClient
     public function createWithId(string $orderId, CreateOrderRequest $request): OrderResponse
     {
         $response = $this->httpClient->put(self::ORDERS_PATH . '/' . $orderId, $request);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return OrderResponse::fromArray($data);
     }
@@ -45,7 +46,7 @@ final readonly class OrdersClient
     public function get(string $orderId): OrderResponse
     {
         $response = $this->httpClient->get(self::ORDERS_PATH . '/' . $orderId);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return OrderResponse::fromArray($data);
     }
@@ -56,7 +57,7 @@ final readonly class OrdersClient
     public function cancel(string $orderId): OrderResponse
     {
         $response = $this->httpClient->post(self::ORDERS_PATH . '/' . $orderId . '/cancel');
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return OrderResponse::fromArray($data);
     }
@@ -67,7 +68,7 @@ final readonly class OrdersClient
     public function close(string $orderId): OrderResponse
     {
         $response = $this->httpClient->post(self::ORDERS_PATH . '/' . $orderId . '/close');
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
 
         return OrderResponse::fromArray($data);
     }

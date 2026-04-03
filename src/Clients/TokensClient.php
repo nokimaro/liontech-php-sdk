@@ -6,6 +6,7 @@ namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\DTOs\Response\SavedPaymentMethod;
 use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Json;
 
 final readonly class TokensClient
 {
@@ -30,10 +31,12 @@ final readonly class TokensClient
         ], static fn (?string $value): bool => $value !== null);
 
         $response = $this->httpClient->get(self::TOKENS_PATH, $query);
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $data = Json::decode((string) $response->getBody());
+
+        $items = Json::assertArrayOfArrays($data['saved_payment_methods'] ?? $data['items'] ?? []);
 
         $methods = [];
-        foreach ($data['saved_payment_methods'] ?? $data['items'] ?? [] as $item) {
+        foreach ($items as $item) {
             $methods[] = SavedPaymentMethod::fromArray($item);
         }
 
