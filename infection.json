@@ -1,0 +1,17 @@
+{
+    "timeout": 60,
+    "processes": 0,
+    "minMsi": 80,
+    "minCoveredMsi": 90,
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "logs": {
+        "text": "infection.log"
+    },
+    "mutators": {
+        "@default": true
+    }
+}
