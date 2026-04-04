@@ -19,7 +19,7 @@ function createErrorResponse(int $statusCode, ?string $body = null): ResponseInt
     $response = Mockery::mock(ResponseInterface::class);
 
     $stream->shouldReceive('__toString')
-        ->andReturn($body ?? '');
+        ->andReturn($body ?? '{}');
     $response->shouldReceive('getStatusCode')
         ->andReturn($statusCode);
     $response->shouldReceive('getBody')
@@ -154,3 +154,63 @@ it('uses default message when body is not valid json', function (): void {
 
     ApiExceptionMapper::map($response);
 })->throws(JsonException::class);
+
+it('throws ValidationException for 400 without body', function (): void {
+    $response = createErrorResponse(400);
+
+    ApiExceptionMapper::map($response);
+})->throws(ValidationException::class, 'Bad Request');
+
+it('throws AuthenticationException for 401 without body', function (): void {
+    $response = createErrorResponse(401);
+
+    ApiExceptionMapper::map($response);
+})->throws(AuthenticationException::class, 'Unauthorized');
+
+it('throws AuthenticationException for 403 without body', function (): void {
+    $response = createErrorResponse(403);
+
+    ApiExceptionMapper::map($response);
+})->throws(AuthenticationException::class, 'Forbidden');
+
+it('throws ResourceNotFoundException for 404 without body', function (): void {
+    $response = createErrorResponse(404);
+
+    ApiExceptionMapper::map($response);
+})->throws(ResourceNotFoundException::class, 'Not Found');
+
+it('throws ConflictException for 409 without body', function (): void {
+    $response = createErrorResponse(409);
+
+    ApiExceptionMapper::map($response);
+})->throws(ConflictException::class, 'Conflict');
+
+it('throws ValidationException for 422 without body', function (): void {
+    $response = createErrorResponse(422);
+
+    ApiExceptionMapper::map($response);
+})->throws(ValidationException::class, 'Unprocessable Entity');
+
+it('throws RateLimitException for 429 without body', function (): void {
+    $response = createErrorResponse(429);
+
+    ApiExceptionMapper::map($response);
+})->throws(RateLimitException::class, 'Too Many Requests');
+
+it('throws TransportException for 500 without body', function (): void {
+    $response = createErrorResponse(500);
+
+    ApiExceptionMapper::map($response);
+})->throws(TransportException::class, 'Internal Server Error');
+
+it('throws TransportException for 502 without body', function (): void {
+    $response = createErrorResponse(502);
+
+    ApiExceptionMapper::map($response);
+})->throws(TransportException::class, 'Bad Gateway');
+
+it('throws TransportException for 503 without body', function (): void {
+    $response = createErrorResponse(503);
+
+    ApiExceptionMapper::map($response);
+})->throws(TransportException::class, 'Service Unavailable');
