@@ -1,45 +1,14 @@
-name: CI - Quick Validation
+name: Tests
 
 on:
-  workflow_dispatch:
   push:
     branches: [ master, main, develop ]
   pull_request:
     branches: [ master, main, develop ]
 
 jobs:
-  quality:
-    name: Quality Gates
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-version: ['8.3', '8.4', '8.5']
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          extensions: mbstring, json, openssl
-          coverage: none
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-
-      - name: Check code style
-        run: composer ecs
-
-      - name: Run static analysis
-        run: composer phpstan
-
-      - name: Run tests
-        run: composer test
-
-  test-coverage:
-    name: Test Coverage
+  test:
+    name: PHP ${{ matrix.php-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,10 +28,14 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Run tests with coverage
-        run: vendor/bin/pest --coverage --coverage-clover=coverage.xml --compact
+      - name: Check code style
+        run: composer ecs
 
-      - name: Upload coverage to Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          fail-on-error: false
+      - name: Run static analysis
+        run: composer phpstan
+
+      - name: Run unit tests
+        run: composer test
+
+      - name: Run type coverage check
+        run: composer test-type-coverage
