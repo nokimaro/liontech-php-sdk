@@ -48,11 +48,11 @@ require_once 'vendor/autoload.php';
 
 use Nokimaro\LionTech\Client;
 
-$liontech = new Client([
-    'access_token' => 'your_access_token_here',
-    // Optional: 'refresh_token' => 'your_refresh_token',
-    // Optional: 'base_url' => 'https://api.sandbox.liontechnology.ai',
-]);
+$liontech = new Client(
+    accessToken: 'your_access_token_here',
+    // refreshToken: 'your_refresh_token',
+    // baseUrl: 'https://api.sandbox.liontechnology.ai',
+);
 ```
 
 ### Create an Order
@@ -271,16 +271,19 @@ The SDK uses [PSR-18](https://www.php-fig.org/psr/psr-18/) so any compatible HTT
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\HttpFactory;
 use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Http\Transport;
 
-$guzzle = new GuzzleClient();
-$factory = new HttpFactory();
+$transport = new Transport(
+    baseUrl: 'https://api.liontechnology.ai',
+    client: new GuzzleClient(),
+    requestFactory: new HttpFactory(),
+    streamFactory: new HttpFactory(),
+);
 
-$liontech = new Client([
-    'access_token' => 'your_token',
-    'client' => $guzzle,
-    'request_factory' => $factory,
-    'stream_factory' => $factory,
-]);
+$liontech = new Client(
+    accessToken: 'your_token',
+    httpClient: $transport,
+);
 ```
 
 ### Sandbox Environment
@@ -289,11 +292,11 @@ $liontech = new Client([
 use Nokimaro\LionTech\Client;
 
 // Via constructor
-$liontech = new Client([
-    'access_token' => 'your_sandbox_token',
-    'base_url' => 'https://api.sandbox.liontechnology.ai',
-    'secure_url' => 'https://secure.sandbox.liontechnology.ai',
-]);
+$liontech = new Client(
+    accessToken: 'your_sandbox_token',
+    baseUrl: 'https://api.sandbox.liontechnology.ai',
+    secureUrl: 'https://secure.sandbox.liontechnology.ai',
+);
 
 // Via builder
 $liontech = Client::builder()
