@@ -62,7 +62,7 @@
         "test": "pest --compact",
         "test-coverage": "XDEBUG_MODE=\"coverage\" vendor/bin/pest --coverage --min=95",
         "test-type-coverage": "vendor/bin/pest --type-coverage --min=100",
-        "test-mutation": "pest --mutate --parallel --class=LionTech\\\\SDK --covered-only --min=80",
+        "test-mutation": "XDEBUG_MODE=\"coverage\" vendor/bin/pest --mutate --parallel --everything --covered-only --min=80 --compact",
         "phpstan": "phpstan analyse",
         "ecs": "ecs check",
         "ecs:fix": "ecs check --fix",
