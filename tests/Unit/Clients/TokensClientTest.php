@@ -85,7 +85,11 @@ it('deletes a token', function (): void {
     [$apiClient, $tokensClient] = createTokensClient();
 
     $apiClient->shouldReceive('delete')
-        ->with('/api/v1/merchant/tokens/tok_123');
+        ->with('/api/v1/merchant/tokens/tok_123')
+        ->once();
 
     $tokensClient->delete('tok_123');
+
+    expect(true)
+        ->toBeTrue();
 });
