@@ -7,7 +7,6 @@ namespace Nokimaro\LionTech\Responses;
 use Nokimaro\LionTech\Enums\PaymentStatus;
 use Nokimaro\LionTech\Json;
 use Nokimaro\LionTech\ValueObjects\Money;
-use Nokimaro\LionTech\ValueObjects\PaymentData;
 
 final readonly class PaymentResponse
 {
@@ -16,8 +15,8 @@ final readonly class PaymentResponse
      * @param string|null $orderId Order ID
      * @param Money $amount Payment amount
      * @param Money|null $convAmount Converted amount
-     * @param PaymentStatus $status Payment status
-     * @param PaymentData|null $paymentMethod Payment method
+     * @param ResponseStatus $status Payment status
+     * @param string|null $paymentMethod Payment method
      * @param array<string, mixed>|null $paymentData Payment data
      * @param array<string, mixed>|null $paymentToken Payment token
      * @param array<string, mixed>|null $additionalAction Additional action (e.g., redirect)
@@ -36,8 +35,8 @@ final readonly class PaymentResponse
         public ?string $orderId = null,
         public Money $amount = new Money('0', \Nokimaro\LionTech\ValueObjects\Currency::USD),
         public ?Money $convAmount = null,
-        public PaymentStatus $status = PaymentStatus::OPERATION,
-        public ?PaymentData $paymentMethod = null,
+        public ResponseStatus $status = new ResponseStatus(''),
+        public ?string $paymentMethod = null,
         public ?array $paymentData = null,
         public ?array $paymentToken = null,
         public ?array $additionalAction = null,
@@ -60,9 +59,9 @@ final readonly class PaymentResponse
     {
         /** @var array<string, mixed>|string $statusRaw */
         $statusRaw = $data['status'];
-        $statusValue = is_array($statusRaw)
-            ? Json::getString($statusRaw, 'value')
-            : Json::getString($data, 'status');
+        $status = is_array($statusRaw)
+            ? ResponseStatus::fromArray($statusRaw)
+            : new ResponseStatus(value: $statusRaw);
 
         /** @var array<string, mixed>|null $amountRaw */
         $amountRaw = $data['amount'] ?? null;
@@ -75,11 +74,6 @@ final readonly class PaymentResponse
         $convAmountRaw = $data['convAmount'] ?? null;
         $convAmount = is_array($convAmountRaw) ? Money::fromArray($convAmountRaw) : null;
 
-        /** @var array<string, mixed>|null $paymentMethodRaw */
-        $paymentMethodRaw = $data['paymentMethod'] ?? null;
-        // @pest-mutate-ignore -- Defensive null check
-        $paymentMethod = is_array($paymentMethodRaw) ? PaymentData::fromArray($paymentMethodRaw) : null;
-
         /** @var array<string, mixed>|null $additionalActionRaw */
         $additionalActionRaw = $data['additionalAction'] ?? null;
         // @pest-mutate-ignore -- Defensive null check
@@ -90,8 +84,8 @@ final readonly class PaymentResponse
             orderId: Json::getNullableString($data, 'orderId'),
             amount: $amount,
             convAmount: $convAmount,
-            status: PaymentStatus::from($statusValue),
-            paymentMethod: $paymentMethod,
+            status: $status,
+            paymentMethod: Json::getNullableString($data, 'paymentMethod'),
             paymentData: Json::getNullableArray($data, 'paymentData'),
             paymentToken: Json::getNullableArray($data, 'paymentToken'),
             additionalAction: $additionalAction,
@@ -130,11 +124,16 @@ final readonly class PaymentResponse
 
     public function isFinal(): bool
     {
-        return $this->status->isFinal();
+        return PaymentStatus::tryFrom($this->status->value)?->isFinal() ?? false;
     }
 
     public function isSuccessful(): bool
     {
-        return $this->status->isSuccessful();
+        return PaymentStatus::tryFrom($this->status->value)?->isSuccessful() ?? false;
+    }
+
+    public function isDeclined(): bool
+    {
+        return PaymentStatus::tryFrom($this->status->value)?->isDeclined() ?? false;
     }
 }

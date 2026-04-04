@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Nokimaro\LionTech\Enums\PayoutStatus;
 use Nokimaro\LionTech\Responses\PayoutResponse;
+use Nokimaro\LionTech\Responses\ResponseStatus;
 use Nokimaro\LionTech\ValueObjects\Currency;
 use Nokimaro\LionTech\ValueObjects\Money;
 
@@ -29,7 +29,9 @@ it('creates payout response from array', function (): void {
     expect($response->amount->currency)
         ->toBe(Currency::USD);
     expect($response->status)
-        ->toBe(PayoutStatus::PENDING);
+        ->toBeInstanceOf(ResponseStatus::class);
+    expect($response->status->value)
+        ->toBe('PENDING');
 });
 
 it('creates payout response with status as object', function (): void {
@@ -41,14 +43,22 @@ it('creates payout response with status as object', function (): void {
         ],
         'status' => [
             'value' => 'SUCCEEDED',
+            'changedAt' => '2024-01-15T10:00:00Z',
+            'description' => 'Payout completed',
         ],
         'createdAt' => '2024-01-01T00:00:00Z',
     ];
 
     $response = PayoutResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(PayoutStatus::SUCCEEDED);
+    expect($response->status->value)
+        ->toBe('SUCCEEDED');
+    expect($response->status->changedAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($response->status->changedAt->format('Y-m-d'))
+        ->toBe('2024-01-15');
+    expect($response->status->description)
+        ->toBe('Payout completed');
 });
 
 it('handles optional fields', function (): void {
@@ -65,9 +75,7 @@ it('handles optional fields', function (): void {
         ],
         'status' => 'SUCCEEDED',
         'createdAt' => '2024-01-01T00:00:00Z',
-        'paymentMethod' => [
-            'type' => 'card',
-        ],
+        'paymentMethod' => 'CARD',
         'webhookUrl' => 'https://example.com/webhook',
         'customFields' => [
             'key' => 'value',
@@ -85,9 +93,7 @@ it('handles optional fields', function (): void {
     expect($response->convAmount->amount)
         ->toBe('450.00');
     expect($response->paymentMethod)
-        ->toBe([
-            'type' => 'card',
-        ]);
+        ->toBe('CARD');
     expect($response->webhookUrl)
         ->toBe('https://example.com/webhook');
     expect($response->txnId)
@@ -227,8 +233,8 @@ it('handles status as string value', function (): void {
 
     $response = PayoutResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(PayoutStatus::SUCCEEDED);
+    expect($response->status->value)
+        ->toBe('SUCCEEDED');
 });
 
 it('checks is successful for declined status', function (): void {

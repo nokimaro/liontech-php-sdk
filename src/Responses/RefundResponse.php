@@ -16,7 +16,7 @@ final readonly class RefundResponse
      * @param string|null $orderId Order ID
      * @param Money $amount Refund amount
      * @param Money|null $convAmount Converted amount
-     * @param RefundStatus $status Refund status
+     * @param ResponseStatus $status Refund status
      * @param string|null $webhookUrl Webhook URL
      * @param array<string, mixed>|null $customFields Custom fields
      * @param \DateTimeImmutable $createdAt Created at
@@ -29,7 +29,7 @@ final readonly class RefundResponse
         public ?string $orderId = null,
         public Money $amount = new Money('0', \Nokimaro\LionTech\ValueObjects\Currency::USD),
         public ?Money $convAmount = null,
-        public RefundStatus $status = RefundStatus::PENDING,
+        public ResponseStatus $status = new ResponseStatus(''),
         public ?string $webhookUrl = null,
         public ?array $customFields = null,
         public \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
@@ -45,9 +45,9 @@ final readonly class RefundResponse
     {
         /** @var array<string, mixed>|string $statusRaw */
         $statusRaw = $data['status'];
-        $statusValue = is_array($statusRaw)
-            ? Json::getString($statusRaw, 'value')
-            : Json::getString($data, 'status');
+        $status = is_array($statusRaw)
+            ? ResponseStatus::fromArray($statusRaw)
+            : new ResponseStatus(value: $statusRaw);
 
         /** @var array<string, mixed>|null $amountRaw */
         $amountRaw = $data['amount'] ?? null;
@@ -66,7 +66,7 @@ final readonly class RefundResponse
             orderId: Json::getNullableString($data, 'orderId'),
             amount: $amount,
             convAmount: $convAmount,
-            status: RefundStatus::from($statusValue),
+            status: $status,
             webhookUrl: Json::getNullableString($data, 'webhookUrl'),
             customFields: Json::getNullableArray($data, 'customFields'),
             // @pest-mutate-ignore -- Defensive null check for createdAt
@@ -81,11 +81,11 @@ final readonly class RefundResponse
 
     public function isFinal(): bool
     {
-        return $this->status->isFinal();
+        return RefundStatus::tryFrom($this->status->value)?->isFinal() ?? false;
     }
 
     public function isSuccessful(): bool
     {
-        return $this->status->isSuccessful();
+        return RefundStatus::tryFrom($this->status->value)?->isSuccessful() ?? false;
     }
 }
