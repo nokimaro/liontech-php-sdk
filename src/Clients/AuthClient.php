@@ -4,39 +4,30 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\Clients;
 
-use LionTech\SDK\DTOs\Request\RefreshTokenRequest;
 use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
-use LionTech\SDK\Http\HttpClient;
-use LionTech\SDK\Json;
+use LionTech\SDK\Http\ApiClient;
 
 final readonly class AuthClient
 {
-    private const string TOKEN_REFRESH_PATH = '/api/v1/merchant/auth/tokens/refresh';
-
     public function __construct(
-        private HttpClient $httpClient,
+        private ApiClient $apiClient,
     ) {
     }
 
-    /**
-     * Refresh access and refresh tokens.
-     */
-    public function refreshTokens(RefreshTokenRequest $request): MerchantTokensRefreshResponse
+    public function refreshTokens(): MerchantTokensRefreshResponse
     {
-        $response = $this->httpClient->post(self::TOKEN_REFRESH_PATH, $request);
-        $data = Json::decode((string) $response->getBody());
-
-        return MerchantTokensRefreshResponse::fromArray($data);
+        return $this->apiClient->refreshTokens();
     }
 
-    /**
-     * Refresh tokens and update the HTTP client's access token.
-     */
-    public function refreshAndApply(RefreshTokenRequest $request): MerchantTokensRefreshResponse
+    public function refreshToken(): string
     {
-        $response = $this->refreshTokens($request);
-        $this->httpClient->setAccessToken($response->accessToken);
+        $token = $this->apiClient->tokenStore()
+            ->refreshToken();
 
-        return $response;
+        if ($token === null) {
+            throw new \RuntimeException('No refresh token configured');
+        }
+
+        return $token;
     }
 }

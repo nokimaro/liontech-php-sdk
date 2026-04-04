@@ -15,13 +15,12 @@ use LionTech\SDK\Clients\TokensClient;
 use LionTech\SDK\Clients\TransfersClient;
 use LionTech\SDK\Helpers\CardEncryptor;
 use LionTech\SDK\Helpers\WebhookSignatureVerifier;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\Http\HttpClient;
 
 final class LionTechSDK
 {
-    private readonly HttpClient $httpClient;
-
-    private readonly HttpClient $secureHttpClient;
+    private readonly ApiClient $apiClient;
 
     private ?AuthClient $authClient = null;
 
@@ -41,126 +40,105 @@ final class LionTechSDK
 
     private ?SignatureClient $signatureClient = null;
 
-    /**
-     * @param array{
-     *     access_token?: string,
-     *     refresh_token?: string,
-     *     base_url?: string,
-     *     secure_url?: string,
-     *     client?: \Psr\Http\Client\ClientInterface,
-     *     request_factory?: \Psr\Http\Message\RequestFactoryInterface,
-     *     stream_factory?: \Psr\Http\Message\StreamFactoryInterface,
-     * } $config
-     */
-    public function __construct(array $config = [])
+    private ?CardEncryptor $cardEncryptor = null;
+
+    private ?WebhookSignatureVerifier $webhookVerifier = null;
+
+    public function __construct(
+        string $accessToken,
+        ?string $refreshToken = null,
+        ?HttpClient $httpClient = null,
+        ?string $baseUrl = null,
+        ?string $secureUrl = null,
+    ) {
+        $this->apiClient = ApiClient::create(
+            accessToken: $accessToken,
+            refreshToken: $refreshToken,
+            baseUrl: $baseUrl ?? 'https://api.liontechnology.ai',
+            secureUrl: $secureUrl ?? 'https://secure.liontechnology.ai',
+            httpClient: $httpClient,
+        );
+    }
+
+    public static function builder(): SdkBuilder
     {
-        $baseUrl = $config['base_url'] ?? 'https://api.liontechnology.ai';
-        $secureUrl = $config['secure_url'] ?? 'https://secure.liontechnology.ai';
-        $client = $config['client'] ?? null;
-        $requestFactory = $config['request_factory'] ?? null;
-        $streamFactory = $config['stream_factory'] ?? null;
-
-        $this->httpClient = new HttpClient(
-            baseUrl: $baseUrl,
-            client: $client,
-            requestFactory: $requestFactory,
-            streamFactory: $streamFactory,
-        );
-
-        $this->secureHttpClient = new HttpClient(
-            baseUrl: $secureUrl,
-            client: $client,
-            requestFactory: $requestFactory,
-            streamFactory: $streamFactory,
-        );
-
-        if (isset($config['access_token'])) {
-            $this->httpClient->setAccessToken($config['access_token']);
-        }
+        return new SdkBuilder();
     }
 
     public function auth(): AuthClient
     {
-        return $this->authClient ??= new AuthClient($this->httpClient);
+        return $this->authClient ??= new AuthClient($this->apiClient);
     }
 
     public function orders(): OrdersClient
     {
-        return $this->ordersClient ??= new OrdersClient($this->httpClient);
+        return $this->ordersClient ??= new OrdersClient($this->apiClient);
     }
 
     public function payments(): PaymentsClient
     {
-        return $this->paymentsClient ??= new PaymentsClient($this->httpClient);
+        return $this->paymentsClient ??= new PaymentsClient($this->apiClient);
     }
 
     public function refunds(): RefundsClient
     {
-        return $this->refundsClient ??= new RefundsClient($this->httpClient);
+        return $this->refundsClient ??= new RefundsClient($this->apiClient);
     }
 
     public function payouts(): PayoutsClient
     {
-        return $this->payoutsClient ??= new PayoutsClient($this->httpClient);
+        return $this->payoutsClient ??= new PayoutsClient($this->apiClient);
     }
 
     public function tokens(): TokensClient
     {
-        return $this->tokensClient ??= new TokensClient($this->httpClient);
+        return $this->tokensClient ??= new TokensClient($this->apiClient);
     }
 
     public function balances(): BalancesClient
     {
-        return $this->balancesClient ??= new BalancesClient($this->httpClient);
+        return $this->balancesClient ??= new BalancesClient($this->apiClient);
     }
 
     public function transfers(): TransfersClient
     {
-        return $this->transfersClient ??= new TransfersClient($this->httpClient);
+        return $this->transfersClient ??= new TransfersClient($this->apiClient);
     }
 
     public function signature(): SignatureClient
     {
-        return $this->signatureClient ??= new SignatureClient($this->secureHttpClient);
+        return $this->signatureClient ??= new SignatureClient($this->apiClient->secureClient());
     }
 
-    /**
-     * Create a webhook signature verifier.
-     * Fetches the public key if not provided.
-     */
-    public function webhookVerifier(?string $publicKeyPem = null): WebhookSignatureVerifier
-    {
-        $pem = $publicKeyPem ?? $this->signature()
-            ->getPublicKey();
-
-        return new WebhookSignatureVerifier($pem);
-    }
-
-    /**
-     * Create a card encryptor.
-     * Fetches the encryption key if not provided.
-     */
     public function cardEncryptor(?string $publicKeyPem = null): CardEncryptor
     {
+        if ($this->cardEncryptor instanceof \LionTech\SDK\Helpers\CardEncryptor) {
+            return $this->cardEncryptor;
+        }
+
         $pem = $publicKeyPem ?? $this->signature()
             ->getPublicKey();
 
-        return new CardEncryptor($pem);
+        return $this->cardEncryptor = new CardEncryptor($pem);
+    }
+
+    public function webhookVerifier(?string $publicKeyPem = null): WebhookSignatureVerifier
+    {
+        if ($this->webhookVerifier instanceof \LionTech\SDK\Helpers\WebhookSignatureVerifier) {
+            return $this->webhookVerifier;
+        }
+
+        $pem = $publicKeyPem ?? $this->signature()
+            ->getPublicKey();
+
+        return $this->webhookVerifier = new WebhookSignatureVerifier($pem);
     }
 
     /**
-     * Get the underlying HTTP client for advanced usage.
+     * Get the underlying API client for advanced usage.
      */
-    public function httpClient(): HttpClient
+    public function apiClient(): ApiClient
     {
-        return $this->httpClient;
-    }
-
-    /**
-     * Get the secure HTTP client for encryption/signature endpoints.
-     */
-    public function secureHttpClient(): HttpClient
-    {
-        return $this->secureHttpClient;
+        return $this->apiClient;
     }
 }

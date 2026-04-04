@@ -5,35 +5,27 @@ declare(strict_types=1);
 namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\DTOs\Response\MerchantAccount;
-use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\Json;
 
 final readonly class BalancesClient
 {
-    private const string BALANCES_PATH = '/api/v1/merchant/balances';
-
     public function __construct(
-        private HttpClient $httpClient,
+        private ApiClient $apiClient,
     ) {
     }
 
     /**
-     * List balances by currency.
-     *
-     * @return array<int, MerchantAccount>
+     * @return list<MerchantAccount>
      */
     public function list(): array
     {
-        $response = $this->httpClient->get(self::BALANCES_PATH);
+        $response = $this->apiClient->get('/api/v1/merchant/balances');
         $data = Json::decode((string) $response->getBody());
 
-        $items = Json::assertArrayOfArrays($data['items'] ?? $data['accounts'] ?? []);
-
-        $accounts = [];
-        foreach ($items as $item) {
-            $accounts[] = MerchantAccount::fromArray($item);
-        }
-
-        return $accounts;
+        return array_map(
+            MerchantAccount::fromArray(...),
+            Json::assertArrayOfArrays($data['items'] ?? $data['accounts'] ?? []),
+        );
     }
 }

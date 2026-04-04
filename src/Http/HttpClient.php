@@ -95,6 +95,21 @@ final class HttpClient
         return $this->send($this->applyHeaders($request));
     }
 
+    public function client(): ClientInterface
+    {
+        return $this->client;
+    }
+
+    public function requestFactory(): RequestFactoryInterface
+    {
+        return $this->requestFactory;
+    }
+
+    public function streamFactory(): StreamFactoryInterface
+    {
+        return $this->streamFactory;
+    }
+
     private function send(RequestInterface $request): ResponseInterface
     {
         try {

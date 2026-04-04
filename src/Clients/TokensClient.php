@@ -5,22 +5,18 @@ declare(strict_types=1);
 namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\DTOs\Response\SavedPaymentMethod;
-use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\Json;
 
 final readonly class TokensClient
 {
-    private const string TOKENS_PATH = '/api/v1/merchant/tokens';
-
     public function __construct(
-        private HttpClient $httpClient,
+        private ApiClient $apiClient,
     ) {
     }
 
     /**
-     * List saved payment tokens.
-     *
-     * @return array<int, SavedPaymentMethod>
+     * @return list<SavedPaymentMethod>
      */
     public function list(?string $accountId = null, ?string $email = null, ?string $phone = null): array
     {
@@ -28,26 +24,19 @@ final readonly class TokensClient
             'accountId' => $accountId,
             'email' => $email,
             'phone' => $phone,
-        ], static fn (?string $value): bool => $value !== null);
+        ], static fn (?string $v): bool => $v !== null);
 
-        $response = $this->httpClient->get(self::TOKENS_PATH, $query);
+        $response = $this->apiClient->get('/api/v1/merchant/tokens', $query);
         $data = Json::decode((string) $response->getBody());
 
-        $items = Json::assertArrayOfArrays($data['saved_payment_methods'] ?? $data['items'] ?? []);
-
-        $methods = [];
-        foreach ($items as $item) {
-            $methods[] = SavedPaymentMethod::fromArray($item);
-        }
-
-        return $methods;
+        return array_map(
+            SavedPaymentMethod::fromArray(...),
+            Json::assertArrayOfArrays($data['saved_payment_methods'] ?? $data['items'] ?? []),
+        );
     }
 
-    /**
-     * Delete a saved payment token.
-     */
     public function delete(string $tokenId): void
     {
-        $this->httpClient->delete(self::TOKENS_PATH . '/' . $tokenId);
+        $this->apiClient->delete('/api/v1/merchant/tokens/' . $tokenId);
     }
 }

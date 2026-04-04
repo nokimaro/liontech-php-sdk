@@ -6,70 +6,48 @@ namespace LionTech\SDK\Clients;
 
 use LionTech\SDK\DTOs\Request\CreateOrderRequest;
 use LionTech\SDK\DTOs\Response\OrderResponse;
-use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\Json;
 
 final readonly class OrdersClient
 {
-    private const string ORDERS_PATH = '/api/v1/merchant/orders';
-
     public function __construct(
-        private HttpClient $httpClient,
+        private ApiClient $apiClient,
     ) {
     }
 
-    /**
-     * Create a new order with a PSP-generated ID.
-     */
     public function create(CreateOrderRequest $request): OrderResponse
     {
-        $response = $this->httpClient->post(self::ORDERS_PATH, $request);
-        $data = Json::decode((string) $response->getBody());
+        $response = $this->apiClient->post('/api/v1/merchant/orders', $request);
 
-        return OrderResponse::fromArray($data);
+        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
     }
 
-    /**
-     * Create an order with a merchant-provided ID.
-     */
     public function createWithId(string $orderId, CreateOrderRequest $request): OrderResponse
     {
-        $response = $this->httpClient->put(self::ORDERS_PATH . '/' . $orderId, $request);
-        $data = Json::decode((string) $response->getBody());
+        $response = $this->apiClient->put('/api/v1/merchant/orders/' . $orderId, $request);
 
-        return OrderResponse::fromArray($data);
+        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
     }
 
-    /**
-     * Get order information.
-     */
     public function get(string $orderId): OrderResponse
     {
-        $response = $this->httpClient->get(self::ORDERS_PATH . '/' . $orderId);
-        $data = Json::decode((string) $response->getBody());
+        $response = $this->apiClient->get('/api/v1/merchant/orders/' . $orderId);
 
-        return OrderResponse::fromArray($data);
+        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
     }
 
-    /**
-     * Cancel an order.
-     */
     public function cancel(string $orderId): OrderResponse
     {
-        $response = $this->httpClient->post(self::ORDERS_PATH . '/' . $orderId . '/cancel');
-        $data = Json::decode((string) $response->getBody());
+        $response = $this->apiClient->post('/api/v1/merchant/orders/' . $orderId . '/cancel');
 
-        return OrderResponse::fromArray($data);
+        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
     }
 
-    /**
-     * Close an order.
-     */
     public function close(string $orderId): OrderResponse
     {
-        $response = $this->httpClient->post(self::ORDERS_PATH . '/' . $orderId . '/close');
-        $data = Json::decode((string) $response->getBody());
+        $response = $this->apiClient->post('/api/v1/merchant/orders/' . $orderId . '/close');
 
-        return OrderResponse::fromArray($data);
+        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
     }
 }
