@@ -1,6 +1,7 @@
 name: CI - Deep Validation
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master, main ]
   schedule:
