@@ -60,4 +60,9 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run tests with coverage
-        run: composer test:coverage
+        run: vendor/bin/pest --coverage --compact
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: false

@@ -2,9 +2,9 @@
 
 [![CI - Quick Validation](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml)
 [![CI - Deep Validation](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci-deep.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci-deep.yml)
+[![Coverage](https://codecov.io/gh/nokimaro/liontech-php-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/nokimaro/liontech-php-sdk)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=flat-square&logo=php)
 ![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%20Max-4F5B93?style=flat-square)
-![Coverage](https://img.shields.io/badge/Coverage-96%25-2ECC71?style=flat-square)
 ![Mutation](https://img.shields.io/badge/Mutation-86%25-2ECC71?style=flat-square)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
 
