@@ -42,3 +42,17 @@ expect()
         expect($this->value->status)
             ->toBeInstanceOf(PaymentStatus::class);
     });
+
+/*
+|--------------------------------------------------------------------------
+| Mockery Setup
+|--------------------------------------------------------------------------
+*/
+
+beforeEach(function (): void {
+    // Ensure Mockery is available
+});
+
+afterEach(function (): void {
+    Mockery::close();
+});

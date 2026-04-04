@@ -75,6 +75,32 @@ it('serializes to JSON', function (): void {
     expect($json['description'])->toBe('Test order');
 });
 
+it('serializes all optional fields to JSON', function (): void {
+    $expireAt = new DateTimeImmutable('2024-12-31T23:59:59Z');
+    $request = new CreateOrderRequest(
+        amount: new Money('100.00', Currency::USD),
+        autoApprove: false,
+        customFields: ['order_number' => '12345'],
+        declineUrl: 'https://example.com/decline',
+        successUrl: 'https://example.com/success',
+        webhookUrl: 'https://example.com/webhook',
+        expireAt: $expireAt,
+        description: 'Test order',
+        options: ['option1' => 'value1'],
+    );
+
+    $json = $request->jsonSerialize();
+
+    expect($json)->toHaveKeys(['amount', 'autoApprove', 'customFields', 'declineUrl', 'successUrl', 'webhookUrl', 'expireAt', 'description', 'options']);
+    expect($json['customFields'])->toBe(['order_number' => '12345']);
+    expect($json['declineUrl'])->toBe('https://example.com/decline');
+    expect($json['successUrl'])->toBe('https://example.com/success');
+    expect($json['webhookUrl'])->toBe('https://example.com/webhook');
+    expect($json['expireAt'])->toBe('2024-12-31T23:59:59Z');
+    expect($json['description'])->toBe('Test order');
+    expect($json['options'])->toBe(['option1' => 'value1']);
+});
+
 it('serializes customer when present', function (): void {
     $request = new CreateOrderRequest(
         amount: new Money('100.00', Currency::USD),

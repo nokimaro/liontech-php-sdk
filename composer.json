@@ -27,14 +27,15 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.8",
-        "pestphp/pest": "^3.5",
-        "phpstan/phpstan": "^2.0",
-        "symplify/easy-coding-standard": "^12.3",
-        "rector/rector": "^2.0",
-        "pestphp/pest-plugin-type-coverage": "^3.0",
         "infection/infection": "^0.29.0",
+        "mockery/mockery": "^1.6",
+        "pestphp/pest": "^3.5",
+        "pestphp/pest-plugin-type-coverage": "^3.0",
+        "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
-        "psr/log": "^3.0"
+        "psr/log": "^3.0",
+        "rector/rector": "^2.0",
+        "symplify/easy-coding-standard": "^12.3"
     },
     "suggest": {
         "guzzlehttp/guzzle": "To use the Guzzle HTTP client (recommended)",
