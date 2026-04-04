@@ -1,9 +1,12 @@
 # LionTech PHP SDK
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/nokimaro/liontech-php-sdk.svg?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
-[![Total Downloads](https://img.shields.io/packagist/dt/nokimaro/liontech-php-sdk.svg?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
-[![PHP Version](https://img.shields.io/packagist/php-v/nokimaro/liontech-php-sdk?style=flat-square)](https://php.net)
-[![License](https://img.shields.io/packagist/l/nokimaro/liontech-php-sdk?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
+[![CI - Quick Validation](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml)
+[![CI - Deep Validation](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci-deep.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci-deep.yml)
+![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=flat-square&logo=php)
+![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%20Max-4F5B93?style=flat-square)
+![Coverage](https://img.shields.io/badge/Coverage-96%25-2ECC71?style=flat-square)
+![Mutation](https://img.shields.io/badge/Mutation-86%25-2ECC71?style=flat-square)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
 
 Community-maintained PHP SDK for the [LionTech Payment Gateway](https://liontechnology.ai). This SDK provides a type-safe, domain-oriented interface for integrating LionTech's payment processing capabilities into your PHP applications.
 
