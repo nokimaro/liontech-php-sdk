@@ -33,3 +33,5 @@ Thumbs.db
 /.coverage
 /coverage/
 AGENTS.md
+QWEN.md
+/docs/
