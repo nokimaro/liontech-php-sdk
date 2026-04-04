@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LionTech\SDK\Http;
 
-final class TokenStore
+class TokenStore
 {
     public function __construct(
         private string $accessToken,

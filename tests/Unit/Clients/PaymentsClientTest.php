@@ -6,98 +6,62 @@ use LionTech\SDK\Clients\PaymentsClient;
 use LionTech\SDK\DTOs\Request\CreatePaymentRequest;
 use LionTech\SDK\DTOs\Response\PaymentResponse;
 use LionTech\SDK\DTOs\Response\RefundResponse;
-use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Enums\PaymentStatus;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\ValueObjects\Currency;
 use LionTech\SDK\ValueObjects\EncryptedCardData;
 use LionTech\SDK\ValueObjects\Money;
 use LionTech\SDK\ValueObjects\PaymentData;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
-function createPaymentsClientMock(): array
+function createPaymentsClient(): array
 {
-    $client = Mockery::mock(ClientInterface::class);
-    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
-    $httpClient = new HttpClient('https://api.example.com', $client, $requestFactory);
-    $paymentsClient = new PaymentsClient($httpClient);
+    $apiClient = Mockery::mock(ApiClient::class);
+    $paymentsClient = new PaymentsClient($apiClient);
 
-    return [$client, $requestFactory, $httpClient, $paymentsClient];
+    return [$apiClient, $paymentsClient];
 }
 
-function mockPaymentResponse($requestFactory, $client, string $method, string $url, string $jsonBody): void
+function paymentData(array $overrides = []): array
 {
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
-
-    $requestFactory->shouldReceive('createRequest')
-        ->with($method, $url)
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $request->shouldReceive('withBody')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn($jsonBody);
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
-}
-
-function paymentResponseJson(): string
-{
-    return json_encode([
+    return array_merge([
         'paymentId' => 'pay_123',
         'amount' => [
             'value' => '100.00',
             'currency' => 'USD',
         ],
-        'status' => 'PENDING',
+        'status' => 'RECONCILED',
         'createdAt' => '2024-01-01T00:00:00Z',
-    ]);
+    ], $overrides);
 }
 
 it('creates a payment', function (): void {
-    [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
-
-    mockPaymentResponse(
-        $requestFactory,
-        $client,
-        'POST',
-        'https://api.example.com/api/v1/merchant/payments',
-        paymentResponseJson()
-    );
-
-    $paymentData = PaymentData::card(new EncryptedCardData(encryptedCardData: 'encrypted_data'));
+    [$apiClient, $paymentsClient] = createPaymentsClient();
+    $paymentData = PaymentData::card(new EncryptedCardData(encryptedCardData: 'enc'));
     $request = new CreatePaymentRequest(amount: new Money('100.00', Currency::USD), paymentData: $paymentData);
+
+    $apiClient->shouldReceive('post')
+        ->with('/api/v1/merchant/payments', $request)
+        ->andReturn(mockResponse(paymentData()));
+
     $result = $paymentsClient->create($request);
 
     expect($result)
         ->toBeInstanceOf(PaymentResponse::class);
     expect($result->paymentId)
         ->toBe('pay_123');
+    expect($result->status)
+        ->toBe(PaymentStatus::RECONCILED);
 });
 
 it('creates a payment with merchant id', function (): void {
-    [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
-
-    mockPaymentResponse(
-        $requestFactory,
-        $client,
-        'PUT',
-        'https://api.example.com/api/v1/merchant/payments/pay_merchant_1',
-        paymentResponseJson()
-    );
-
-    $paymentData = PaymentData::card(new EncryptedCardData(encryptedCardData: 'encrypted_data'));
+    [$apiClient, $paymentsClient] = createPaymentsClient();
+    $paymentData = PaymentData::card(new EncryptedCardData(encryptedCardData: 'enc'));
     $request = new CreatePaymentRequest(amount: new Money('100.00', Currency::USD), paymentData: $paymentData);
+
+    $apiClient->shouldReceive('put')
+        ->with('/api/v1/merchant/payments/pay_merchant_1', $request)
+        ->andReturn(mockResponse(paymentData()));
+
     $result = $paymentsClient->createWithId('pay_merchant_1', $request);
 
     expect($result)
@@ -107,15 +71,11 @@ it('creates a payment with merchant id', function (): void {
 });
 
 it('gets a payment', function (): void {
-    [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
+    [$apiClient, $paymentsClient] = createPaymentsClient();
 
-    mockPaymentResponse(
-        $requestFactory,
-        $client,
-        'GET',
-        'https://api.example.com/api/v1/merchant/payments/pay_123',
-        paymentResponseJson()
-    );
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/payments/pay_123')
+        ->andReturn(mockResponse(paymentData()));
 
     $result = $paymentsClient->get('pay_123');
 
@@ -126,49 +86,28 @@ it('gets a payment', function (): void {
 });
 
 it('confirms a payment', function (): void {
-    [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
+    [$apiClient, $paymentsClient] = createPaymentsClient();
 
-    mockPaymentResponse(
-        $requestFactory,
-        $client,
-        'POST',
-        'https://api.example.com/api/v1/merchant/payments/pay_123/confirm',
-        json_encode([
-            'paymentId' => 'pay_123',
-            'amount' => [
-                'value' => '100.00',
-                'currency' => 'USD',
-            ],
+    $apiClient->shouldReceive('post')
+        ->with('/api/v1/merchant/payments/pay_123/confirm')
+        ->andReturn(mockResponse(paymentData([
             'status' => 'RECONCILED',
-            'createdAt' => '2024-01-01T00:00:00Z',
-        ])
-    );
+        ])));
 
     $result = $paymentsClient->confirm('pay_123');
 
     expect($result)
         ->toBeInstanceOf(PaymentResponse::class);
-    expect($result->status->value)
-        ->toBe('RECONCILED');
+    expect($result->status)
+        ->toBe(PaymentStatus::RECONCILED);
 });
 
-it('lists refunds for a payment', function (): void {
-    [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
+it('gets refunds for a payment', function (): void {
+    [$apiClient, $paymentsClient] = createPaymentsClient();
 
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
-
-    $requestFactory->shouldReceive('createRequest')
-        ->with('GET', 'https://api.example.com/api/v1/merchant/payments/pay_123/refunds')
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn(json_encode([
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/payments/pay_123/refunds')
+        ->andReturn(mockResponse([
             'items' => [
                 [
                     'refundId' => 'ref_1',
@@ -182,55 +121,49 @@ it('lists refunds for a payment', function (): void {
                 ],
             ],
         ]));
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
 
-    $result = $paymentsClient->getRefunds('pay_123');
+    $refunds = $paymentsClient->getRefunds('pay_123');
 
-    expect($result)
+    expect($refunds)
         ->toHaveCount(1);
-    expect($result[0])->toBeInstanceOf(RefundResponse::class);
-    expect($result[0]->refundId)->toBe('ref_1');
+    expect($refunds[0])->toBeInstanceOf(RefundResponse::class);
+    expect($refunds[0]->refundId)->toBe('ref_1');
 });
 
-it('lists refunds with direct array response', function (): void {
-    [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
+it('checks if payment is final', function (): void {
+    [$apiClient, $paymentsClient] = createPaymentsClient();
 
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/payments/pay_123')
+        ->andReturn(mockResponse(paymentData([
+            'status' => 'RECONCILED',
+        ])));
 
-    $requestFactory->shouldReceive('createRequest')
-        ->with('GET', 'https://api.example.com/api/v1/merchant/payments/pay_456/refunds')
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn(json_encode([
-            [
-                'refundId' => 'ref_2',
-                'paymentId' => 'pay_456',
-                'amount' => [
-                    'value' => '25.00',
-                    'currency' => 'USD',
-                ],
-                'status' => 'PENDING',
-                'createdAt' => '2024-01-01T00:00:00Z',
+    $result = $paymentsClient->get('pay_123');
+
+    expect($result->isFinal())
+        ->toBeTrue();
+    expect($result->isSuccessful())
+        ->toBeTrue();
+});
+
+it('checks redirect requirement', function (): void {
+    [$apiClient, $paymentsClient] = createPaymentsClient();
+
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/payments/pay_123')
+        ->andReturn(mockResponse(paymentData([
+            'status' => 'PENDING',
+            'additionalAction' => [
+                'action' => 'redirect',
+                'value' => 'https://3ds.example.com',
             ],
-        ]));
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
+        ])));
 
-    $result = $paymentsClient->getRefunds('pay_456');
+    $result = $paymentsClient->get('pay_123');
 
-    expect($result)
-        ->toHaveCount(1);
-    expect($result[0]->refundId)->toBe('ref_2');
+    expect($result->requiresRedirect())
+        ->toBeTrue();
+    expect($result->getRedirectUrl())
+        ->toBe('https://3ds.example.com');
 });

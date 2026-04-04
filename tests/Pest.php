@@ -9,6 +9,8 @@ use LionTech\SDK\Enums\PaymentStatus;
 use LionTech\SDK\ValueObjects\Currency;
 use LionTech\SDK\ValueObjects\Money;
 use PHPUnit\Framework\Attributes\Test;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +58,22 @@ beforeEach(function (): void {
 afterEach(function (): void {
     Mockery::close();
 });
+
+/*
+|--------------------------------------------------------------------------
+| Shared Test Helpers
+|--------------------------------------------------------------------------
+*/
+
+function mockResponse(array $data): ResponseInterface
+{
+    $stream = Mockery::mock(StreamInterface::class);
+    $stream->shouldReceive('__toString')
+        ->andReturn(json_encode($data));
+
+    $response = Mockery::mock(ResponseInterface::class);
+    $response->shouldReceive('getBody')
+        ->andReturn($stream);
+
+    return $response;
+}

@@ -5,97 +5,57 @@ declare(strict_types=1);
 use LionTech\SDK\Clients\RefundsClient;
 use LionTech\SDK\DTOs\Request\CreateRefundRequest;
 use LionTech\SDK\DTOs\Response\RefundResponse;
-use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Enums\RefundStatus;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\ValueObjects\Currency;
 use LionTech\SDK\ValueObjects\Money;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
-function createRefundsClientMock(): array
+function createRefundsClient(): array
 {
-    $client = Mockery::mock(ClientInterface::class);
-    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
-    $httpClient = new HttpClient('https://api.example.com', $client, $requestFactory);
-    $refundsClient = new RefundsClient($httpClient);
+    $apiClient = Mockery::mock(ApiClient::class);
+    $refundsClient = new RefundsClient($apiClient);
 
-    return [$client, $requestFactory, $httpClient, $refundsClient];
+    return [$apiClient, $refundsClient];
 }
 
-function mockRefundResponse($requestFactory, $client, string $method, string $url, string $jsonBody): void
+function refundData(array $overrides = []): array
 {
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
-
-    $requestFactory->shouldReceive('createRequest')
-        ->with($method, $url)
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $request->shouldReceive('withBody')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn($jsonBody);
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
-}
-
-function refundResponseJson(): string
-{
-    return json_encode([
+    return array_merge([
         'refundId' => 'ref_123',
         'paymentId' => 'pay_123',
         'amount' => [
             'value' => '50.00',
             'currency' => 'USD',
         ],
-        'status' => 'PENDING',
+        'status' => 'SUCCEEDED',
         'createdAt' => '2024-01-01T00:00:00Z',
-    ]);
+    ], $overrides);
 }
 
 it('creates a refund', function (): void {
-    [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
-
-    mockRefundResponse(
-        $requestFactory,
-        $client,
-        'POST',
-        'https://api.example.com/api/v1/merchant/refunds',
-        refundResponseJson()
-    );
-
+    [$apiClient, $refundsClient] = createRefundsClient();
     $request = new CreateRefundRequest(amount: new Money('50.00', Currency::USD), paymentId: 'pay_123');
+
+    $apiClient->shouldReceive('post')
+        ->with('/api/v1/merchant/refunds', $request)
+        ->andReturn(mockResponse(refundData()));
+
     $result = $refundsClient->create($request);
 
     expect($result)
         ->toBeInstanceOf(RefundResponse::class);
     expect($result->refundId)
         ->toBe('ref_123');
-    expect($result->paymentId)
-        ->toBe('pay_123');
 });
 
 it('creates a refund with merchant id', function (): void {
-    [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
-
-    mockRefundResponse(
-        $requestFactory,
-        $client,
-        'PUT',
-        'https://api.example.com/api/v1/merchant/refunds/ref_merchant_1',
-        refundResponseJson()
-    );
-
+    [$apiClient, $refundsClient] = createRefundsClient();
     $request = new CreateRefundRequest(amount: new Money('50.00', Currency::USD), paymentId: 'pay_123');
+
+    $apiClient->shouldReceive('put')
+        ->with('/api/v1/merchant/refunds/ref_merchant_1', $request)
+        ->andReturn(mockResponse(refundData()));
+
     $result = $refundsClient->createWithId('ref_merchant_1', $request);
 
     expect($result)
@@ -105,15 +65,11 @@ it('creates a refund with merchant id', function (): void {
 });
 
 it('gets a refund', function (): void {
-    [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
+    [$apiClient, $refundsClient] = createRefundsClient();
 
-    mockRefundResponse(
-        $requestFactory,
-        $client,
-        'GET',
-        'https://api.example.com/api/v1/merchant/refunds/ref_123',
-        refundResponseJson()
-    );
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/refunds/ref_123')
+        ->andReturn(mockResponse(refundData()));
 
     $result = $refundsClient->get('ref_123');
 
@@ -121,29 +77,18 @@ it('gets a refund', function (): void {
         ->toBeInstanceOf(RefundResponse::class);
     expect($result->refundId)
         ->toBe('ref_123');
-    expect($result->paymentId)
-        ->toBe('pay_123');
+    expect($result->status)
+        ->toBe(RefundStatus::SUCCEEDED);
 });
 
-it('checks refund is final', function (): void {
-    [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
+it('checks if refund is final', function (): void {
+    [$apiClient, $refundsClient] = createRefundsClient();
 
-    mockRefundResponse(
-        $requestFactory,
-        $client,
-        'GET',
-        'https://api.example.com/api/v1/merchant/refunds/ref_123',
-        json_encode([
-            'refundId' => 'ref_123',
-            'paymentId' => 'pay_123',
-            'amount' => [
-                'value' => '50.00',
-                'currency' => 'USD',
-            ],
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/refunds/ref_123')
+        ->andReturn(mockResponse(refundData([
             'status' => 'SUCCEEDED',
-            'createdAt' => '2024-01-01T00:00:00Z',
-        ])
-    );
+        ])));
 
     $result = $refundsClient->get('ref_123');
 

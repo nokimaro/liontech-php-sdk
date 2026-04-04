@@ -4,48 +4,36 @@ declare(strict_types=1);
 
 use LionTech\SDK\Clients\SignatureClient;
 use LionTech\SDK\Http\HttpClient;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-function createSignatureClientMock(): array
+function createSignatureClient(): array
 {
-    $client = Mockery::mock(ClientInterface::class);
-    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
-    $httpClient = new HttpClient('https://secure.example.com', $client, $requestFactory);
+    $httpClient = Mockery::mock(HttpClient::class);
     $signatureClient = new SignatureClient($httpClient);
 
-    return [$client, $requestFactory, $httpClient, $signatureClient];
+    return [$httpClient, $signatureClient];
 }
 
-it('gets the public key', function (): void {
-    [$client, $requestFactory, $httpClient, $signatureClient] = createSignatureClientMock();
+it('gets public key', function (): void {
+    [$httpClient, $signatureClient] = createSignatureClient();
 
-    $request = Mockery::mock(RequestInterface::class);
     $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
-
-    $requestFactory->shouldReceive('createRequest')
-        ->with('GET', 'https://secure.example.com/signature-key')
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
     $stream->shouldReceive('__toString')
         ->andReturn(json_encode([
-            'pem' => '-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----',
+            'pem' => '-----BEGIN PUBLIC KEY-----...',
         ]));
+
+    $response = Mockery::mock(ResponseInterface::class);
     $response->shouldReceive('getBody')
         ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
 
-    $result = $signatureClient->getPublicKey();
+    $httpClient->shouldReceive('get')
+        ->with('/signature-key')
+        ->andReturn($response);
 
-    expect($result)
-        ->toBe('-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----');
+    $key = $signatureClient->getPublicKey();
+
+    expect($key)
+        ->toBe('-----BEGIN PUBLIC KEY-----...');
 });

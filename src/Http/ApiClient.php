@@ -10,7 +10,7 @@ use LionTech\SDK\Exceptions\Auth\TokenExpiredException;
 use LionTech\SDK\Json;
 use Psr\Http\Message\ResponseInterface;
 
-final class ApiClient
+class ApiClient
 {
     private readonly HttpClient $merchantClient;
 

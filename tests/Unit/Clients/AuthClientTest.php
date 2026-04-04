@@ -3,93 +3,61 @@
 declare(strict_types=1);
 
 use LionTech\SDK\Clients\AuthClient;
-use LionTech\SDK\DTOs\Request\RefreshTokenRequest;
 use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
-use LionTech\SDK\Http\HttpClient;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
+use LionTech\SDK\Http\ApiClient;
 
-function createAuthClientMock(): array
+function createAuthClient(): array
 {
-    $client = Mockery::mock(ClientInterface::class);
-    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
-    $httpClient = new HttpClient('https://api.example.com', $client, $requestFactory);
-    $authClient = new AuthClient($httpClient);
+    $apiClient = Mockery::mock(ApiClient::class);
+    $authClient = new AuthClient($apiClient);
 
-    return [$client, $requestFactory, $httpClient, $authClient];
+    return [$apiClient, $authClient];
 }
 
 it('refreshes tokens', function (): void {
-    [$client, $requestFactory, $httpClient, $authClient] = createAuthClientMock();
+    [$apiClient, $authClient] = createAuthClient();
 
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
+    $tokens = new MerchantTokensRefreshResponse(
+        accessToken: 'new_access',
+        accessTokenExpireAt: new DateTimeImmutable('2024-12-31T23:59:59Z'),
+        refreshToken: 'new_refresh',
+        refreshTokenExpireAt: new DateTimeImmutable('2025-12-31T23:59:59Z'),
+    );
 
-    $requestFactory->shouldReceive('createRequest')
-        ->with('POST', 'https://api.example.com/api/v1/merchant/auth/tokens/refresh')
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $request->shouldReceive('withBody')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn(
-            '{"accessToken":"new_token","accessTokenExpireAt":"2024-12-31T23:59:59Z","refreshToken":"new_refresh","refreshTokenExpireAt":"2025-12-31T23:59:59Z"}'
-        );
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
+    $apiClient->shouldReceive('refreshTokens')
+        ->andReturn($tokens);
 
-    $refreshRequest = new RefreshTokenRequest('old_refresh');
-    $result = $authClient->refreshTokens($refreshRequest);
+    $result = $authClient->refreshTokens();
 
     expect($result)
-        ->toBeInstanceOf(MerchantTokensRefreshResponse::class);
+        ->toBe($tokens);
     expect($result->accessToken)
-        ->toBe('new_token');
+        ->toBe('new_access');
     expect($result->refreshToken)
         ->toBe('new_refresh');
 });
 
-it('refreshes tokens and applies to http client', function (): void {
-    [$client, $requestFactory, $httpClient, $authClient] = createAuthClientMock();
+it('returns refresh token', function (): void {
+    [$apiClient, $authClient] = createAuthClient();
+    $tokenStore = Mockery::mock(\LionTech\SDK\Http\TokenStore::class);
+    $tokenStore->shouldReceive('refreshToken')
+        ->andReturn('refresh_token_123');
+    $apiClient->shouldReceive('tokenStore')
+        ->andReturn($tokenStore);
 
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
+    $result = $authClient->refreshToken();
 
-    $requestFactory->shouldReceive('createRequest')
-        ->with('POST', 'https://api.example.com/api/v1/merchant/auth/tokens/refresh')
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $request->shouldReceive('withBody')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn(
-            '{"accessToken":"new_token","accessTokenExpireAt":"2024-12-31T23:59:59Z","refreshToken":"new_refresh","refreshTokenExpireAt":"2025-12-31T23:59:59Z"}'
-        );
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
-
-    $refreshRequest = new RefreshTokenRequest('old_refresh');
-    $result = $authClient->refreshAndApply($refreshRequest);
-
-    expect($result->accessToken)
-        ->toBe('new_token');
-    expect($httpClient->getAccessToken())
-        ->toBe('new_token');
+    expect($result)
+        ->toBe('refresh_token_123');
 });
+
+it('throws when no refresh token configured', function (): void {
+    [$apiClient, $authClient] = createAuthClient();
+    $tokenStore = Mockery::mock(\LionTech\SDK\Http\TokenStore::class);
+    $tokenStore->shouldReceive('refreshToken')
+        ->andReturn(null);
+    $apiClient->shouldReceive('tokenStore')
+        ->andReturn($tokenStore);
+
+    $authClient->refreshToken();
+})->throws(\RuntimeException::class, 'No refresh token configured');

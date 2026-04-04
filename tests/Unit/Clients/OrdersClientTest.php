@@ -5,52 +5,21 @@ declare(strict_types=1);
 use LionTech\SDK\Clients\OrdersClient;
 use LionTech\SDK\DTOs\Request\CreateOrderRequest;
 use LionTech\SDK\DTOs\Response\OrderResponse;
-use LionTech\SDK\Http\HttpClient;
+use LionTech\SDK\Http\ApiClient;
 use LionTech\SDK\ValueObjects\Currency;
 use LionTech\SDK\ValueObjects\Money;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
-function createOrdersClientMock(): array
+function createOrdersClient(): array
 {
-    $client = Mockery::mock(ClientInterface::class);
-    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
-    $httpClient = new HttpClient('https://api.example.com', $client, $requestFactory);
-    $ordersClient = new OrdersClient($httpClient);
+    $apiClient = Mockery::mock(ApiClient::class);
+    $ordersClient = new OrdersClient($apiClient);
 
-    return [$client, $requestFactory, $httpClient, $ordersClient];
+    return [$apiClient, $ordersClient];
 }
 
-function mockOrderResponse($requestFactory, $client, string $method, string $url, string $jsonBody): void
+function orderData(array $overrides = []): array
 {
-    $request = Mockery::mock(RequestInterface::class);
-    $stream = Mockery::mock(StreamInterface::class);
-    $response = Mockery::mock(ResponseInterface::class);
-
-    $requestFactory->shouldReceive('createRequest')
-        ->with($method, $url)
-        ->andReturn($request);
-    $request->shouldReceive('withHeader')
-        ->andReturnSelf();
-    $request->shouldReceive('withBody')
-        ->andReturnSelf();
-    $client->shouldReceive('sendRequest')
-        ->with($request)
-        ->andReturn($response);
-    $stream->shouldReceive('__toString')
-        ->andReturn($jsonBody);
-    $response->shouldReceive('getBody')
-        ->andReturn($stream);
-    $response->shouldReceive('getStatusCode')
-        ->andReturn(200);
-}
-
-function orderResponseJson(): string
-{
-    return json_encode([
+    return array_merge([
         'orderId' => 'ord_123',
         'amount' => [
             'value' => '100.00',
@@ -58,21 +27,17 @@ function orderResponseJson(): string
         ],
         'status' => 'CREATED',
         'createdAt' => '2024-01-01T00:00:00Z',
-    ]);
+    ], $overrides);
 }
 
 it('creates an order', function (): void {
-    [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
-
-    mockOrderResponse(
-        $requestFactory,
-        $client,
-        'POST',
-        'https://api.example.com/api/v1/merchant/orders',
-        orderResponseJson()
-    );
-
+    [$apiClient, $ordersClient] = createOrdersClient();
     $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD));
+
+    $apiClient->shouldReceive('post')
+        ->with('/api/v1/merchant/orders', $request)
+        ->andReturn(mockResponse(orderData()));
+
     $result = $ordersClient->create($request);
 
     expect($result)
@@ -82,17 +47,13 @@ it('creates an order', function (): void {
 });
 
 it('creates an order with merchant id', function (): void {
-    [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
-
-    mockOrderResponse(
-        $requestFactory,
-        $client,
-        'PUT',
-        'https://api.example.com/api/v1/merchant/orders/ord_merchant_1',
-        orderResponseJson()
-    );
-
+    [$apiClient, $ordersClient] = createOrdersClient();
     $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD));
+
+    $apiClient->shouldReceive('put')
+        ->with('/api/v1/merchant/orders/ord_merchant_1', $request)
+        ->andReturn(mockResponse(orderData()));
+
     $result = $ordersClient->createWithId('ord_merchant_1', $request);
 
     expect($result)
@@ -102,15 +63,11 @@ it('creates an order with merchant id', function (): void {
 });
 
 it('gets an order', function (): void {
-    [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
+    [$apiClient, $ordersClient] = createOrdersClient();
 
-    mockOrderResponse(
-        $requestFactory,
-        $client,
-        'GET',
-        'https://api.example.com/api/v1/merchant/orders/ord_123',
-        orderResponseJson()
-    );
+    $apiClient->shouldReceive('get')
+        ->with('/api/v1/merchant/orders/ord_123')
+        ->andReturn(mockResponse(orderData()));
 
     $result = $ordersClient->get('ord_123');
 
@@ -121,23 +78,13 @@ it('gets an order', function (): void {
 });
 
 it('cancels an order', function (): void {
-    [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
+    [$apiClient, $ordersClient] = createOrdersClient();
 
-    mockOrderResponse(
-        $requestFactory,
-        $client,
-        'POST',
-        'https://api.example.com/api/v1/merchant/orders/ord_123/cancel',
-        json_encode([
-            'orderId' => 'ord_123',
-            'amount' => [
-                'value' => '100.00',
-                'currency' => 'USD',
-            ],
+    $apiClient->shouldReceive('post')
+        ->with('/api/v1/merchant/orders/ord_123/cancel')
+        ->andReturn(mockResponse(orderData([
             'status' => 'CANCELLED',
-            'createdAt' => '2024-01-01T00:00:00Z',
-        ])
-    );
+        ])));
 
     $result = $ordersClient->cancel('ord_123');
 
@@ -148,23 +95,13 @@ it('cancels an order', function (): void {
 });
 
 it('closes an order', function (): void {
-    [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
+    [$apiClient, $ordersClient] = createOrdersClient();
 
-    mockOrderResponse(
-        $requestFactory,
-        $client,
-        'POST',
-        'https://api.example.com/api/v1/merchant/orders/ord_123/close',
-        json_encode([
-            'orderId' => 'ord_123',
-            'amount' => [
-                'value' => '100.00',
-                'currency' => 'USD',
-            ],
+    $apiClient->shouldReceive('post')
+        ->with('/api/v1/merchant/orders/ord_123/close')
+        ->andReturn(mockResponse(orderData([
             'status' => 'PAID',
-            'createdAt' => '2024-01-01T00:00:00Z',
-        ])
-    );
+        ])));
 
     $result = $ordersClient->close('ord_123');
 
