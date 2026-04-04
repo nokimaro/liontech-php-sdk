@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- `php-http/multipart-stream-builder` production dependency — was never used; all API endpoints use `application/json`
+
 ## [1.0.0] - 2026-04-04
 
 ### Added
