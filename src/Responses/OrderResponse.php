@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Nokimaro\LionTech\Responses;
 
-use Nokimaro\LionTech\Enums\OrderStatus;
 use Nokimaro\LionTech\Json;
 use Nokimaro\LionTech\ValueObjects\Money;
 
@@ -15,7 +14,7 @@ final readonly class OrderResponse
      * @param Money $amount Order amount
      * @param Money|null $convAmount Converted amount
      * @param Money|null $paidAmount Paid amount
-     * @param OrderStatus $status Order status
+     * @param ResponseStatus $status Order status
      * @param string|null $payUrl Payment URL
      * @param string|null $successUrl Success URL
      * @param string|null $declineUrl Decline URL
@@ -32,7 +31,7 @@ final readonly class OrderResponse
         public Money $amount,
         public ?Money $convAmount = null,
         public ?Money $paidAmount = null,
-        public OrderStatus $status = OrderStatus::CREATED,
+        public ResponseStatus $status = new ResponseStatus(''),
         public ?string $payUrl = null,
         public ?string $successUrl = null,
         public ?string $declineUrl = null,
@@ -53,9 +52,9 @@ final readonly class OrderResponse
     {
         /** @var array<string, mixed>|string $statusRaw */
         $statusRaw = $data['status'];
-        $statusValue = is_array($statusRaw)
-            ? Json::getString($statusRaw, 'value')
-            : Json::getString($data, 'status');
+        $status = is_array($statusRaw)
+            ? ResponseStatus::fromArray($statusRaw)
+            : new ResponseStatus(value: $statusRaw);
 
         /** @var array<string, mixed> $amountData */
         $amountData = $data['amount'];
@@ -69,7 +68,7 @@ final readonly class OrderResponse
             amount: Money::fromArray($amountData),
             convAmount: $convAmountData !== null ? Money::fromArray($convAmountData) : null,
             paidAmount: $paidAmountData !== null ? Money::fromArray($paidAmountData) : null,
-            status: OrderStatus::from($statusValue),
+            status: $status,
             payUrl: Json::getNullableString($data, 'payUrl'),
             successUrl: Json::getNullableString($data, 'successUrl'),
             declineUrl: Json::getNullableString($data, 'declineUrl'),

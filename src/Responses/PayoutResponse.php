@@ -15,8 +15,8 @@ final readonly class PayoutResponse
      * @param string|null $orderId Order ID
      * @param Money $amount Payout amount
      * @param Money|null $convAmount Converted amount
-     * @param PayoutStatus $status Payout status
-     * @param array<string, mixed>|null $paymentMethod Payment method
+     * @param ResponseStatus $status Payout status
+     * @param string|null $paymentMethod Payment method
      * @param string|null $webhookUrl Webhook URL
      * @param array<string, mixed>|null $customFields Custom fields
      * @param \DateTimeImmutable $createdAt Created at
@@ -28,8 +28,8 @@ final readonly class PayoutResponse
         public ?string $orderId = null,
         public Money $amount = new Money('0', \Nokimaro\LionTech\ValueObjects\Currency::USD),
         public ?Money $convAmount = null,
-        public PayoutStatus $status = PayoutStatus::PENDING,
-        public ?array $paymentMethod = null,
+        public ResponseStatus $status = new ResponseStatus(''),
+        public ?string $paymentMethod = null,
         public ?string $webhookUrl = null,
         public ?array $customFields = null,
         public \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
@@ -45,9 +45,9 @@ final readonly class PayoutResponse
     {
         /** @var array<string, mixed>|string $statusRaw */
         $statusRaw = $data['status'];
-        $statusValue = is_array($statusRaw)
-            ? Json::getString($statusRaw, 'value')
-            : Json::getString($data, 'status');
+        $status = is_array($statusRaw)
+            ? ResponseStatus::fromArray($statusRaw)
+            : new ResponseStatus(value: $statusRaw);
 
         /** @var array<string, mixed>|null $amountRaw */
         $amountRaw = $data['amount'] ?? null;
@@ -65,8 +65,8 @@ final readonly class PayoutResponse
             orderId: Json::getNullableString($data, 'orderId'),
             amount: $amount,
             convAmount: $convAmount,
-            status: PayoutStatus::from($statusValue),
-            paymentMethod: Json::getNullableArray($data, 'paymentMethod'),
+            status: $status,
+            paymentMethod: Json::getNullableString($data, 'paymentMethod'),
             webhookUrl: Json::getNullableString($data, 'webhookUrl'),
             customFields: Json::getNullableArray($data, 'customFields'),
             // @pest-mutate-ignore -- Defensive null check for createdAt
@@ -81,11 +81,11 @@ final readonly class PayoutResponse
 
     public function isFinal(): bool
     {
-        return $this->status->isFinal();
+        return PayoutStatus::tryFrom($this->status->value)?->isFinal() ?? false;
     }
 
     public function isSuccessful(): bool
     {
-        return $this->status->isSuccessful();
+        return PayoutStatus::tryFrom($this->status->value)?->isSuccessful() ?? false;
     }
 }

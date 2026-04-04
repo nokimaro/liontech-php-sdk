@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Nokimaro\LionTech\Clients\PaymentsClient;
-use Nokimaro\LionTech\Enums\PaymentStatus;
 use Nokimaro\LionTech\Http\ApiClient;
 use Nokimaro\LionTech\Requests\CreatePaymentRequest;
 use Nokimaro\LionTech\Responses\PaymentResponse;
@@ -49,8 +48,8 @@ it('creates a payment', function (): void {
         ->toBeInstanceOf(PaymentResponse::class);
     expect($result->paymentId)
         ->toBe('pay_123');
-    expect($result->status)
-        ->toBe(PaymentStatus::RECONCILED);
+    expect($result->status->value)
+        ->toBe('RECONCILED');
 });
 
 it('creates a payment with merchant id', function (): void {
@@ -98,8 +97,8 @@ it('confirms a payment', function (): void {
 
     expect($result)
         ->toBeInstanceOf(PaymentResponse::class);
-    expect($result->status)
-        ->toBe(PaymentStatus::RECONCILED);
+    expect($result->status->value)
+        ->toBe('RECONCILED');
 });
 
 it('gets refunds for a payment', function (): void {

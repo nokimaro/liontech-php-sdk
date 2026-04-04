@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Nokimaro\LionTech\Enums\RefundStatus;
 use Nokimaro\LionTech\Responses\RefundResponse;
+use Nokimaro\LionTech\Responses\ResponseStatus;
 use Nokimaro\LionTech\ValueObjects\Money;
 
 it('creates refund response from array', function (): void {
@@ -29,7 +29,9 @@ it('creates refund response from array', function (): void {
     expect($response->amount->amount)
         ->toBe('50.00');
     expect($response->status)
-        ->toBe(RefundStatus::PENDING);
+        ->toBeInstanceOf(ResponseStatus::class);
+    expect($response->status->value)
+        ->toBe('PENDING');
 });
 
 it('creates refund response with status as object', function (): void {
@@ -42,14 +44,22 @@ it('creates refund response with status as object', function (): void {
         ],
         'status' => [
             'value' => 'SUCCEEDED',
+            'changedAt' => '2024-01-15T10:00:00Z',
+            'description' => 'Refund processed',
         ],
         'createdAt' => '2024-01-01T00:00:00Z',
     ];
 
     $response = RefundResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(RefundStatus::SUCCEEDED);
+    expect($response->status->value)
+        ->toBe('SUCCEEDED');
+    expect($response->status->changedAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($response->status->changedAt->format('Y-m-d'))
+        ->toBe('2024-01-15');
+    expect($response->status->description)
+        ->toBe('Refund processed');
 });
 
 it('handles optional fields', function (): void {
@@ -229,8 +239,8 @@ it('handles status as string value', function (): void {
 
     $response = RefundResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(RefundStatus::SUCCEEDED);
+    expect($response->status->value)
+        ->toBe('SUCCEEDED');
 });
 
 it('checks is successful for declined status', function (): void {

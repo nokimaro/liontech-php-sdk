@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Nokimaro\LionTech\Enums\OrderStatus;
 use Nokimaro\LionTech\Responses\OrderResponse;
+use Nokimaro\LionTech\Responses\ResponseStatus;
 use Nokimaro\LionTech\ValueObjects\Currency;
 use Nokimaro\LionTech\ValueObjects\Money;
 
@@ -30,7 +30,9 @@ it('creates order response from array', function (): void {
     expect($response->amount->currency)
         ->toBe(Currency::USD);
     expect($response->status)
-        ->toBe(OrderStatus::CREATED);
+        ->toBeInstanceOf(ResponseStatus::class);
+    expect($response->status->value)
+        ->toBe('CREATED');
     expect($response->autoApprove)
         ->toBeTrue();
 });
@@ -48,8 +50,8 @@ it('creates order response with status as string', function (): void {
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(OrderStatus::PAID);
+    expect($response->status->value)
+        ->toBe('PAID');
 });
 
 it('creates order response with status as object', function (): void {
@@ -61,14 +63,22 @@ it('creates order response with status as object', function (): void {
         ],
         'status' => [
             'value' => 'REFUNDED',
+            'changedAt' => '2024-01-15T10:00:00Z',
+            'description' => 'Fully refunded',
         ],
         'createdAt' => '2024-01-01T12:00:00Z',
     ];
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(OrderStatus::REFUNDED);
+    expect($response->status->value)
+        ->toBe('REFUNDED');
+    expect($response->status->changedAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($response->status->changedAt->format('Y-m-d'))
+        ->toBe('2024-01-15');
+    expect($response->status->description)
+        ->toBe('Fully refunded');
 });
 
 it('handles optional fields', function (): void {
@@ -227,4 +237,27 @@ it('handles items as empty array', function (): void {
 
     expect($response->items)
         ->toBe([]);
+});
+
+it('status without changedAt and description defaults to null', function (): void {
+    $data = [
+        'orderId' => 'ord_123',
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
+        'status' => [
+            'value' => 'CREATED',
+        ],
+        'createdAt' => '2024-01-01T12:00:00Z',
+    ];
+
+    $response = OrderResponse::fromArray($data);
+
+    expect($response->status->value)
+        ->toBe('CREATED');
+    expect($response->status->changedAt)
+        ->toBeNull();
+    expect($response->status->description)
+        ->toBeNull();
 });

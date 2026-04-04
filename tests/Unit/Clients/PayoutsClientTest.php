@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Nokimaro\LionTech\Clients\PayoutsClient;
-use Nokimaro\LionTech\Enums\PayoutStatus;
 use Nokimaro\LionTech\Http\ApiClient;
 use Nokimaro\LionTech\Requests\CreatePayoutRequest;
 use Nokimaro\LionTech\Responses\PayoutResponse;
@@ -48,8 +47,8 @@ it('creates a payout', function (): void {
         ->toBeInstanceOf(PayoutResponse::class);
     expect($result->payoutId)
         ->toBe('payout_123');
-    expect($result->status)
-        ->toBe(PayoutStatus::SUCCEEDED);
+    expect($result->status->value)
+        ->toBe('SUCCEEDED');
 });
 
 it('gets a payout', function (): void {
@@ -65,8 +64,8 @@ it('gets a payout', function (): void {
         ->toBeInstanceOf(PayoutResponse::class);
     expect($result->payoutId)
         ->toBe('payout_123');
-    expect($result->status)
-        ->toBe(PayoutStatus::SUCCEEDED);
+    expect($result->status->value)
+        ->toBe('SUCCEEDED');
     expect($result->isFinal())
         ->toBeTrue();
     expect($result->isSuccessful())

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Nokimaro\LionTech\Clients\RefundsClient;
-use Nokimaro\LionTech\Enums\RefundStatus;
 use Nokimaro\LionTech\Http\ApiClient;
 use Nokimaro\LionTech\Requests\CreateRefundRequest;
 use Nokimaro\LionTech\Responses\RefundResponse;
@@ -77,8 +76,8 @@ it('gets a refund', function (): void {
         ->toBeInstanceOf(RefundResponse::class);
     expect($result->refundId)
         ->toBe('ref_123');
-    expect($result->status)
-        ->toBe(RefundStatus::SUCCEEDED);
+    expect($result->status->value)
+        ->toBe('SUCCEEDED');
 });
 
 it('checks if refund is final', function (): void {

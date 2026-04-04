@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-use Nokimaro\LionTech\Enums\PaymentMethodType;
-use Nokimaro\LionTech\Enums\PaymentStatus;
 use Nokimaro\LionTech\Responses\PaymentResponse;
+use Nokimaro\LionTech\Responses\ResponseStatus;
 use Nokimaro\LionTech\ValueObjects\Currency;
 use Nokimaro\LionTech\ValueObjects\Money;
-use Nokimaro\LionTech\ValueObjects\PaymentData;
 
 it('creates payment response from array', function (): void {
     $data = [
@@ -31,7 +29,9 @@ it('creates payment response from array', function (): void {
     expect($response->amount->currency)
         ->toBe(Currency::USD);
     expect($response->status)
-        ->toBe(PaymentStatus::RECONCILED);
+        ->toBeInstanceOf(ResponseStatus::class);
+    expect($response->status->value)
+        ->toBe('RECONCILED');
 });
 
 it('identifies redirect action', function (): void {
@@ -112,7 +112,7 @@ it('checks if payment is declined', function (): void {
         ->toBeTrue();
     expect($response->isSuccessful())
         ->toBeFalse();
-    expect($response->status->isDeclined())
+    expect($response->isDeclined())
         ->toBeTrue();
 });
 
@@ -143,12 +143,7 @@ it('handles payment method and additional action', function (): void {
         ],
         'status' => 'PENDING',
         'createdAt' => '2024-01-01T12:00:00Z',
-        'paymentMethod' => [
-            'type' => 'card',
-            'object' => [
-                'encryptedCardData' => 'encrypted',
-            ],
-        ],
+        'paymentMethod' => 'CARD',
         'paymentData' => [
             'three_ds' => true,
         ],
@@ -164,9 +159,7 @@ it('handles payment method and additional action', function (): void {
     $response = PaymentResponse::fromArray($data);
 
     expect($response->paymentMethod)
-        ->toBeInstanceOf(PaymentData::class);
-    expect($response->paymentMethod->type)
-        ->toBe(PaymentMethodType::CARD);
+        ->toBe('CARD');
     expect($response->paymentData)
         ->toBe([
             'three_ds' => true,
@@ -267,21 +260,31 @@ it('handles missing amount', function (): void {
         ->toBe(Currency::USD);
 });
 
-it('handles status as string directly', function (): void {
+it('handles status as object with all fields', function (): void {
     $data = [
         'paymentId' => 'pay_123',
         'amount' => [
             'value' => '50.00',
             'currency' => 'EUR',
         ],
-        'status' => 'DECLINED',
+        'status' => [
+            'value' => 'RECONCILED',
+            'changedAt' => '2024-01-15T10:00:00Z',
+            'description' => 'Payment confirmed',
+        ],
         'createdAt' => '2024-01-01T12:00:00Z',
     ];
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->status)
-        ->toBe(PaymentStatus::DECLINED);
+    expect($response->status->value)
+        ->toBe('RECONCILED');
+    expect($response->status->changedAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($response->status->changedAt->format('Y-m-d'))
+        ->toBe('2024-01-15');
+    expect($response->status->description)
+        ->toBe('Payment confirmed');
 });
 
 it('returns null redirect url when not requiring redirect', function (): void {
