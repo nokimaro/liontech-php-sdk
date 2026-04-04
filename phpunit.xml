@@ -3,6 +3,8 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          cacheDirectory=".phpunit.cache"
+         executionOrder="default"
+         resolveDependencies="true"
 >
     <testsuites>
         <testsuite name="Unit">
