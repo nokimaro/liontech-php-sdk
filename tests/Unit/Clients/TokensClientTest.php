@@ -61,7 +61,8 @@ it('lists saved payment methods', function (): void {
 
     $result = $tokensClient->list();
 
-    expect($result)->toHaveCount(1);
+    expect($result)
+        ->toHaveCount(1);
     expect($result[0])->toBeInstanceOf(SavedPaymentMethod::class);
     expect($result[0]->paymentMethodId)->toBe('pm_123');
     expect($result[0]->tokenId)->toBe('tok_123');
@@ -71,22 +72,28 @@ it('lists saved payment methods', function (): void {
 it('lists saved payment methods with items key', function (): void {
     [$client, $requestFactory, $httpClient, $tokensClient] = createTokensClientMock();
 
-    mockTokensListResponse($requestFactory, $client, 'https://api.example.com/api/v1/merchant/tokens?accountId=acc_123', json_encode([
-        'items' => [
-            [
-                'payment_method_id' => 'pm_456',
-                'token_id' => 'tok_456',
-                'display_value' => 'Mastercard ****5678',
-                'card_type' => 'MASTERCARD',
-                'card_exp' => '01/26',
-                'card_requires_cvv' => false,
+    mockTokensListResponse(
+        $requestFactory,
+        $client,
+        'https://api.example.com/api/v1/merchant/tokens?accountId=acc_123',
+        json_encode([
+            'items' => [
+                [
+                    'payment_method_id' => 'pm_456',
+                    'token_id' => 'tok_456',
+                    'display_value' => 'Mastercard ****5678',
+                    'card_type' => 'MASTERCARD',
+                    'card_exp' => '01/26',
+                    'card_requires_cvv' => false,
+                ],
             ],
-        ],
-    ]));
+        ])
+    );
 
     $result = $tokensClient->list(accountId: 'acc_123');
 
-    expect($result)->toHaveCount(1);
+    expect($result)
+        ->toHaveCount(1);
     expect($result[0]->paymentMethodId)->toBe('pm_456');
     expect($result[0]->cardRequiresCvv)->toBeFalse();
 });
@@ -94,25 +101,37 @@ it('lists saved payment methods with items key', function (): void {
 it('filters by email', function (): void {
     [$client, $requestFactory, $httpClient, $tokensClient] = createTokensClientMock();
 
-    mockTokensListResponse($requestFactory, $client, 'https://api.example.com/api/v1/merchant/tokens?email=test%40example.com', json_encode([
-        'saved_payment_methods' => [],
-    ]));
+    mockTokensListResponse(
+        $requestFactory,
+        $client,
+        'https://api.example.com/api/v1/merchant/tokens?email=test%40example.com',
+        json_encode([
+            'saved_payment_methods' => [],
+        ])
+    );
 
     $result = $tokensClient->list(email: 'test@example.com');
 
-    expect($result)->toBe([]);
+    expect($result)
+        ->toBe([]);
 });
 
 it('filters by phone', function (): void {
     [$client, $requestFactory, $httpClient, $tokensClient] = createTokensClientMock();
 
-    mockTokensListResponse($requestFactory, $client, 'https://api.example.com/api/v1/merchant/tokens?phone=%2B1234567890', json_encode([
-        'saved_payment_methods' => [],
-    ]));
+    mockTokensListResponse(
+        $requestFactory,
+        $client,
+        'https://api.example.com/api/v1/merchant/tokens?phone=%2B1234567890',
+        json_encode([
+            'saved_payment_methods' => [],
+        ])
+    );
 
     $result = $tokensClient->list(phone: '+1234567890');
 
-    expect($result)->toBe([]);
+    expect($result)
+        ->toBe([]);
 });
 
 it('deletes a token', function (): void {
@@ -139,5 +158,6 @@ it('deletes a token', function (): void {
 
     $tokensClient->delete('tok_123');
 
-    expect(true)->toBeTrue(); // Just verify no exception is thrown
+    expect(true)
+        ->toBeTrue(); // Just verify no exception is thrown
 });

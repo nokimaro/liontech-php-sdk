@@ -13,7 +13,8 @@ it('invokes middleware handler', function (): void {
 
     $result = $middleware($response);
 
-    expect($result)->toBe($modifiedResponse);
+    expect($result)
+        ->toBe($modifiedResponse);
 });
 
 it('creates noop middleware', function (): void {
@@ -23,5 +24,6 @@ it('creates noop middleware', function (): void {
 
     $result = $middleware($response);
 
-    expect($result)->toBe($response);
+    expect($result)
+        ->toBe($response);
 });

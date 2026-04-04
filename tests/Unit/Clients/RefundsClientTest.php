@@ -53,7 +53,10 @@ function refundResponseJson(): string
     return json_encode([
         'refundId' => 'ref_123',
         'paymentId' => 'pay_123',
-        'amount' => ['value' => '50.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '50.00',
+            'currency' => 'USD',
+        ],
         'status' => 'PENDING',
         'createdAt' => '2024-01-01T00:00:00Z',
     ]);
@@ -62,59 +65,90 @@ function refundResponseJson(): string
 it('creates a refund', function (): void {
     [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
 
-    mockRefundResponse($requestFactory, $client, 'POST', 'https://api.example.com/api/v1/merchant/refunds', refundResponseJson());
-
-    $request = new CreateRefundRequest(
-        amount: new Money('50.00', Currency::USD),
-        paymentId: 'pay_123',
+    mockRefundResponse(
+        $requestFactory,
+        $client,
+        'POST',
+        'https://api.example.com/api/v1/merchant/refunds',
+        refundResponseJson()
     );
+
+    $request = new CreateRefundRequest(amount: new Money('50.00', Currency::USD), paymentId: 'pay_123');
     $result = $refundsClient->create($request);
 
-    expect($result)->toBeInstanceOf(RefundResponse::class);
-    expect($result->refundId)->toBe('ref_123');
-    expect($result->paymentId)->toBe('pay_123');
+    expect($result)
+        ->toBeInstanceOf(RefundResponse::class);
+    expect($result->refundId)
+        ->toBe('ref_123');
+    expect($result->paymentId)
+        ->toBe('pay_123');
 });
 
 it('creates a refund with merchant id', function (): void {
     [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
 
-    mockRefundResponse($requestFactory, $client, 'PUT', 'https://api.example.com/api/v1/merchant/refunds/ref_merchant_1', refundResponseJson());
-
-    $request = new CreateRefundRequest(
-        amount: new Money('50.00', Currency::USD),
-        paymentId: 'pay_123',
+    mockRefundResponse(
+        $requestFactory,
+        $client,
+        'PUT',
+        'https://api.example.com/api/v1/merchant/refunds/ref_merchant_1',
+        refundResponseJson()
     );
+
+    $request = new CreateRefundRequest(amount: new Money('50.00', Currency::USD), paymentId: 'pay_123');
     $result = $refundsClient->createWithId('ref_merchant_1', $request);
 
-    expect($result)->toBeInstanceOf(RefundResponse::class);
-    expect($result->refundId)->toBe('ref_123');
+    expect($result)
+        ->toBeInstanceOf(RefundResponse::class);
+    expect($result->refundId)
+        ->toBe('ref_123');
 });
 
 it('gets a refund', function (): void {
     [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
 
-    mockRefundResponse($requestFactory, $client, 'GET', 'https://api.example.com/api/v1/merchant/refunds/ref_123', refundResponseJson());
+    mockRefundResponse(
+        $requestFactory,
+        $client,
+        'GET',
+        'https://api.example.com/api/v1/merchant/refunds/ref_123',
+        refundResponseJson()
+    );
 
     $result = $refundsClient->get('ref_123');
 
-    expect($result)->toBeInstanceOf(RefundResponse::class);
-    expect($result->refundId)->toBe('ref_123');
-    expect($result->paymentId)->toBe('pay_123');
+    expect($result)
+        ->toBeInstanceOf(RefundResponse::class);
+    expect($result->refundId)
+        ->toBe('ref_123');
+    expect($result->paymentId)
+        ->toBe('pay_123');
 });
 
 it('checks refund is final', function (): void {
     [$client, $requestFactory, $httpClient, $refundsClient] = createRefundsClientMock();
 
-    mockRefundResponse($requestFactory, $client, 'GET', 'https://api.example.com/api/v1/merchant/refunds/ref_123', json_encode([
-        'refundId' => 'ref_123',
-        'paymentId' => 'pay_123',
-        'amount' => ['value' => '50.00', 'currency' => 'USD'],
-        'status' => 'SUCCEEDED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ]));
+    mockRefundResponse(
+        $requestFactory,
+        $client,
+        'GET',
+        'https://api.example.com/api/v1/merchant/refunds/ref_123',
+        json_encode([
+            'refundId' => 'ref_123',
+            'paymentId' => 'pay_123',
+            'amount' => [
+                'value' => '50.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'SUCCEEDED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ])
+    );
 
     $result = $refundsClient->get('ref_123');
 
-    expect($result->isFinal())->toBeTrue();
-    expect($result->isSuccessful())->toBeTrue();
+    expect($result->isFinal())
+        ->toBeTrue();
+    expect($result->isSuccessful())
+        ->toBeTrue();
 });

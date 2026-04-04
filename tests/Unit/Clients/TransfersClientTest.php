@@ -38,15 +38,25 @@ it('creates a transfer', function (): void {
         ->with($request)
         ->andReturn($response);
     $stream->shouldReceive('__toString')
-        ->andReturn(json_encode(['transferId' => 'tr_123', 'status' => 'completed']));
+        ->andReturn(json_encode([
+            'transferId' => 'tr_123',
+            'status' => 'completed',
+        ]));
     $response->shouldReceive('getBody')
         ->andReturn($stream);
     $response->shouldReceive('getStatusCode')
         ->andReturn(200);
 
-    $result = $transfersClient->create(['amount' => 100.00, 'currency' => 'USD']);
+    $result = $transfersClient->create([
+        'amount' => 100.00,
+        'currency' => 'USD',
+    ]);
 
-    expect($result)->toBe(['transferId' => 'tr_123', 'status' => 'completed']);
+    expect($result)
+        ->toBe([
+            'transferId' => 'tr_123',
+            'status' => 'completed',
+        ]);
 });
 
 it('gets a transfer', function (): void {
@@ -65,7 +75,11 @@ it('gets a transfer', function (): void {
         ->with($request)
         ->andReturn($response);
     $stream->shouldReceive('__toString')
-        ->andReturn(json_encode(['transferId' => 'tr_123', 'status' => 'completed', 'amount' => 100.00]));
+        ->andReturn(json_encode([
+            'transferId' => 'tr_123',
+            'status' => 'completed',
+            'amount' => 100.00,
+        ]));
     $response->shouldReceive('getBody')
         ->andReturn($stream);
     $response->shouldReceive('getStatusCode')

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use LionTech\SDK\Clients\PayoutsClient;
 use LionTech\SDK\DTOs\Request\CreatePayoutRequest;
 use LionTech\SDK\DTOs\Response\PayoutResponse;
-use LionTech\SDK\Enums\PaymentMethodType;
 use LionTech\SDK\Http\HttpClient;
 use LionTech\SDK\ValueObjects\Currency;
 use LionTech\SDK\ValueObjects\EncryptedCardData;
@@ -47,7 +46,10 @@ it('creates a payout with merchant id', function (): void {
     $stream->shouldReceive('__toString')
         ->andReturn(json_encode([
             'payoutId' => 'payout_123',
-            'amount' => ['value' => '500.00', 'currency' => 'USD'],
+            'amount' => [
+                'value' => '500.00',
+                'currency' => 'USD',
+            ],
             'status' => 'PENDING',
             'createdAt' => '2024-01-01T00:00:00Z',
         ]));
@@ -63,9 +65,12 @@ it('creates a payout with merchant id', function (): void {
     );
     $result = $payoutsClient->createWithId('payout_123', $payoutRequest);
 
-    expect($result)->toBeInstanceOf(PayoutResponse::class);
-    expect($result->payoutId)->toBe('payout_123');
-    expect($result->status->value)->toBe('PENDING');
+    expect($result)
+        ->toBeInstanceOf(PayoutResponse::class);
+    expect($result->payoutId)
+        ->toBe('payout_123');
+    expect($result->status->value)
+        ->toBe('PENDING');
 });
 
 it('gets a payout', function (): void {
@@ -87,7 +92,10 @@ it('gets a payout', function (): void {
         ->andReturn(json_encode([
             'payoutId' => 'payout_123',
             'orderId' => 'ord_123',
-            'amount' => ['value' => '500.00', 'currency' => 'USD'],
+            'amount' => [
+                'value' => '500.00',
+                'currency' => 'USD',
+            ],
             'status' => 'SUCCEEDED',
             'createdAt' => '2024-01-01T00:00:00Z',
             'txnId' => 'txn_123',
@@ -100,12 +108,18 @@ it('gets a payout', function (): void {
 
     $result = $payoutsClient->get('payout_123');
 
-    expect($result)->toBeInstanceOf(PayoutResponse::class);
-    expect($result->payoutId)->toBe('payout_123');
-    expect($result->orderId)->toBe('ord_123');
-    expect($result->status->value)->toBe('SUCCEEDED');
-    expect($result->txnId)->toBe('txn_123');
-    expect($result->rrn)->toBe('rrn_123');
+    expect($result)
+        ->toBeInstanceOf(PayoutResponse::class);
+    expect($result->payoutId)
+        ->toBe('payout_123');
+    expect($result->orderId)
+        ->toBe('ord_123');
+    expect($result->status->value)
+        ->toBe('SUCCEEDED');
+    expect($result->txnId)
+        ->toBe('txn_123');
+    expect($result->rrn)
+        ->toBe('rrn_123');
 });
 
 it('checks payout is final', function (): void {
@@ -126,7 +140,10 @@ it('checks payout is final', function (): void {
     $stream->shouldReceive('__toString')
         ->andReturn(json_encode([
             'payoutId' => 'payout_456',
-            'amount' => ['value' => '500.00', 'currency' => 'USD'],
+            'amount' => [
+                'value' => '500.00',
+                'currency' => 'USD',
+            ],
             'status' => 'SUCCEEDED',
             'createdAt' => '2024-01-01T00:00:00Z',
         ]));
@@ -137,6 +154,8 @@ it('checks payout is final', function (): void {
 
     $result = $payoutsClient->get('payout_456');
 
-    expect($result->isFinal())->toBeTrue();
-    expect($result->isSuccessful())->toBeTrue();
+    expect($result->isFinal())
+        ->toBeTrue();
+    expect($result->isSuccessful())
+        ->toBeTrue();
 });

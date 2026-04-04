@@ -14,10 +14,14 @@ it('creates merchant tokens refresh response from array', function (): void {
 
     $response = MerchantTokensRefreshResponse::fromArray($data);
 
-    expect($response->accessToken)->toBe('new_access_token');
-    expect($response->accessTokenExpireAt)->toBeInstanceOf(DateTimeImmutable::class);
-    expect($response->refreshToken)->toBe('new_refresh_token');
-    expect($response->refreshTokenExpireAt)->toBeInstanceOf(DateTimeImmutable::class);
+    expect($response->accessToken)
+        ->toBe('new_access_token');
+    expect($response->accessTokenExpireAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($response->refreshToken)
+        ->toBe('new_refresh_token');
+    expect($response->refreshTokenExpireAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
 });
 
 it('parses dates correctly', function (): void {
@@ -30,8 +34,10 @@ it('parses dates correctly', function (): void {
 
     $response = MerchantTokensRefreshResponse::fromArray($data);
 
-    expect($response->accessTokenExpireAt->format('Y-m-d'))->toBe('2024-06-15');
-    expect($response->refreshTokenExpireAt->format('Y-m-d'))->toBe('2025-06-15');
+    expect($response->accessTokenExpireAt->format('Y-m-d'))
+        ->toBe('2024-06-15');
+    expect($response->refreshTokenExpireAt->format('Y-m-d'))
+        ->toBe('2025-06-15');
 });
 
 it('is immutable', function (): void {
@@ -45,5 +51,6 @@ it('is immutable', function (): void {
     $response = MerchantTokensRefreshResponse::fromArray($data);
     $reflection = new ReflectionClass($response);
 
-    expect($reflection->isReadOnly())->toBeTrue();
+    expect($reflection->isReadOnly())
+        ->toBeTrue();
 });

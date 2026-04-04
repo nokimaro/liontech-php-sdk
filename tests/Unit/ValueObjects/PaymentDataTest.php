@@ -11,16 +11,20 @@ it('creates card payment data using factory', function (): void {
     $cardData = new EncryptedCardData(encryptedCardData: 'encrypted', cardHolder: 'John Doe');
     $paymentData = PaymentData::card($cardData);
 
-    expect($paymentData->type)->toBe(PaymentMethodType::CARD);
-    expect($paymentData->object)->toBe($cardData);
+    expect($paymentData->type)
+        ->toBe(PaymentMethodType::CARD);
+    expect($paymentData->object)
+        ->toBe($cardData);
 });
 
 it('creates sbp payment data using factory', function (): void {
     $sbpData = new SbpData(bank: 'sberbank');
     $paymentData = PaymentData::sbp($sbpData);
 
-    expect($paymentData->type)->toBe(PaymentMethodType::SBP);
-    expect($paymentData->object)->toBe($sbpData);
+    expect($paymentData->type)
+        ->toBe(PaymentMethodType::SBP);
+    expect($paymentData->object)
+        ->toBe($sbpData);
 });
 
 it('serializes card payment data', function (): void {
@@ -29,13 +33,14 @@ it('serializes card payment data', function (): void {
 
     $json = $paymentData->jsonSerialize();
 
-    expect($json)->toBe([
-        'type' => 'card',
-        'object' => [
-            'encryptedCardData' => 'encrypted',
-            'cardHolder' => 'John Doe',
-        ],
-    ]);
+    expect($json)
+        ->toBe([
+            'type' => 'card',
+            'object' => [
+                'encryptedCardData' => 'encrypted',
+                'cardHolder' => 'John Doe',
+            ],
+        ]);
 });
 
 it('serializes sbp payment data', function (): void {
@@ -44,12 +49,13 @@ it('serializes sbp payment data', function (): void {
 
     $json = $paymentData->jsonSerialize();
 
-    expect($json)->toBe([
-        'type' => 'sbp',
-        'object' => [
-            'bank' => 'sberbank',
-        ],
-    ]);
+    expect($json)
+        ->toBe([
+            'type' => 'sbp',
+            'object' => [
+                'bank' => 'sberbank',
+            ],
+        ]);
 });
 
 it('creates from array with card type', function (): void {
@@ -63,10 +69,14 @@ it('creates from array with card type', function (): void {
 
     $paymentData = PaymentData::fromArray($data);
 
-    expect($paymentData->type)->toBe(PaymentMethodType::CARD);
-    expect($paymentData->object)->toBeInstanceOf(EncryptedCardData::class);
-    expect($paymentData->object->encryptedCardData)->toBe('encrypted');
-    expect($paymentData->object->cardHolder)->toBe('John Doe');
+    expect($paymentData->type)
+        ->toBe(PaymentMethodType::CARD);
+    expect($paymentData->object)
+        ->toBeInstanceOf(EncryptedCardData::class);
+    expect($paymentData->object->encryptedCardData)
+        ->toBe('encrypted');
+    expect($paymentData->object->cardHolder)
+        ->toBe('John Doe');
 });
 
 it('creates from array with sbp type', function (): void {
@@ -79,9 +89,12 @@ it('creates from array with sbp type', function (): void {
 
     $paymentData = PaymentData::fromArray($data);
 
-    expect($paymentData->type)->toBe(PaymentMethodType::SBP);
-    expect($paymentData->object)->toBeInstanceOf(SbpData::class);
-    expect($paymentData->object->bank)->toBe('tinkoff');
+    expect($paymentData->type)
+        ->toBe(PaymentMethodType::SBP);
+    expect($paymentData->object)
+        ->toBeInstanceOf(SbpData::class);
+    expect($paymentData->object->bank)
+        ->toBe('tinkoff');
 });
 
 it('creates from array with type as object', function (): void {
@@ -94,7 +107,8 @@ it('creates from array with type as object', function (): void {
 
     $paymentData = PaymentData::fromArray($data);
 
-    expect($paymentData->type)->toBe(PaymentMethodType::CARD);
+    expect($paymentData->type)
+        ->toBe(PaymentMethodType::CARD);
 });
 
 it('is immutable', function (): void {
@@ -102,5 +116,6 @@ it('is immutable', function (): void {
     $paymentData = PaymentData::card($cardData);
     $reflection = new ReflectionClass($paymentData);
 
-    expect($reflection->isReadOnly())->toBeTrue();
+    expect($reflection->isReadOnly())
+        ->toBeTrue();
 });

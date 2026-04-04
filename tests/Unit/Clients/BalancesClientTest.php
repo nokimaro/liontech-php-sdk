@@ -63,7 +63,8 @@ it('lists balances', function (): void {
 
     $result = $balancesClient->list();
 
-    expect($result)->toHaveCount(1);
+    expect($result)
+        ->toHaveCount(1);
     expect($result[0])->toBeInstanceOf(MerchantAccount::class);
     expect($result[0]->accountId)->toBe('acc_123');
     expect($result[0]->balance)->toBe('1000.00');
@@ -89,7 +90,8 @@ it('lists balances with accounts key', function (): void {
 
     $result = $balancesClient->list();
 
-    expect($result)->toHaveCount(1);
+    expect($result)
+        ->toHaveCount(1);
     expect($result[0]->currency->value)->toBe('EUR');
 });
 
@@ -100,5 +102,6 @@ it('returns empty array when no balances', function (): void {
 
     $result = $balancesClient->list();
 
-    expect($result)->toBe([]);
+    expect($result)
+        ->toBe([]);
 });

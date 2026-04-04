@@ -19,14 +19,22 @@ it('creates merchant account from array', function (): void {
 
     $account = MerchantAccount::fromArray($data);
 
-    expect($account->accountId)->toBe('acc_123');
-    expect($account->accountTypeId)->toBe('type_1');
-    expect($account->mstId)->toBe('mst_1');
-    expect($account->currency)->toBe(Currency::USD);
-    expect($account->balance)->toBe('1000.00');
-    expect($account->createdAt)->toBeInstanceOf(DateTimeImmutable::class);
-    expect($account->updatedAt)->toBeInstanceOf(DateTimeImmutable::class);
-    expect($account->validOn)->toBeInstanceOf(DateTimeImmutable::class);
+    expect($account->accountId)
+        ->toBe('acc_123');
+    expect($account->accountTypeId)
+        ->toBe('type_1');
+    expect($account->mstId)
+        ->toBe('mst_1');
+    expect($account->currency)
+        ->toBe(Currency::USD);
+    expect($account->balance)
+        ->toBe('1000.00');
+    expect($account->createdAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($account->updatedAt)
+        ->toBeInstanceOf(DateTimeImmutable::class);
+    expect($account->validOn)
+        ->toBeInstanceOf(DateTimeImmutable::class);
 });
 
 it('creates merchant account with different currency', function (): void {
@@ -43,8 +51,10 @@ it('creates merchant account with different currency', function (): void {
 
     $account = MerchantAccount::fromArray($data);
 
-    expect($account->currency)->toBe(Currency::EUR);
-    expect($account->balance)->toBe('500.00');
+    expect($account->currency)
+        ->toBe(Currency::EUR);
+    expect($account->balance)
+        ->toBe('500.00');
 });
 
 it('is immutable', function (): void {
@@ -62,5 +72,6 @@ it('is immutable', function (): void {
     $account = MerchantAccount::fromArray($data);
     $reflection = new ReflectionClass($account);
 
-    expect($reflection->isReadOnly())->toBeTrue();
+    expect($reflection->isReadOnly())
+        ->toBeTrue();
 });

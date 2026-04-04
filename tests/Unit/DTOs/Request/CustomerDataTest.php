@@ -86,7 +86,7 @@ it('does not include null fields in JSON', function (): void {
 
 it('serializes all fields to JSON', function (): void {
     $birthdate = new DateTimeImmutable('1990-01-01');
-    $browserData = new BrowserData(userAgent: 'Mozilla/5.0', language: 'en');
+    $browserData = new BrowserData(language: 'en', userAgent: 'Mozilla/5.0');
     $customer = new CustomerData(
         accountId: 'acc_123',
         email: 'test@example.com',
@@ -106,22 +106,23 @@ it('serializes all fields to JSON', function (): void {
 
     $json = $customer->jsonSerialize();
 
-    expect($json)->toHaveKeys([
-        'accountId',
-        'email',
-        'fullName',
-        'phone',
-        'ip',
-        'fingerprint',
-        'address',
-        'city',
-        'state',
-        'postalCode',
-        'country',
-        'neighborhood',
-        'birthdate',
-        'browserData',
-    ]);
+    expect($json)
+        ->toHaveKeys([
+            'accountId',
+            'email',
+            'fullName',
+            'phone',
+            'ip',
+            'fingerprint',
+            'address',
+            'city',
+            'state',
+            'postalCode',
+            'country',
+            'neighborhood',
+            'birthdate',
+            'browserData',
+        ]);
     expect($json['accountId'])->toBe('acc_123');
     expect($json['email'])->toBe('test@example.com');
     expect($json['fullName'])->toBe('John Doe');

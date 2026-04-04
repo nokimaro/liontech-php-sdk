@@ -6,7 +6,6 @@ use LionTech\SDK\Clients\PaymentsClient;
 use LionTech\SDK\DTOs\Request\CreatePaymentRequest;
 use LionTech\SDK\DTOs\Response\PaymentResponse;
 use LionTech\SDK\DTOs\Response\RefundResponse;
-use LionTech\SDK\Enums\PaymentMethodType;
 use LionTech\SDK\Http\HttpClient;
 use LionTech\SDK\ValueObjects\Currency;
 use LionTech\SDK\ValueObjects\EncryptedCardData;
@@ -56,7 +55,10 @@ function paymentResponseJson(): string
 {
     return json_encode([
         'paymentId' => 'pay_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'PENDING',
         'createdAt' => '2024-01-01T00:00:00Z',
     ]);
@@ -65,60 +67,89 @@ function paymentResponseJson(): string
 it('creates a payment', function (): void {
     [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
 
-    mockPaymentResponse($requestFactory, $client, 'POST', 'https://api.example.com/api/v1/merchant/payments', paymentResponseJson());
+    mockPaymentResponse(
+        $requestFactory,
+        $client,
+        'POST',
+        'https://api.example.com/api/v1/merchant/payments',
+        paymentResponseJson()
+    );
 
     $paymentData = PaymentData::card(new EncryptedCardData(encryptedCardData: 'encrypted_data'));
-    $request = new CreatePaymentRequest(
-        amount: new Money('100.00', Currency::USD),
-        paymentData: $paymentData,
-    );
+    $request = new CreatePaymentRequest(amount: new Money('100.00', Currency::USD), paymentData: $paymentData);
     $result = $paymentsClient->create($request);
 
-    expect($result)->toBeInstanceOf(PaymentResponse::class);
-    expect($result->paymentId)->toBe('pay_123');
+    expect($result)
+        ->toBeInstanceOf(PaymentResponse::class);
+    expect($result->paymentId)
+        ->toBe('pay_123');
 });
 
 it('creates a payment with merchant id', function (): void {
     [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
 
-    mockPaymentResponse($requestFactory, $client, 'PUT', 'https://api.example.com/api/v1/merchant/payments/pay_merchant_1', paymentResponseJson());
+    mockPaymentResponse(
+        $requestFactory,
+        $client,
+        'PUT',
+        'https://api.example.com/api/v1/merchant/payments/pay_merchant_1',
+        paymentResponseJson()
+    );
 
     $paymentData = PaymentData::card(new EncryptedCardData(encryptedCardData: 'encrypted_data'));
-    $request = new CreatePaymentRequest(
-        amount: new Money('100.00', Currency::USD),
-        paymentData: $paymentData,
-    );
+    $request = new CreatePaymentRequest(amount: new Money('100.00', Currency::USD), paymentData: $paymentData);
     $result = $paymentsClient->createWithId('pay_merchant_1', $request);
 
-    expect($result)->toBeInstanceOf(PaymentResponse::class);
-    expect($result->paymentId)->toBe('pay_123');
+    expect($result)
+        ->toBeInstanceOf(PaymentResponse::class);
+    expect($result->paymentId)
+        ->toBe('pay_123');
 });
 
 it('gets a payment', function (): void {
     [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
 
-    mockPaymentResponse($requestFactory, $client, 'GET', 'https://api.example.com/api/v1/merchant/payments/pay_123', paymentResponseJson());
+    mockPaymentResponse(
+        $requestFactory,
+        $client,
+        'GET',
+        'https://api.example.com/api/v1/merchant/payments/pay_123',
+        paymentResponseJson()
+    );
 
     $result = $paymentsClient->get('pay_123');
 
-    expect($result)->toBeInstanceOf(PaymentResponse::class);
-    expect($result->paymentId)->toBe('pay_123');
+    expect($result)
+        ->toBeInstanceOf(PaymentResponse::class);
+    expect($result->paymentId)
+        ->toBe('pay_123');
 });
 
 it('confirms a payment', function (): void {
     [$client, $requestFactory, $httpClient, $paymentsClient] = createPaymentsClientMock();
 
-    mockPaymentResponse($requestFactory, $client, 'POST', 'https://api.example.com/api/v1/merchant/payments/pay_123/confirm', json_encode([
-        'paymentId' => 'pay_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
-        'status' => 'RECONCILED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ]));
+    mockPaymentResponse(
+        $requestFactory,
+        $client,
+        'POST',
+        'https://api.example.com/api/v1/merchant/payments/pay_123/confirm',
+        json_encode([
+            'paymentId' => 'pay_123',
+            'amount' => [
+                'value' => '100.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'RECONCILED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ])
+    );
 
     $result = $paymentsClient->confirm('pay_123');
 
-    expect($result)->toBeInstanceOf(PaymentResponse::class);
-    expect($result->status->value)->toBe('RECONCILED');
+    expect($result)
+        ->toBeInstanceOf(PaymentResponse::class);
+    expect($result->status->value)
+        ->toBe('RECONCILED');
 });
 
 it('lists refunds for a payment', function (): void {
@@ -142,7 +173,10 @@ it('lists refunds for a payment', function (): void {
                 [
                     'refundId' => 'ref_1',
                     'paymentId' => 'pay_123',
-                    'amount' => ['value' => '50.00', 'currency' => 'USD'],
+                    'amount' => [
+                        'value' => '50.00',
+                        'currency' => 'USD',
+                    ],
                     'status' => 'SUCCEEDED',
                     'createdAt' => '2024-01-01T00:00:00Z',
                 ],
@@ -155,7 +189,8 @@ it('lists refunds for a payment', function (): void {
 
     $result = $paymentsClient->getRefunds('pay_123');
 
-    expect($result)->toHaveCount(1);
+    expect($result)
+        ->toHaveCount(1);
     expect($result[0])->toBeInstanceOf(RefundResponse::class);
     expect($result[0]->refundId)->toBe('ref_1');
 });
@@ -180,7 +215,10 @@ it('lists refunds with direct array response', function (): void {
             [
                 'refundId' => 'ref_2',
                 'paymentId' => 'pay_456',
-                'amount' => ['value' => '25.00', 'currency' => 'USD'],
+                'amount' => [
+                    'value' => '25.00',
+                    'currency' => 'USD',
+                ],
                 'status' => 'PENDING',
                 'createdAt' => '2024-01-01T00:00:00Z',
             ],
@@ -192,6 +230,7 @@ it('lists refunds with direct array response', function (): void {
 
     $result = $paymentsClient->getRefunds('pay_456');
 
-    expect($result)->toHaveCount(1);
+    expect($result)
+        ->toHaveCount(1);
     expect($result[0]->refundId)->toBe('ref_2');
 });

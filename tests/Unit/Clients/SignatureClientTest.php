@@ -36,7 +36,9 @@ it('gets the public key', function (): void {
         ->with($request)
         ->andReturn($response);
     $stream->shouldReceive('__toString')
-        ->andReturn(json_encode(['pem' => '-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----']));
+        ->andReturn(json_encode([
+            'pem' => '-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----',
+        ]));
     $response->shouldReceive('getBody')
         ->andReturn($stream);
     $response->shouldReceive('getStatusCode')
@@ -44,5 +46,6 @@ it('gets the public key', function (): void {
 
     $result = $signatureClient->getPublicKey();
 
-    expect($result)->toBe('-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----');
+    expect($result)
+        ->toBe('-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----');
 });

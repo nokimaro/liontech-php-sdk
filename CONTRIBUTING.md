@@ -10,7 +10,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ### Reporting Bugs
 
-Before creating bug reports, please check the [issue list](https://github.com/liontech/liontech-php-sdk/issues) to see if the issue has already been reported. When you are creating a bug report, please include as many details as possible:
+Before creating bug reports, please check the [issue list](https://github.com/nokimaro/liontech-php-sdk/issues) to see if the issue has already been reported. When you are creating a bug report, please include as many details as possible:
 
 - **Use a clear and descriptive title**
 - **Describe the exact steps to reproduce the problem**

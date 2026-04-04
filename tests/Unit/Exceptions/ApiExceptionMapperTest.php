@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 use LionTech\SDK\Exceptions\ApiExceptionMapper;
-use LionTech\SDK\Exceptions\ApiErrorResponse;
 use LionTech\SDK\Exceptions\Auth\AuthenticationException;
 use LionTech\SDK\Exceptions\Auth\TokenExpiredException;
 use LionTech\SDK\Exceptions\Business\ConflictException;
-use LionTech\SDK\Exceptions\ResourceNotFoundException;
 use LionTech\SDK\Exceptions\RateLimitException;
+use LionTech\SDK\Exceptions\ResourceNotFoundException;
 use LionTech\SDK\Exceptions\Transport\TransportException;
 use LionTech\SDK\Exceptions\Validation\ValidationException;
 use Psr\Http\Message\ResponseInterface;
@@ -30,49 +29,73 @@ function createErrorResponse(int $statusCode, ?string $body = null): ResponseInt
 }
 
 it('throws AuthenticationException for 401', function (): void {
-    $response = createErrorResponse(401, json_encode(['code' => 401, 'description' => 'Unauthorized']));
+    $response = createErrorResponse(401, json_encode([
+        'code' => 401,
+        'description' => 'Unauthorized',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(AuthenticationException::class);
 
 it('throws TokenExpiredException for 403 with code 504', function (): void {
-    $response = createErrorResponse(403, json_encode(['code' => 504, 'description' => 'Token expired']));
+    $response = createErrorResponse(403, json_encode([
+        'code' => 504,
+        'description' => 'Token expired',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(TokenExpiredException::class);
 
 it('throws AuthenticationException for 403 without code 504', function (): void {
-    $response = createErrorResponse(403, json_encode(['code' => 403, 'description' => 'Forbidden']));
+    $response = createErrorResponse(403, json_encode([
+        'code' => 403,
+        'description' => 'Forbidden',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(AuthenticationException::class);
 
 it('throws ValidationException for 400', function (): void {
-    $response = createErrorResponse(400, json_encode(['code' => 400, 'description' => 'Bad Request']));
+    $response = createErrorResponse(400, json_encode([
+        'code' => 400,
+        'description' => 'Bad Request',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(ValidationException::class);
 
 it('throws ValidationException for 422', function (): void {
-    $response = createErrorResponse(422, json_encode(['code' => 422, 'description' => 'Unprocessable Entity']));
+    $response = createErrorResponse(422, json_encode([
+        'code' => 422,
+        'description' => 'Unprocessable Entity',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(ValidationException::class);
 
 it('throws ResourceNotFoundException for 404', function (): void {
-    $response = createErrorResponse(404, json_encode(['code' => 404, 'description' => 'Not Found']));
+    $response = createErrorResponse(404, json_encode([
+        'code' => 404,
+        'description' => 'Not Found',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(ResourceNotFoundException::class);
 
 it('throws ConflictException for 409', function (): void {
-    $response = createErrorResponse(409, json_encode(['code' => 409, 'description' => 'Conflict']));
+    $response = createErrorResponse(409, json_encode([
+        'code' => 409,
+        'description' => 'Conflict',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(ConflictException::class);
 
 it('throws RateLimitException for 429', function (): void {
-    $response = createErrorResponse(429, json_encode(['code' => 429, 'description' => 'Rate Limited']));
+    $response = createErrorResponse(429, json_encode([
+        'code' => 429,
+        'description' => 'Rate Limited',
+    ]));
 
     ApiExceptionMapper::map($response);
 })->throws(RateLimitException::class);
@@ -102,12 +125,16 @@ it('throws TransportException for unknown error code', function (): void {
 })->throws(TransportException::class);
 
 it('uses error description from API response', function (): void {
-    $response = createErrorResponse(400, json_encode(['code' => 400, 'description' => 'Custom error message']));
+    $response = createErrorResponse(400, json_encode([
+        'code' => 400,
+        'description' => 'Custom error message',
+    ]));
 
     try {
         ApiExceptionMapper::map($response);
     } catch (ValidationException $e) {
-        expect($e->getMessage())->toBe('Custom error message');
+        expect($e->getMessage())
+            ->toBe('Custom error message');
     }
 });
 
@@ -117,7 +144,8 @@ it('uses default message when body is empty json object', function (): void {
     try {
         ApiExceptionMapper::map($response);
     } catch (ValidationException $e) {
-        expect($e->getMessage())->toBe('Bad Request');
+        expect($e->getMessage())
+            ->toBe('Bad Request');
     }
 });
 

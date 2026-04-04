@@ -40,7 +40,9 @@ it('refreshes tokens', function (): void {
         ->with($request)
         ->andReturn($response);
     $stream->shouldReceive('__toString')
-        ->andReturn('{"accessToken":"new_token","accessTokenExpireAt":"2024-12-31T23:59:59Z","refreshToken":"new_refresh","refreshTokenExpireAt":"2025-12-31T23:59:59Z"}');
+        ->andReturn(
+            '{"accessToken":"new_token","accessTokenExpireAt":"2024-12-31T23:59:59Z","refreshToken":"new_refresh","refreshTokenExpireAt":"2025-12-31T23:59:59Z"}'
+        );
     $response->shouldReceive('getBody')
         ->andReturn($stream);
     $response->shouldReceive('getStatusCode')
@@ -75,7 +77,9 @@ it('refreshes tokens and applies to http client', function (): void {
         ->with($request)
         ->andReturn($response);
     $stream->shouldReceive('__toString')
-        ->andReturn('{"accessToken":"new_token","accessTokenExpireAt":"2024-12-31T23:59:59Z","refreshToken":"new_refresh","refreshTokenExpireAt":"2025-12-31T23:59:59Z"}');
+        ->andReturn(
+            '{"accessToken":"new_token","accessTokenExpireAt":"2024-12-31T23:59:59Z","refreshToken":"new_refresh","refreshTokenExpireAt":"2025-12-31T23:59:59Z"}'
+        );
     $response->shouldReceive('getBody')
         ->andReturn($stream);
     $response->shouldReceive('getStatusCode')

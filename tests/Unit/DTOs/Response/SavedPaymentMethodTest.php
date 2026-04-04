@@ -16,12 +16,18 @@ it('creates saved payment method from array', function (): void {
 
     $method = SavedPaymentMethod::fromArray($data);
 
-    expect($method->paymentMethodId)->toBe('pm_123');
-    expect($method->tokenId)->toBe('tok_123');
-    expect($method->displayValue)->toBe('Visa ****1234');
-    expect($method->cardType)->toBe('VISA');
-    expect($method->cardExp)->toBe('12/25');
-    expect($method->cardRequiresCvv)->toBeTrue();
+    expect($method->paymentMethodId)
+        ->toBe('pm_123');
+    expect($method->tokenId)
+        ->toBe('tok_123');
+    expect($method->displayValue)
+        ->toBe('Visa ****1234');
+    expect($method->cardType)
+        ->toBe('VISA');
+    expect($method->cardExp)
+        ->toBe('12/25');
+    expect($method->cardRequiresCvv)
+        ->toBeTrue();
 });
 
 it('parses card_requires_cvv as false', function (): void {
@@ -36,7 +42,8 @@ it('parses card_requires_cvv as false', function (): void {
 
     $method = SavedPaymentMethod::fromArray($data);
 
-    expect($method->cardRequiresCvv)->toBeFalse();
+    expect($method->cardRequiresCvv)
+        ->toBeFalse();
 });
 
 it('is immutable', function (): void {
@@ -52,5 +59,6 @@ it('is immutable', function (): void {
     $method = SavedPaymentMethod::fromArray($data);
     $reflection = new ReflectionClass($method);
 
-    expect($reflection->isReadOnly())->toBeTrue();
+    expect($reflection->isReadOnly())
+        ->toBeTrue();
 });

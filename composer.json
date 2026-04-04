@@ -1,6 +1,6 @@
 {
-    "name": "liontech/liontech-php-sdk",
-    "description": "Official PHP SDK for LionTech Payment Gateway",
+    "name": "nokimaro/liontech-php-sdk",
+    "description": "Community-maintained PHP SDK for LionTech Payment Gateway",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -11,10 +11,10 @@
         "api",
         "php"
     ],
-    "homepage": "https://github.com/liontech/liontech-php-sdk",
+    "homepage": "https://github.com/nokimaro/liontech-php-sdk",
     "support": {
-        "issues": "https://github.com/liontech/liontech-php-sdk/issues",
-        "source": "https://github.com/liontech/liontech-php-sdk"
+        "issues": "https://github.com/nokimaro/liontech-php-sdk/issues",
+        "source": "https://github.com/nokimaro/liontech-php-sdk"
     },
     "require": {
         "php": "^8.3",
@@ -81,8 +81,9 @@
     },
     "authors": [
         {
-            "name": "LionTech",
-            "email": "dev@liontechnology.ai"
+            "name": "Nik Dm",
+            "email": "nox@nox.kz",
+            "role": "Maintainer"
         }
     ]
 }

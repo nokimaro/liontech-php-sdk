@@ -20,4 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extensive documentation and examples
 - Unit test suite
 
-[Unreleased]: https://github.com/liontech/liontech-php-sdk/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.0.0...HEAD

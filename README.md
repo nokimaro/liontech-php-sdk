@@ -1,11 +1,11 @@
 # LionTech PHP SDK
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/liontech/liontech-php-sdk.svg?style=flat-square)](https://packagist.org/packages/liontech/liontech-php-sdk)
-[![Total Downloads](https://img.shields.io/packagist/dt/liontech/liontech-php-sdk.svg?style=flat-square)](https://packagist.org/packages/liontech/liontech-php-sdk)
-[![PHP Version](https://img.shields.io/packagist/php-v/liontech/liontech-php-sdk?style=flat-square)](https://php.net)
-[![License](https://img.shields.io/packagist/l/liontech/liontech-php-sdk?style=flat-square)](https://packagist.org/packages/liontech/liontech-php-sdk)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/nokimaro/liontech-php-sdk.svg?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
+[![Total Downloads](https://img.shields.io/packagist/dt/nokimaro/liontech-php-sdk.svg?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
+[![PHP Version](https://img.shields.io/packagist/php-v/nokimaro/liontech-php-sdk?style=flat-square)](https://php.net)
+[![License](https://img.shields.io/packagist/l/nokimaro/liontech-php-sdk?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
 
-Official PHP SDK for the [LionTech Payment Gateway](https://liontechnology.ai). This SDK provides a type-safe, domain-oriented interface for integrating LionTech's payment processing capabilities into your PHP applications.
+Community-maintained PHP SDK for the [LionTech Payment Gateway](https://liontechnology.ai). This SDK provides a type-safe, domain-oriented interface for integrating LionTech's payment processing capabilities into your PHP applications.
 
 ## Features
 
@@ -27,7 +27,7 @@ Official PHP SDK for the [LionTech Payment Gateway](https://liontechnology.ai). 
 Install the SDK via Composer:
 
 ```bash
-composer require liontech/liontech-php-sdk
+composer require nokimaro/liontech-php-sdk
 ```
 
 If you don't have an HTTP client installed, we recommend Guzzle:
@@ -370,5 +370,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 ## Support
 
 - Documentation: [docs/api.json](docs/api.json)
-- Issues: [GitHub Issues](https://github.com/liontech/liontech-php-sdk/issues)
-- Email: dev@liontechnology.ai
+- Issues: [GitHub Issues](https://github.com/nokimaro/liontech-php-sdk/issues)
+- Repository: [nokimaro/liontech-php-sdk](https://github.com/nokimaro/liontech-php-sdk)

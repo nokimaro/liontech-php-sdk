@@ -52,7 +52,10 @@ function orderResponseJson(): string
 {
     return json_encode([
         'orderId' => 'ord_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'CREATED',
         'createdAt' => '2024-01-01T00:00:00Z',
     ]);
@@ -61,66 +64,112 @@ function orderResponseJson(): string
 it('creates an order', function (): void {
     [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
 
-    mockOrderResponse($requestFactory, $client, 'POST', 'https://api.example.com/api/v1/merchant/orders', orderResponseJson());
+    mockOrderResponse(
+        $requestFactory,
+        $client,
+        'POST',
+        'https://api.example.com/api/v1/merchant/orders',
+        orderResponseJson()
+    );
 
     $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD));
     $result = $ordersClient->create($request);
 
-    expect($result)->toBeInstanceOf(OrderResponse::class);
-    expect($result->orderId)->toBe('ord_123');
+    expect($result)
+        ->toBeInstanceOf(OrderResponse::class);
+    expect($result->orderId)
+        ->toBe('ord_123');
 });
 
 it('creates an order with merchant id', function (): void {
     [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
 
-    mockOrderResponse($requestFactory, $client, 'PUT', 'https://api.example.com/api/v1/merchant/orders/ord_merchant_1', orderResponseJson());
+    mockOrderResponse(
+        $requestFactory,
+        $client,
+        'PUT',
+        'https://api.example.com/api/v1/merchant/orders/ord_merchant_1',
+        orderResponseJson()
+    );
 
     $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD));
     $result = $ordersClient->createWithId('ord_merchant_1', $request);
 
-    expect($result)->toBeInstanceOf(OrderResponse::class);
-    expect($result->orderId)->toBe('ord_123');
+    expect($result)
+        ->toBeInstanceOf(OrderResponse::class);
+    expect($result->orderId)
+        ->toBe('ord_123');
 });
 
 it('gets an order', function (): void {
     [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
 
-    mockOrderResponse($requestFactory, $client, 'GET', 'https://api.example.com/api/v1/merchant/orders/ord_123', orderResponseJson());
+    mockOrderResponse(
+        $requestFactory,
+        $client,
+        'GET',
+        'https://api.example.com/api/v1/merchant/orders/ord_123',
+        orderResponseJson()
+    );
 
     $result = $ordersClient->get('ord_123');
 
-    expect($result)->toBeInstanceOf(OrderResponse::class);
-    expect($result->orderId)->toBe('ord_123');
+    expect($result)
+        ->toBeInstanceOf(OrderResponse::class);
+    expect($result->orderId)
+        ->toBe('ord_123');
 });
 
 it('cancels an order', function (): void {
     [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
 
-    mockOrderResponse($requestFactory, $client, 'POST', 'https://api.example.com/api/v1/merchant/orders/ord_123/cancel', json_encode([
-        'orderId' => 'ord_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
-        'status' => 'CANCELLED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ]));
+    mockOrderResponse(
+        $requestFactory,
+        $client,
+        'POST',
+        'https://api.example.com/api/v1/merchant/orders/ord_123/cancel',
+        json_encode([
+            'orderId' => 'ord_123',
+            'amount' => [
+                'value' => '100.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'CANCELLED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ])
+    );
 
     $result = $ordersClient->cancel('ord_123');
 
-    expect($result)->toBeInstanceOf(OrderResponse::class);
-    expect($result->status->value)->toBe('CANCELLED');
+    expect($result)
+        ->toBeInstanceOf(OrderResponse::class);
+    expect($result->status->value)
+        ->toBe('CANCELLED');
 });
 
 it('closes an order', function (): void {
     [$client, $requestFactory, $httpClient, $ordersClient] = createOrdersClientMock();
 
-    mockOrderResponse($requestFactory, $client, 'POST', 'https://api.example.com/api/v1/merchant/orders/ord_123/close', json_encode([
-        'orderId' => 'ord_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
-        'status' => 'PAID',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ]));
+    mockOrderResponse(
+        $requestFactory,
+        $client,
+        'POST',
+        'https://api.example.com/api/v1/merchant/orders/ord_123/close',
+        json_encode([
+            'orderId' => 'ord_123',
+            'amount' => [
+                'value' => '100.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'PAID',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ])
+    );
 
     $result = $ordersClient->close('ord_123');
 
-    expect($result)->toBeInstanceOf(OrderResponse::class);
-    expect($result->status->value)->toBe('PAID');
+    expect($result)
+        ->toBeInstanceOf(OrderResponse::class);
+    expect($result->status->value)
+        ->toBe('PAID');
 });

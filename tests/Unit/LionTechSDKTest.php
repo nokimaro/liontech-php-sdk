@@ -22,7 +22,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 it('creates with default config', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk)->toBeInstanceOf(LionTechSDK::class);
+    expect($sdk)
+        ->toBeInstanceOf(LionTechSDK::class);
 });
 
 it('creates with custom config', function (): void {
@@ -39,7 +40,8 @@ it('creates with custom config', function (): void {
         'stream_factory' => $streamFactory,
     ]);
 
-    expect($sdk)->toBeInstanceOf(LionTechSDK::class);
+    expect($sdk)
+        ->toBeInstanceOf(LionTechSDK::class);
 });
 
 it('returns same instance on repeated client access', function (): void {
@@ -48,89 +50,105 @@ it('returns same instance on repeated client access', function (): void {
     $orders1 = $sdk->orders();
     $orders2 = $sdk->orders();
 
-    expect($orders1)->toBe($orders2);
+    expect($orders1)
+        ->toBe($orders2);
 });
 
 it('creates auth client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->auth())->toBeInstanceOf(AuthClient::class);
+    expect($sdk->auth())
+        ->toBeInstanceOf(AuthClient::class);
 });
 
 it('creates orders client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->orders())->toBeInstanceOf(OrdersClient::class);
+    expect($sdk->orders())
+        ->toBeInstanceOf(OrdersClient::class);
 });
 
 it('creates payments client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->payments())->toBeInstanceOf(PaymentsClient::class);
+    expect($sdk->payments())
+        ->toBeInstanceOf(PaymentsClient::class);
 });
 
 it('creates refunds client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->refunds())->toBeInstanceOf(RefundsClient::class);
+    expect($sdk->refunds())
+        ->toBeInstanceOf(RefundsClient::class);
 });
 
 it('creates payouts client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->payouts())->toBeInstanceOf(PayoutsClient::class);
+    expect($sdk->payouts())
+        ->toBeInstanceOf(PayoutsClient::class);
 });
 
 it('creates tokens client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->tokens())->toBeInstanceOf(TokensClient::class);
+    expect($sdk->tokens())
+        ->toBeInstanceOf(TokensClient::class);
 });
 
 it('creates balances client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->balances())->toBeInstanceOf(BalancesClient::class);
+    expect($sdk->balances())
+        ->toBeInstanceOf(BalancesClient::class);
 });
 
 it('creates transfers client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->transfers())->toBeInstanceOf(TransfersClient::class);
+    expect($sdk->transfers())
+        ->toBeInstanceOf(TransfersClient::class);
 });
 
 it('creates signature client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->signature())->toBeInstanceOf(SignatureClient::class);
+    expect($sdk->signature())
+        ->toBeInstanceOf(SignatureClient::class);
 });
 
 it('returns http client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->httpClient())->toBeInstanceOf(HttpClient::class);
+    expect($sdk->httpClient())
+        ->toBeInstanceOf(HttpClient::class);
 });
 
 it('returns secure http client', function (): void {
     $sdk = new LionTechSDK();
 
-    expect($sdk->secureHttpClient())->toBeInstanceOf(HttpClient::class);
+    expect($sdk->secureHttpClient())
+        ->toBeInstanceOf(HttpClient::class);
 });
 
 it('creates webhook verifier with provided key', function (): void {
     $privateKey = phpseclib3\Crypt\RSA::createKey(2048);
-    $publicKeyPem = $privateKey->getPublicKey()->toString('PKCS8');
+    $publicKeyPem = $privateKey->getPublicKey()
+        ->toString('PKCS8');
 
     $sdk = new LionTechSDK();
 
-    expect($sdk->webhookVerifier($publicKeyPem))->toBeInstanceOf(WebhookSignatureVerifier::class);
+    expect($sdk->webhookVerifier($publicKeyPem))
+        ->toBeInstanceOf(WebhookSignatureVerifier::class);
 });
 
 it('creates card encryptor with provided key', function (): void {
     $privateKey = phpseclib3\Crypt\RSA::createKey(2048);
-    $publicKeyPem = $privateKey->getPublicKey()->toString('PKCS8');
+    $publicKeyPem = $privateKey->getPublicKey()
+        ->toString('PKCS8');
 
     $sdk = new LionTechSDK();
 
-    expect($sdk->cardEncryptor($publicKeyPem))->toBeInstanceOf(CardEncryptor::class);
+    expect($sdk->cardEncryptor($publicKeyPem))
+        ->toBeInstanceOf(CardEncryptor::class);
 });
