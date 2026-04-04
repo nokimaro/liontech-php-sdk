@@ -63,7 +63,7 @@
         "test": "pest --compact",
         "test:coverage": "pest --coverage --compact",
         "test:type-coverage": "pest --type-coverage --compact",
-        "test:mutation": "infection --threads=max",
+        "test:mutation": "infection --test-framework=phpunit --test-framework-options=\"--configuration=phpunit.xml\" --threads=max",
         "phpstan": "phpstan analyse",
         "ecs": "ecs check",
         "ecs:fix": "ecs check --fix",
