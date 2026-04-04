@@ -2,6 +2,7 @@
     "timeout": 60,
     "minMsi": 80,
     "minCoveredMsi": 90,
+    "testFramework": "pest",
     "source": {
         "directories": [
             "src"
