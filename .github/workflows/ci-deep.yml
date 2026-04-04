@@ -2,7 +2,7 @@ name: CI - Deep Validation
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
   schedule:
     - cron: '0 2 * * 1'  # Run at 2 AM on Mondays
 
