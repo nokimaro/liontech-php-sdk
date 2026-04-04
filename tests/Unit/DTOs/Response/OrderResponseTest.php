@@ -174,7 +174,10 @@ it('handles items and expireAt', function (): void {
 it('handles expireAt as null', function (): void {
     $data = [
         'orderId' => 'ord_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'CREATED',
         'createdAt' => '2024-01-01T12:00:00Z',
         'expireAt' => null,
@@ -182,27 +185,39 @@ it('handles expireAt as null', function (): void {
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->expireAt)->toBeNull();
+    expect($response->expireAt)
+        ->toBeNull();
 });
 
 it('handles items with multiple items', function (): void {
     $data = [
         'orderId' => 'ord_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'CREATED',
         'createdAt' => '2024-01-01T12:00:00Z',
-        'items' => [['name' => 'Item 1'], ['name' => 'Item 2']],
+        'items' => [[
+            'name' => 'Item 1',
+        ], [
+            'name' => 'Item 2',
+        ]],
     ];
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->items)->toHaveCount(2);
+    expect($response->items)
+        ->toHaveCount(2);
 });
 
 it('handles items as empty array', function (): void {
     $data = [
         'orderId' => 'ord_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'CREATED',
         'createdAt' => '2024-01-01T12:00:00Z',
         'items' => [],
@@ -210,5 +225,6 @@ it('handles items as empty array', function (): void {
 
     $response = OrderResponse::fromArray($data);
 
-    expect($response->items)->toBe([]);
+    expect($response->items)
+        ->toBe([]);
 });

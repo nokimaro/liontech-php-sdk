@@ -230,11 +230,12 @@ it('preserves error description from ApiErrorResponse', function (): void {
         'code' => 513,
         'description' => 'Custom error message',
     ]));
-    
+
     try {
         ApiExceptionMapper::map($response);
     } catch (ValidationException $e) {
-        expect($e->getMessage())->toBe('Custom error message');
+        expect($e->getMessage())
+            ->toBe('Custom error message');
     }
 });
 
@@ -242,13 +243,18 @@ it('throws ValidationException with preserved error details', function (): void 
     $response = createErrorResponse(400, json_encode([
         'code' => 513,
         'description' => 'Currency mismatch',
-        'details' => [['field' => 'currency', 'issue' => 'invalid']],
+        'details' => [[
+            'field' => 'currency',
+            'issue' => 'invalid',
+        ]],
     ]));
-    
+
     try {
         ApiExceptionMapper::map($response);
     } catch (ValidationException $e) {
-        expect($e->getErrors())->toHaveKey('code', 513);
-        expect($e->getErrors())->toHaveKey('details');
+        expect($e->getErrors())
+            ->toHaveKey('code', 513);
+        expect($e->getErrors())
+            ->toHaveKey('details');
     }
 });

@@ -287,29 +287,42 @@ it('handles status as string directly', function (): void {
 it('returns null redirect url when not requiring redirect', function (): void {
     $data = [
         'paymentId' => 'pay_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'RECONCILED',
         'createdAt' => '2024-01-01T00:00:00Z',
     ];
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->requiresRedirect())->toBeFalse();
-    expect($response->getRedirectUrl())->toBeNull();
+    expect($response->requiresRedirect())
+        ->toBeFalse();
+    expect($response->getRedirectUrl())
+        ->toBeNull();
 });
 
 it('handles items array with multiple items', function (): void {
     $data = [
         'paymentId' => 'pay_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'RECONCILED',
         'createdAt' => '2024-01-01T00:00:00Z',
-        'items' => [['name' => 'Item 1'], ['name' => 'Item 2']],
+        'items' => [[
+            'name' => 'Item 1',
+        ], [
+            'name' => 'Item 2',
+        ]],
     ];
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->items)->toHaveCount(2);
+    expect($response->items)
+        ->toHaveCount(2);
     expect($response->items[0]['name'])->toBe('Item 1');
     expect($response->items[1]['name'])->toBe('Item 2');
 });
@@ -317,28 +330,42 @@ it('handles items array with multiple items', function (): void {
 it('handles additionalAction with non-redirect type', function (): void {
     $data = [
         'paymentId' => 'pay_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'PENDING',
         'createdAt' => '2024-01-01T00:00:00Z',
-        'additionalAction' => ['action' => 'something_else', 'value' => 'url'],
+        'additionalAction' => [
+            'action' => 'something_else',
+            'value' => 'url',
+        ],
     ];
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->requiresRedirect())->toBeFalse();
+    expect($response->requiresRedirect())
+        ->toBeFalse();
 });
 
 it('handles getRedirectUrl with missing value key', function (): void {
     $data = [
         'paymentId' => 'pay_123',
-        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'amount' => [
+            'value' => '100.00',
+            'currency' => 'USD',
+        ],
         'status' => 'PENDING',
         'createdAt' => '2024-01-01T00:00:00Z',
-        'additionalAction' => ['action' => 'redirect'],
+        'additionalAction' => [
+            'action' => 'redirect',
+        ],
     ];
 
     $response = PaymentResponse::fromArray($data);
 
-    expect($response->requiresRedirect())->toBeTrue();
-    expect($response->getRedirectUrl())->toBeNull();
+    expect($response->requiresRedirect())
+        ->toBeTrue();
+    expect($response->getRedirectUrl())
+        ->toBeNull();
 });
