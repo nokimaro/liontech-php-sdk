@@ -1,8 +1,7 @@
 # LionTech PHP SDK
 
-[![CI - Quick Validation](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml)
-[![CI - Deep Validation](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci-deep.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci-deep.yml)
-[![Coverage](https://codecov.io/gh/nokimaro/liontech-php-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/nokimaro/liontech-php-sdk)
+[![Tests](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/Coverage-96%25-2ECC71?style=flat-square)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=flat-square&logo=php)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
 
