@@ -98,10 +98,10 @@ composer phpstan
 composer test
 
 # Run tests with coverage
-composer test:coverage
+composer test-coverage
 
 # Run mutation testing
-composer test:mutation
+composer test-mutation
 ```
 
 ## Git Commit Messages

@@ -18,24 +18,25 @@ A clear and concise description of what the bug is.
 
 ## Expected Behavior
 
-A clear and concise description of what you expected to happen.
+What you expected to happen.
 
 ## Actual Behavior
 
 What actually happened.
-
-## Environment
-
-- **PHP Version**: [e.g., 8.3.0]
-- **SDK Version**: [e.g., v1.0.0]
-- **OS**: [e.g., Ubuntu 22.04]
-
-## Additional Context
-
-Add any other context about the problem here. Include error messages, stack traces, or screenshots if applicable.
 
 ## Code Example
 
 ```php
 // Minimal code example that reproduces the issue
 ```
+
+## Environment
+
+- **PHP Version**: [e.g., 8.3.0]
+- **SDK Version**: [e.g., 1.0.0]
+- **HTTP Client**: [e.g., guzzlehttp/guzzle 7.8]
+- **OS**: [e.g., Ubuntu 22.04]
+
+## Additional Context
+
+Add any other context, stack traces, or error messages here.

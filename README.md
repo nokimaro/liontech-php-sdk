@@ -1,5 +1,6 @@
 # LionTech PHP SDK
 
+[![Latest Version](https://img.shields.io/packagist/v/nokimaro/liontech-php-sdk?style=flat-square)](https://packagist.org/packages/nokimaro/liontech-php-sdk)
 [![Tests](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/nokimaro/liontech-php-sdk/actions/workflows/ci.yml)
 ![Coverage](https://img.shields.io/badge/Coverage-96%25-2ECC71?style=flat-square)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=flat-square&logo=php)
@@ -7,15 +8,17 @@
 
 Community-maintained PHP SDK for the [LionTech Payment Gateway](https://liontechnology.ai). This SDK provides a type-safe, domain-oriented interface for integrating LionTech's payment processing capabilities into your PHP applications.
 
+> **Note:** This is an unofficial, community-maintained library. LionTech has no official PHP SDK.
+
 ## Features
 
-- ✅ **Complete API Coverage**: Orders, Payments, Refunds, Payouts, Tokens, Transfers, Balances
-- ✅ **Type-Safe**: Strong typing with PHP 8.3 enums, readonly classes, and typed properties
-- ✅ **PSR Compliant**: PSR-4, PSR-7, PSR-17, PSR-18 compatible
-- ✅ **Secure**: Webhook signature verification and RSA card encryption helpers
-- ✅ **Token Management**: Automatic token refresh support
-- ✅ **Domain-Oriented**: Clean API with request/response DTOs instead of raw arrays
-- ✅ **Extensible**: Bring your own PSR-18 HTTP client
+- **Complete API Coverage**: Orders, Payments, Refunds, Payouts, Tokens, Transfers, Balances
+- **Type-Safe**: Strong typing with PHP 8.3 enums, readonly classes, and typed properties
+- **PSR Compliant**: PSR-4, PSR-7, PSR-17, PSR-18 compatible
+- **Secure**: Webhook signature verification and RSA card encryption
+- **Token Management**: Automatic token refresh support
+- **Domain-Oriented**: Clean API with typed request/response objects instead of raw arrays
+- **Extensible**: Bring your own PSR-18 HTTP client
 
 ## Requirements
 
@@ -23,8 +26,6 @@ Community-maintained PHP SDK for the [LionTech Payment Gateway](https://liontech
 - PSR-18 HTTP Client implementation (Guzzle recommended)
 
 ## Installation
-
-Install the SDK via Composer:
 
 ```bash
 composer require nokimaro/liontech-php-sdk
@@ -45,9 +46,9 @@ composer require guzzlehttp/guzzle
 
 require_once 'vendor/autoload.php';
 
-use LionTech\SDK\LionTechSDK;
+use Nokimaro\LionTech\Client;
 
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => 'your_access_token_here',
     // Optional: 'refresh_token' => 'your_refresh_token',
     // Optional: 'base_url' => 'https://api.sandbox.liontechnology.ai',
@@ -59,10 +60,11 @@ $sdk = new LionTechSDK([
 ```php
 <?php
 
-use LionTech\SDK\DTOs\Request\CreateOrderRequest;
-use LionTech\SDK\DTOs\Request\CustomerData;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Requests\CreateOrderRequest;
+use Nokimaro\LionTech\Requests\CustomerData;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 $orderRequest = new CreateOrderRequest(
     amount: new Money('100.00', Currency::USD),
@@ -78,7 +80,7 @@ $orderRequest = new CreateOrderRequest(
     description: 'Order #12345',
 );
 
-$order = $sdk->orders()->create($orderRequest);
+$order = $liontech->orders()->create($orderRequest);
 
 echo "Order ID: {$order->orderId}\n";
 echo "Pay URL: {$order->payUrl}\n";
@@ -89,15 +91,15 @@ echo "Pay URL: {$order->payUrl}\n";
 ```php
 <?php
 
-use LionTech\SDK\DTOs\Request\CreatePaymentRequest;
-use LionTech\SDK\DTOs\Request\CustomerData;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\EncryptedCardData;
-use LionTech\SDK\ValueObjects\Money;
-use LionTech\SDK\ValueObjects\PaymentData;
+use Nokimaro\LionTech\Requests\CreatePaymentRequest;
+use Nokimaro\LionTech\Requests\CustomerData;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
+use Nokimaro\LionTech\ValueObjects\Money;
+use Nokimaro\LionTech\ValueObjects\PaymentData;
 
-// First, encrypt the card data
-$encryptor = $sdk->cardEncryptor();
+// Encrypt the card data before sending
+$encryptor = $liontech->cardEncryptor();
 $encryptedCard = $encryptor->encryptForPayment([
     'pan' => '4405639704015096',
     'cvv' => '123',
@@ -122,7 +124,7 @@ $paymentRequest = new CreatePaymentRequest(
     backLink: 'https://your-site.com/payment-result',
 );
 
-$payment = $sdk->payments()->create($paymentRequest);
+$payment = $liontech->payments()->create($paymentRequest);
 
 if ($payment->requiresRedirect()) {
     // 3DS verification required
@@ -132,8 +134,6 @@ if ($payment->requiresRedirect()) {
 
 if ($payment->isSuccessful()) {
     echo "Payment successful!\n";
-} else {
-    echo "Payment pending or declined.\n";
 }
 ```
 
@@ -142,9 +142,9 @@ if ($payment->isSuccessful()) {
 ```php
 <?php
 
-use LionTech\SDK\DTOs\Request\CreateRefundRequest;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Requests\CreateRefundRequest;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 $refundRequest = new CreateRefundRequest(
     amount: new Money('25.00', Currency::USD),
@@ -152,7 +152,7 @@ $refundRequest = new CreateRefundRequest(
     webhookUrl: 'https://your-site.com/webhook',
 );
 
-$refund = $sdk->refunds()->create($refundRequest);
+$refund = $liontech->refunds()->create($refundRequest);
 
 echo "Refund ID: {$refund->refundId}\n";
 echo "Status: {$refund->status->value}\n";
@@ -167,18 +167,13 @@ echo "Status: {$refund->status->value}\n";
 $payload = file_get_contents('php://input');
 $headers = getallheaders();
 
-$verifier = $sdk->webhookVerifier();
+$verifier = $liontech->webhookVerifier();
 
 if ($verifier->verify($headers, $payload)) {
-    // Signature is valid, process the webhook
     $data = json_decode($payload, true);
-    
-    // Process the payment status update
-    // ...
-    
+    // Process the payment status update...
     http_response_code(200);
 } else {
-    // Invalid signature, reject the request
     http_response_code(401);
     echo "Invalid webhook signature";
 }
@@ -189,16 +184,15 @@ if ($verifier->verify($headers, $payload)) {
 ```php
 <?php
 
-use LionTech\SDK\DTOs\Request\RefreshTokenRequest;
+use Nokimaro\LionTech\Requests\RefreshTokenRequest;
 
 $refreshRequest = new RefreshTokenRequest(
     refreshToken: 'your_current_refresh_token',
 );
 
-$response = $sdk->auth()->refreshAndApply($refreshRequest);
+$response = $liontech->auth()->refreshAndApply($refreshRequest);
 
 echo "New access token: {$response->accessToken}\n";
-echo "New refresh token: {$response->refreshToken}\n";
 echo "Expires at: {$response->accessTokenExpireAt->format('Y-m-d H:i:s')}\n";
 ```
 
@@ -206,62 +200,60 @@ echo "Expires at: {$response->accessTokenExpireAt->format('Y-m-d H:i:s')}\n";
 
 ### Available Clients
 
-The SDK provides domain-oriented clients for each API resource:
-
 ```php
 // Authentication & Token Management
-$sdk->auth()->refreshTokens($request);
-$sdk->auth()->refreshAndApply($request);
+$liontech->auth()->refreshTokens($request);
+$liontech->auth()->refreshAndApply($request);
 
 // Orders
-$sdk->orders()->create($request);
-$sdk->orders()->createWithId('custom_id', $request);
-$sdk->orders()->get('order_id');
-$sdk->orders()->cancel('order_id');
-$sdk->orders()->close('order_id');
+$liontech->orders()->create($request);
+$liontech->orders()->createWithId('custom_id', $request);
+$liontech->orders()->get('order_id');
+$liontech->orders()->cancel('order_id');
+$liontech->orders()->close('order_id');
 
 // Payments
-$sdk->payments()->create($request);
-$sdk->payments()->createWithId('custom_id', $request);
-$sdk->payments()->get('payment_id');
-$sdk->payments()->confirm('payment_id');
-$sdk->payments()->getRefunds('payment_id');
+$liontech->payments()->create($request);
+$liontech->payments()->createWithId('custom_id', $request);
+$liontech->payments()->get('payment_id');
+$liontech->payments()->confirm('payment_id');
+$liontech->payments()->getRefunds('payment_id');
 
 // Refunds
-$sdk->refunds()->create($request);
-$sdk->refunds()->createWithId('custom_id', $request);
-$sdk->refunds()->get('refund_id');
+$liontech->refunds()->create($request);
+$liontech->refunds()->createWithId('custom_id', $request);
+$liontech->refunds()->get('refund_id');
 
 // Payouts
-$sdk->payouts()->createWithId('custom_id', $request);
-$sdk->payouts()->get('payout_id');
+$liontech->payouts()->createWithId('custom_id', $request);
+$liontech->payouts()->get('payout_id');
 
 // Tokens (Saved Payment Methods)
-$sdk->tokens()->list(accountId: 'acc_123');
-$sdk->tokens()->delete('token_id');
+$liontech->tokens()->list(accountId: 'acc_123');
+$liontech->tokens()->delete('token_id');
 
 // Balances
-$sdk->balances()->list();
+$liontech->balances()->list();
 
 // Transfers
-$sdk->transfers()->create($data);
-$sdk->transfers()->get('transfer_id');
+$liontech->transfers()->create($data);
+$liontech->transfers()->get('transfer_id');
 
 // Signature
-$sdk->signature()->getPublicKey();
+$liontech->signature()->getPublicKey();
 ```
 
-### Security Helpers
+### Security Utilities
 
 ```php
 // Webhook Signature Verification
-$verifier = $sdk->webhookVerifier(); // Auto-fetches public key
-$verifier = $sdk->webhookVerifier($customPemKey); // Or provide your own
+$verifier = $liontech->webhookVerifier();          // auto-fetches public key
+$verifier = $liontech->webhookVerifier($pemKey);   // or provide your own
 $isValid = $verifier->verify($headers, $payload);
 
 // Card Encryption
-$encryptor = $sdk->cardEncryptor(); // Auto-fetches encryption key
-$encryptor = $sdk->cardEncryptor($customPemKey); // Or provide your own
+$encryptor = $liontech->cardEncryptor();           // auto-fetches encryption key
+$encryptor = $liontech->cardEncryptor($pemKey);    // or provide your own
 $encrypted = $encryptor->encryptForPayment([
     'pan' => '4405639704015096',
     'cvv' => '123',
@@ -273,16 +265,17 @@ $encrypted = $encryptor->encryptForPayment([
 
 ### Custom HTTP Client
 
-You can provide your own PSR-18 client:
+The SDK uses [PSR-18](https://www.php-fig.org/psr/psr-18/) so any compatible HTTP client works.
 
 ```php
-use GuzzleHttp\Client;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\HttpFactory;
+use Nokimaro\LionTech\Client;
 
-$guzzle = new Client();
+$guzzle = new GuzzleClient();
 $factory = new HttpFactory();
 
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => 'your_token',
     'client' => $guzzle,
     'request_factory' => $factory,
@@ -293,11 +286,20 @@ $sdk = new LionTechSDK([
 ### Sandbox Environment
 
 ```php
-$sdk = new LionTechSDK([
+use Nokimaro\LionTech\Client;
+
+// Via constructor
+$liontech = new Client([
     'access_token' => 'your_sandbox_token',
     'base_url' => 'https://api.sandbox.liontechnology.ai',
     'secure_url' => 'https://secure.sandbox.liontechnology.ai',
 ]);
+
+// Via builder
+$liontech = Client::builder()
+    ->accessToken('your_sandbox_token')
+    ->sandbox()
+    ->build();
 ```
 
 ## Error Handling
@@ -305,20 +307,20 @@ $sdk = new LionTechSDK([
 The SDK throws typed exceptions for different error scenarios:
 
 ```php
-use LionTech\SDK\Exceptions\Auth\AuthenticationException;
-use LionTech\SDK\Exceptions\Auth\TokenExpiredException;
-use LionTech\SDK\Exceptions\Validation\ValidationException;
-use LionTech\SDK\Exceptions\ResourceNotFoundException;
-use LionTech\SDK\Exceptions\Business\ConflictException;
-use LionTech\SDK\Exceptions\RateLimitException;
-use LionTech\SDK\Exceptions\Transport\TransportException;
+use Nokimaro\LionTech\Exceptions\Auth\AuthenticationException;
+use Nokimaro\LionTech\Exceptions\Auth\TokenExpiredException;
+use Nokimaro\LionTech\Exceptions\Business\ConflictException;
+use Nokimaro\LionTech\Exceptions\RateLimitException;
+use Nokimaro\LionTech\Exceptions\ResourceNotFoundException;
+use Nokimaro\LionTech\Exceptions\Transport\TransportException;
+use Nokimaro\LionTech\Exceptions\Validation\ValidationException;
 
 try {
-    $payment = $sdk->payments()->create($request);
+    $payment = $liontech->payments()->create($request);
 } catch (TokenExpiredException $e) {
-    // Token expired, refresh and retry
-    $sdk->auth()->refreshAndApply($refreshRequest);
-    $payment = $sdk->payments()->create($request);
+    // Token expired — refresh and retry
+    $liontech->auth()->refreshAndApply($refreshRequest);
+    $payment = $liontech->payments()->create($request);
 } catch (ValidationException $e) {
     // Invalid request data
     $errors = $e->getErrors();
@@ -340,7 +342,7 @@ try {
 composer test
 
 # Run tests with coverage
-composer test:coverage
+composer test-coverage
 
 # Run static analysis
 composer phpstan
@@ -356,19 +358,21 @@ composer fix
 
 The following test cards are available in the sandbox environment:
 
-- `5522 0427 0506 6736` — Payment with 3DS (3DS OTP: `123456`)
-- `4405 6397 0401 5096` — Payment without 3DS
+| Card Number | Scenario |
+|-------------|----------|
+| `5522 0427 0506 6736` | Payment with 3DS (OTP: `123456`) |
+| `4405 6397 0401 5096` | Payment without 3DS |
 
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
+## Security
+
+If you discover a security vulnerability, please review our [Security Policy](SECURITY.md)
+and report it via [GitHub Security Advisories](https://github.com/nokimaro/liontech-php-sdk/security/advisories/new).
+**Do not** open a public issue.
+
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Support
-
-- Documentation: [docs/api.json](docs/api.json)
-- Issues: [GitHub Issues](https://github.com/nokimaro/liontech-php-sdk/issues)
-- Repository: [nokimaro/liontech-php-sdk](https://github.com/nokimaro/liontech-php-sdk)
+The MIT License (MIT). Please see [LICENSE.md](LICENSE.md) for more information.
