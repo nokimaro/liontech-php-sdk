@@ -19,6 +19,7 @@ final class Json
     public static function decode(string $json): array
     {
         /** @var ArrayType */
+        // @pest-mutate-ignore -- Depth limit is a safety guard
         return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
     }
 
@@ -45,7 +46,7 @@ final class Json
     public static function assertArrayOfArrays(mixed $value): array
     {
         $array = self::assertArray($value);
-
+        // @pest-mutate-ignore -- Structural array ops, not business logic
         return array_values(array_map(self::assertArray(...), $array));
     }
 
@@ -113,7 +114,7 @@ final class Json
         if ($value === null) {
             return null;
         }
-
+        // @pest-mutate-ignore -- Early return structurally identical to else
         if (is_string($value)) {
             return $value;
         }

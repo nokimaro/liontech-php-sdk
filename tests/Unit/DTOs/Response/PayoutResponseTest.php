@@ -213,3 +213,30 @@ it('is immutable', function (): void {
     expect($reflection->isReadOnly())
         ->toBeTrue();
 });
+
+it('handles status as string value', function (): void {
+    $data = [
+        'payoutId' => 'payout_123',
+        'amount' => ['value' => '500.00', 'currency' => 'USD'],
+        'status' => 'SUCCEEDED',
+        'createdAt' => '2024-01-01T00:00:00Z',
+    ];
+
+    $response = PayoutResponse::fromArray($data);
+
+    expect($response->status)->toBe(PayoutStatus::SUCCEEDED);
+});
+
+it('checks is successful for declined status', function (): void {
+    $data = [
+        'payoutId' => 'payout_123',
+        'amount' => ['value' => '500.00', 'currency' => 'USD'],
+        'status' => 'DECLINED',
+        'createdAt' => '2024-01-01T00:00:00Z',
+    ];
+
+    $response = PayoutResponse::fromArray($data);
+
+    expect($response->isFinal())->toBeTrue();
+    expect($response->isSuccessful())->toBeFalse();
+});

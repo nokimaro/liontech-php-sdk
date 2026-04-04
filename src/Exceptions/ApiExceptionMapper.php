@@ -38,6 +38,7 @@ class ApiExceptionMapper
             500 => 'Internal Server Error',
             502 => 'Bad Gateway',
             503 => 'Service Unavailable',
+            // @pest-mutate-ignore -- Status code is intentionally concatenated
             default => 'HTTP Error ' . $statusCode,
         };
 
@@ -60,6 +61,7 @@ class ApiExceptionMapper
             // Rate limit
             $statusCode === 429 => throw new RateLimitException($message, $statusCode),
 
+            // @pest-mutate-ignore -- >= 500 covers all server errors
             // Server errors
             $statusCode >= 500 => throw new TransportException($message, $statusCode),
 

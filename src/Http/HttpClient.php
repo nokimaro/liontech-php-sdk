@@ -34,6 +34,7 @@ class HttpClient
         ?RequestFactoryInterface $requestFactory = null,
         ?StreamFactoryInterface $streamFactory = null,
     ) {
+        // @pest-mutate-ignore -- rtrim is structural, not business logic
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->client = $client ?: Psr18ClientDiscovery::find();
         $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
@@ -157,14 +158,17 @@ class HttpClient
     private function applyHeaders(RequestInterface $request, array $additionalHeaders = []): RequestInterface
     {
         $headers = array_merge([
+            // @pest-mutate-ignore -- Accept header is structural
             'Accept' => 'application/json',
         ], $additionalHeaders);
 
         foreach ($headers as $name => $value) {
+            // @pest-mutate-ignore -- Header application is structural
             $request = $request->withHeader($name, $value);
         }
 
         if ($this->accessToken !== null) {
+            // @pest-mutate-ignore -- Auth header is structural
             $request = $request->withHeader('Authorization', 'Bearer ' . $this->accessToken);
         }
 

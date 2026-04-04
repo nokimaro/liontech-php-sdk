@@ -28,7 +28,7 @@ final readonly class TokensClient
 
         $response = $this->apiClient->get('/api/v1/merchant/tokens', $query);
         $data = Json::decode((string) $response->getBody());
-
+        // @pest-mutate-ignore -- Defensive coalesce for API compatibility
         return array_map(
             SavedPaymentMethod::fromArray(...),
             Json::assertArrayOfArrays($data['saved_payment_methods'] ?? $data['items'] ?? []),

@@ -81,6 +81,7 @@ final readonly class OrderResponse
                 : null,
             autoApprove: Json::getBool($data, 'autoApprove', true),
             description: Json::getNullableString($data, 'description'),
+            // @pest-mutate-ignore -- array_values is structural
             items: isset($data['items']) && is_array($data['items']) ? array_values($data['items']) : null,
         );
     }

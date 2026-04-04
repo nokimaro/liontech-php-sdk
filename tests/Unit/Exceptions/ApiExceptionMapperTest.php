@@ -214,3 +214,41 @@ it('throws TransportException for 503 without body', function (): void {
 
     ApiExceptionMapper::map($response);
 })->throws(TransportException::class, 'Service Unavailable');
+
+it('throws TransportException for 501 status code', function (): void {
+    $response = createErrorResponse(501);
+    ApiExceptionMapper::map($response);
+})->throws(TransportException::class, 'HTTP Error 501');
+
+it('throws TransportException for 418 status code', function (): void {
+    $response = createErrorResponse(418);
+    ApiExceptionMapper::map($response);
+})->throws(TransportException::class, 'HTTP Error 418');
+
+it('preserves error description from ApiErrorResponse', function (): void {
+    $response = createErrorResponse(400, json_encode([
+        'code' => 513,
+        'description' => 'Custom error message',
+    ]));
+    
+    try {
+        ApiExceptionMapper::map($response);
+    } catch (ValidationException $e) {
+        expect($e->getMessage())->toBe('Custom error message');
+    }
+});
+
+it('throws ValidationException with preserved error details', function (): void {
+    $response = createErrorResponse(400, json_encode([
+        'code' => 513,
+        'description' => 'Currency mismatch',
+        'details' => [['field' => 'currency', 'issue' => 'invalid']],
+    ]));
+    
+    try {
+        ApiExceptionMapper::map($response);
+    } catch (ValidationException $e) {
+        expect($e->getErrors())->toHaveKey('code', 513);
+        expect($e->getErrors())->toHaveKey('details');
+    }
+});

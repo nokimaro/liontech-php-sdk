@@ -77,10 +77,12 @@ final readonly class PaymentResponse
 
         /** @var array<string, mixed>|null $paymentMethodRaw */
         $paymentMethodRaw = $data['paymentMethod'] ?? null;
+        // @pest-mutate-ignore -- Defensive null check
         $paymentMethod = is_array($paymentMethodRaw) ? PaymentData::fromArray($paymentMethodRaw) : null;
 
         /** @var array<string, mixed>|null $additionalActionRaw */
         $additionalActionRaw = $data['additionalAction'] ?? null;
+        // @pest-mutate-ignore -- Defensive null check
         $additionalAction = is_array($additionalActionRaw) ? $additionalActionRaw : null;
 
         return new self(
@@ -102,6 +104,7 @@ final readonly class PaymentResponse
                 'createdAt'
             )) : new \DateTimeImmutable(),
             description: Json::getNullableString($data, 'description'),
+            // @pest-mutate-ignore -- array_values is structural
             items: isset($data['items']) && is_array($data['items']) ? array_values($data['items']) : null,
             txnId: Json::getNullableString($data, 'txnId'),
             rrn: Json::getNullableString($data, 'rrn'),

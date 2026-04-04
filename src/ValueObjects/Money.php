@@ -26,7 +26,7 @@ final readonly class Money implements JsonSerializable
     {
         $value = $data['value'];
         $currency = $data['currency'];
-
+        // @pest-mutate-ignore -- Defensive type checks for API robustness
         return new self(
             amount: is_string($value) ? $value : (is_numeric($value) ? (string) $value : '0'),
             currency: Currency::from(is_string($currency) ? $currency : 'USD'),

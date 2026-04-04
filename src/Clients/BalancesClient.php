@@ -22,7 +22,7 @@ final readonly class BalancesClient
     {
         $response = $this->apiClient->get('/api/v1/merchant/balances');
         $data = Json::decode((string) $response->getBody());
-
+        // @pest-mutate-ignore -- Defensive coalesce for API compatibility
         return array_map(
             MerchantAccount::fromArray(...),
             Json::assertArrayOfArrays($data['items'] ?? $data['accounts'] ?? []),

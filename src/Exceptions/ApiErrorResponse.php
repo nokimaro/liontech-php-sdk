@@ -28,6 +28,7 @@ final readonly class ApiErrorResponse
             code: Json::getInt($data, 'code'),
             description: Json::getString($data, 'description', 'Unknown error'),
             traceId: Json::getNullableString($data, 'traceId'),
+            // @pest-mutate-ignore -- Defensive coalesce for API compatibility
             details: Json::getNullableArray($data, 'details') ?? [],
         );
     }

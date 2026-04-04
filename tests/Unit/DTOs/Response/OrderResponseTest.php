@@ -170,3 +170,45 @@ it('handles items and expireAt', function (): void {
     expect($response->paidAmount)
         ->toBeInstanceOf(Money::class);
 });
+
+it('handles expireAt as null', function (): void {
+    $data = [
+        'orderId' => 'ord_123',
+        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'status' => 'CREATED',
+        'createdAt' => '2024-01-01T12:00:00Z',
+        'expireAt' => null,
+    ];
+
+    $response = OrderResponse::fromArray($data);
+
+    expect($response->expireAt)->toBeNull();
+});
+
+it('handles items with multiple items', function (): void {
+    $data = [
+        'orderId' => 'ord_123',
+        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'status' => 'CREATED',
+        'createdAt' => '2024-01-01T12:00:00Z',
+        'items' => [['name' => 'Item 1'], ['name' => 'Item 2']],
+    ];
+
+    $response = OrderResponse::fromArray($data);
+
+    expect($response->items)->toHaveCount(2);
+});
+
+it('handles items as empty array', function (): void {
+    $data = [
+        'orderId' => 'ord_123',
+        'amount' => ['value' => '100.00', 'currency' => 'USD'],
+        'status' => 'CREATED',
+        'createdAt' => '2024-01-01T12:00:00Z',
+        'items' => [],
+    ];
+
+    $response = OrderResponse::fromArray($data);
+
+    expect($response->items)->toBe([]);
+});

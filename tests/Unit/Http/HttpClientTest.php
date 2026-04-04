@@ -228,3 +228,123 @@ it('throws transport exception on HTTP client failure', function (): void {
 
     $client->get('/test');
 })->throws(\LionTech\SDK\Exceptions\Transport\TransportException::class, 'HTTP request failed: Connection refused');
+
+it('trims trailing slash with multiple slashes', function (): void {
+    $client = new HttpClient('https://api.example.com///');
+    $reflection = new ReflectionClass($client);
+    $property = $reflection->getProperty('baseUrl');
+    $property->setAccessible(true);
+    expect($property->getValue($client))->toBe('https://api.example.com');
+});
+
+it('performs POST request without body', function (): void {
+    $stream = Mockery::mock(StreamInterface::class);
+    $stream->shouldReceive('__toString')->andReturn('{"status":"ok"}');
+
+    $response = Mockery::mock(ResponseInterface::class);
+    $response->shouldReceive('getBody')->andReturn($stream);
+    $response->shouldReceive('getStatusCode')->andReturn(200);
+
+    $request = Mockery::mock(RequestInterface::class);
+    $request->shouldReceive('withHeader')->andReturnSelf();
+    $request->shouldReceive('withBody')->andReturnSelf();
+
+    $clientMock = Mockery::mock(ClientInterface::class);
+    $clientMock->shouldReceive('sendRequest')->andReturn($response);
+
+    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
+    $requestFactory->shouldReceive('createRequest')->andReturn($request);
+
+    $streamFactory = Mockery::mock(StreamFactoryInterface::class);
+    $streamFactory->shouldReceive('createStream')->andReturn($stream);
+
+    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $result = $httpClient->post('/test');
+
+    expect($result)->toBe($response);
+});
+
+it('applies accept header on all requests', function (): void {
+    $stream = Mockery::mock(StreamInterface::class);
+    $stream->shouldReceive('__toString')->andReturn('{}');
+
+    $response = Mockery::mock(ResponseInterface::class);
+    $response->shouldReceive('getBody')->andReturn($stream);
+    $response->shouldReceive('getStatusCode')->andReturn(200);
+
+    $request = Mockery::mock(RequestInterface::class);
+    $request->shouldReceive('withHeader')
+        ->with('Accept', 'application/json')
+        ->andReturnSelf();
+    $request->shouldReceive('withHeader')
+        ->with('Authorization', Mockery::type('string'))
+        ->andReturnSelf();
+    $request->shouldReceive('withBody')->andReturnSelf();
+
+    $clientMock = Mockery::mock(ClientInterface::class);
+    $clientMock->shouldReceive('sendRequest')->andReturn($response);
+
+    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
+    $requestFactory->shouldReceive('createRequest')->andReturn($request);
+
+    $streamFactory = Mockery::mock(StreamFactoryInterface::class);
+    $streamFactory->shouldReceive('createStream')->andReturn($stream);
+
+    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $httpClient->setAccessToken('test_token');
+    $httpClient->get('/test');
+});
+
+it('performs DELETE request with query parameters', function (): void {
+    $stream = Mockery::mock(StreamInterface::class);
+    $stream->shouldReceive('__toString')->andReturn('{}');
+
+    $response = Mockery::mock(ResponseInterface::class);
+    $response->shouldReceive('getBody')->andReturn($stream);
+    $response->shouldReceive('getStatusCode')->andReturn(200);
+
+    $request = Mockery::mock(RequestInterface::class);
+    $request->shouldReceive('withHeader')->andReturnSelf();
+
+    $clientMock = Mockery::mock(ClientInterface::class);
+    $clientMock->shouldReceive('sendRequest')->andReturn($response);
+
+    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
+    $requestFactory->shouldReceive('createRequest')
+        ->with('DELETE', 'https://api.example.com/test?key=value')
+        ->andReturn($request);
+
+    $streamFactory = Mockery::mock(StreamFactoryInterface::class);
+
+    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $result = $httpClient->delete('/test', ['key' => 'value']);
+
+    expect($result)->toBe($response);
+});
+
+it('builds URL without query parameters', function (): void {
+    $stream = Mockery::mock(StreamInterface::class);
+    $stream->shouldReceive('__toString')->andReturn('{}');
+
+    $response = Mockery::mock(ResponseInterface::class);
+    $response->shouldReceive('getBody')->andReturn($stream);
+    $response->shouldReceive('getStatusCode')->andReturn(200);
+
+    $request = Mockery::mock(RequestInterface::class);
+    $request->shouldReceive('withHeader')->andReturnSelf();
+
+    $clientMock = Mockery::mock(ClientInterface::class);
+    $clientMock->shouldReceive('sendRequest')->andReturn($response);
+
+    $requestFactory = Mockery::mock(RequestFactoryInterface::class);
+    $requestFactory->shouldReceive('createRequest')
+        ->with('GET', 'https://api.example.com/test')
+        ->andReturn($request);
+
+    $streamFactory = Mockery::mock(StreamFactoryInterface::class);
+
+    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $result = $httpClient->get('/test');
+
+    expect($result)->toBe($response);
+});

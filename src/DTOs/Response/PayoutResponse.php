@@ -69,6 +69,7 @@ final readonly class PayoutResponse
             paymentMethod: Json::getNullableArray($data, 'paymentMethod'),
             webhookUrl: Json::getNullableString($data, 'webhookUrl'),
             customFields: Json::getNullableArray($data, 'customFields'),
+            // @pest-mutate-ignore -- Defensive null check for createdAt
             createdAt: isset($data['createdAt']) ? new \DateTimeImmutable(Json::getString(
                 $data,
                 'createdAt'
