@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\PayoutsClient;
-use LionTech\SDK\DTOs\Request\CreatePayoutRequest;
-use LionTech\SDK\DTOs\Response\PayoutResponse;
-use LionTech\SDK\Enums\PayoutStatus;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\EncryptedCardData;
-use LionTech\SDK\ValueObjects\Money;
-use LionTech\SDK\ValueObjects\PaymentData;
+use Nokimaro\LionTech\Clients\PayoutsClient;
+use Nokimaro\LionTech\Enums\PayoutStatus;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Requests\CreatePayoutRequest;
+use Nokimaro\LionTech\Responses\PayoutResponse;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
+use Nokimaro\LionTech\ValueObjects\Money;
+use Nokimaro\LionTech\ValueObjects\PaymentData;
 
 function createPayoutsClient(): array
 {

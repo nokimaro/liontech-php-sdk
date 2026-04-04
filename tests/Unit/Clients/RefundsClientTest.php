@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\RefundsClient;
-use LionTech\SDK\DTOs\Request\CreateRefundRequest;
-use LionTech\SDK\DTOs\Response\RefundResponse;
-use LionTech\SDK\Enums\RefundStatus;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Clients\RefundsClient;
+use Nokimaro\LionTech\Enums\RefundStatus;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Requests\CreateRefundRequest;
+use Nokimaro\LionTech\Responses\RefundResponse;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 function createRefundsClient(): array
 {

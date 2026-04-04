@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Json;
 
 it('decodes valid JSON', function (): void {
     $result = Json::decode('{"key": "value"}');

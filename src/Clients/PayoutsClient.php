@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Clients;
+namespace Nokimaro\LionTech\Clients;
 
-use LionTech\SDK\DTOs\Request\CreatePayoutRequest;
-use LionTech\SDK\DTOs\Response\PayoutResponse;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Json;
+use Nokimaro\LionTech\Requests\CreatePayoutRequest;
+use Nokimaro\LionTech\Responses\PayoutResponse;
 
 final readonly class PayoutsClient
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\ValueObjects\EncryptedCardData;
+use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
 
 it('creates encrypted card data', function (): void {
     $data = new EncryptedCardData(encryptedCardData: 'base64encodeddata', cardHolder: 'John Doe');

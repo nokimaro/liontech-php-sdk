@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Currency;
 
 it('has correct symbol for USD', function (): void {
     expect(Currency::USD->symbol())->toBe('$');

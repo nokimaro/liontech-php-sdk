@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 it('creates money value object', function (): void {
     $money = new Money('100.00', Currency::USD);

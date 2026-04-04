@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\ValueObjects;
+namespace Nokimaro\LionTech\ValueObjects;
 
 enum Currency: string
 {

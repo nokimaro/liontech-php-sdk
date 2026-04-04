@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Http;
+namespace Nokimaro\LionTech\Http;
 
 class TokenStore
 {

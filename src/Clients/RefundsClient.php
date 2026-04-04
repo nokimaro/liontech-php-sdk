@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Clients;
+namespace Nokimaro\LionTech\Clients;
 
-use LionTech\SDK\DTOs\Request\CreateRefundRequest;
-use LionTech\SDK\DTOs\Response\RefundResponse;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Json;
+use Nokimaro\LionTech\Requests\CreateRefundRequest;
+use Nokimaro\LionTech\Responses\RefundResponse;
 
 final readonly class RefundsClient
 {

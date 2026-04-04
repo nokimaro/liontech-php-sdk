@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\SignatureClient;
-use LionTech\SDK\Http\HttpClient;
+use Nokimaro\LionTech\Clients\SignatureClient;
+use Nokimaro\LionTech\Http\Transport;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 function createSignatureClient(): array
 {
-    $httpClient = Mockery::mock(HttpClient::class);
+    $httpClient = Mockery::mock(Transport::class);
     $signatureClient = new SignatureClient($httpClient);
 
     return [$httpClient, $signatureClient];

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Enums\PaymentStatus;
+use Nokimaro\LionTech\Enums\PaymentStatus;
 
 it('has correct payment statuses', function (): void {
     expect(PaymentStatus::cases())->toHaveCount(6);

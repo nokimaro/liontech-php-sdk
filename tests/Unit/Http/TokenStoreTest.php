@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Http\TokenStore;
+use Nokimaro\LionTech\Http\TokenStore;
 
 it('stores and returns tokens', function (): void {
     $store = new TokenStore('access_123', 'refresh_456');

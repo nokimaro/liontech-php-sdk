@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Exceptions\Auth;
+namespace Nokimaro\LionTech\Exceptions\Auth;
 
 class TokenExpiredException extends AuthenticationException
 {

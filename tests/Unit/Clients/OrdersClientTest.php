@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\OrdersClient;
-use LionTech\SDK\DTOs\Request\CreateOrderRequest;
-use LionTech\SDK\DTOs\Response\OrderResponse;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Clients\OrdersClient;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Requests\CreateOrderRequest;
+use Nokimaro\LionTech\Responses\OrderResponse;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 function createOrdersClient(): array
 {

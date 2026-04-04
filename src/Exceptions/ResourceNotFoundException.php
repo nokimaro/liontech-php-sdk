@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Exceptions;
+namespace Nokimaro\LionTech\Exceptions;
 
 class ResourceNotFoundException extends SdkException
 {

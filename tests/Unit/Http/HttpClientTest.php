@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Http\HttpClient;
-use LionTech\SDK\Http\ResponseMiddleware;
+use Nokimaro\LionTech\Http\ResponseMiddleware;
+use Nokimaro\LionTech\Http\Transport;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
-function createHttpClientMocks(): array
+function createTransportMocks(): array
 {
     $httpClient = Mockery::mock(ClientInterface::class);
     $requestFactory = Mockery::mock(RequestFactoryInterface::class);
@@ -42,10 +42,10 @@ function createHttpClientMocks(): array
 }
 
 it('creates with default factories', function (): void {
-    $client = new HttpClient('https://api.example.com');
+    $client = new Transport('https://api.example.com');
 
     expect($client)
-        ->toBeInstanceOf(HttpClient::class);
+        ->toBeInstanceOf(Transport::class);
 });
 
 it('creates with custom dependencies', function (): void {
@@ -53,14 +53,14 @@ it('creates with custom dependencies', function (): void {
     $requestFactory = Mockery::mock(RequestFactoryInterface::class);
     $streamFactory = Mockery::mock(StreamFactoryInterface::class);
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
 
     expect($client)
-        ->toBeInstanceOf(HttpClient::class);
+        ->toBeInstanceOf(Transport::class);
 });
 
 it('sets and gets access token', function (): void {
-    $client = new HttpClient('https://api.example.com');
+    $client = new Transport('https://api.example.com');
 
     expect($client->getAccessToken())
         ->toBeNull();
@@ -72,7 +72,7 @@ it('sets and gets access token', function (): void {
 });
 
 it('trims trailing slash from base url', function (): void {
-    $client = new HttpClient('https://api.example.com/');
+    $client = new Transport('https://api.example.com/');
 
     $result = $client->getAccessToken();
     expect($result)
@@ -80,9 +80,9 @@ it('trims trailing slash from base url', function (): void {
 });
 
 it('performs GET request', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $result = $client->get('/test', [
         'key' => 'value',
     ]);
@@ -92,9 +92,9 @@ it('performs GET request', function (): void {
 });
 
 it('performs POST request with null data', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $result = $client->post('/test');
 
     expect($result)
@@ -102,9 +102,9 @@ it('performs POST request with null data', function (): void {
 });
 
 it('performs POST request with JsonSerializable data', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
 
     $data = new class() implements JsonSerializable {
         public function jsonSerialize(): array
@@ -122,9 +122,9 @@ it('performs POST request with JsonSerializable data', function (): void {
 });
 
 it('performs POST request with array data', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $result = $client->post('/test', [
         'key' => 'value',
     ]);
@@ -134,9 +134,9 @@ it('performs POST request with array data', function (): void {
 });
 
 it('performs PUT request', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $result = $client->put('/test', [
         'key' => 'value',
     ]);
@@ -146,9 +146,9 @@ it('performs PUT request', function (): void {
 });
 
 it('performs DELETE request', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $result = $client->delete('/test', [
         'key' => 'value',
     ]);
@@ -158,14 +158,14 @@ it('performs DELETE request', function (): void {
 });
 
 it('applies response middleware', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
     $modifiedResponse = Mockery::mock(ResponseInterface::class);
     $modifiedResponse->shouldReceive('getStatusCode')
         ->andReturn(200);
 
     $middleware = new ResponseMiddleware(static fn () => $modifiedResponse);
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $client->setResponseMiddleware($middleware);
     $result = $client->get('/test');
 
@@ -174,9 +174,9 @@ it('applies response middleware', function (): void {
 });
 
 it('adds authorization header when token is set', function (): void {
-    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createHttpClientMocks();
+    [$httpClient, $requestFactory, $streamFactory, $request, $stream, $response] = createTransportMocks();
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
     $client->setAccessToken('token_123');
     $result = $client->get('/test');
 
@@ -206,10 +206,10 @@ it('throws exception on HTTP error response', function (): void {
     $stream->shouldReceive('__toString')
         ->andReturn('{}');
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
 
     $client->get('/test');
-})->throws(\LionTech\SDK\Exceptions\Validation\ValidationException::class);
+})->throws(\Nokimaro\LionTech\Exceptions\Validation\ValidationException::class);
 
 it('throws transport exception on HTTP client failure', function (): void {
     $httpClient = Mockery::mock(ClientInterface::class);
@@ -224,13 +224,16 @@ it('throws transport exception on HTTP client failure', function (): void {
     $httpClient->shouldReceive('sendRequest')
         ->andThrow(new \Exception('Connection refused'));
 
-    $client = new HttpClient('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
+    $client = new Transport('https://api.example.com', $httpClient, $requestFactory, $streamFactory);
 
     $client->get('/test');
-})->throws(\LionTech\SDK\Exceptions\Transport\TransportException::class, 'HTTP request failed: Connection refused');
+})->throws(
+    \Nokimaro\LionTech\Exceptions\Transport\TransportException::class,
+    'HTTP request failed: Connection refused'
+);
 
 it('trims trailing slash with multiple slashes', function (): void {
-    $client = new HttpClient('https://api.example.com///');
+    $client = new Transport('https://api.example.com///');
     $reflection = new ReflectionClass($client);
     $property = $reflection->getProperty('baseUrl');
     expect($property->getValue($client))
@@ -266,7 +269,7 @@ it('performs POST request without body', function (): void {
     $streamFactory->shouldReceive('createStream')
         ->andReturn($stream);
 
-    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $httpClient = new Transport('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
     $result = $httpClient->post('/test');
 
     expect($result)
@@ -306,7 +309,7 @@ it('applies accept header on all requests', function (): void {
     $streamFactory->shouldReceive('createStream')
         ->andReturn($stream);
 
-    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $httpClient = new Transport('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
     $httpClient->setAccessToken('test_token');
     $httpClient->get('/test');
 });
@@ -337,7 +340,7 @@ it('performs DELETE request with query parameters', function (): void {
 
     $streamFactory = Mockery::mock(StreamFactoryInterface::class);
 
-    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $httpClient = new Transport('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
     $result = $httpClient->delete('/test', [
         'key' => 'value',
     ]);
@@ -372,7 +375,7 @@ it('builds URL without query parameters', function (): void {
 
     $streamFactory = Mockery::mock(StreamFactoryInterface::class);
 
-    $httpClient = new HttpClient('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
+    $httpClient = new Transport('https://api.example.com', $clientMock, $requestFactory, $streamFactory);
     $result = $httpClient->get('/test');
 
     expect($result)

@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Http;
+namespace Nokimaro\LionTech\Http;
 
-use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
-use LionTech\SDK\Exceptions\Auth\AuthenticationException;
-use LionTech\SDK\Exceptions\Auth\TokenExpiredException;
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Exceptions\Auth\AuthenticationException;
+use Nokimaro\LionTech\Exceptions\Auth\TokenExpiredException;
+use Nokimaro\LionTech\Json;
+use Nokimaro\LionTech\Responses\MerchantTokensRefreshResponse;
 use Psr\Http\Message\ResponseInterface;
 
 class ApiClient
 {
-    private readonly HttpClient $merchantClient;
+    private readonly Transport $merchantClient;
 
-    private readonly HttpClient $secureClient;
+    private readonly Transport $secureClient;
 
     private readonly TokenStore $tokenStore;
 
-    private function __construct(string $accessToken, ?string $refreshToken, HttpClient $merchant, HttpClient $secure)
+    private function __construct(string $accessToken, ?string $refreshToken, Transport $merchant, Transport $secure)
     {
         $this->merchantClient = $merchant;
         $this->secureClient = $secure;
@@ -30,19 +30,19 @@ class ApiClient
         ?string $refreshToken = null,
         ?string $baseUrl = null,
         ?string $secureUrl = null,
-        ?HttpClient $httpClient = null
+        ?Transport $httpClient = null
     ): self {
-        $base = $httpClient ?? new HttpClient($baseUrl ?? 'https://api.liontechnology.ai');
+        $base = $httpClient ?? new Transport($baseUrl ?? 'https://api.liontechnology.ai');
         $client = $base->client();
         $rf = $base->requestFactory();
         $sf = $base->streamFactory();
-        $merchant = new HttpClient(
+        $merchant = new Transport(
             baseUrl: $baseUrl ?? 'https://api.liontechnology.ai',
             client: $client,
             requestFactory: $rf,
             streamFactory: $sf
         );
-        $secure = new HttpClient(
+        $secure = new Transport(
             baseUrl: $secureUrl ?? 'https://secure.liontechnology.ai',
             client: $client,
             requestFactory: $rf,
@@ -51,12 +51,12 @@ class ApiClient
         return new self($accessToken, $refreshToken, $merchant, $secure);
     }
 
-    public function merchantClient(): HttpClient
+    public function merchantClient(): Transport
     {
         return $this->merchantClient;
     }
 
-    public function secureClient(): HttpClient
+    public function secureClient(): Transport
     {
         return $this->secureClient;
     }
@@ -98,7 +98,7 @@ class ApiClient
         if ($refresh === null) {
             throw new AuthenticationException('No refresh token available');
         }
-        $req = new \LionTech\SDK\DTOs\Request\RefreshTokenRequest($refresh);
+        $req = new \Nokimaro\LionTech\Requests\RefreshTokenRequest($refresh);
         $resp = $this->secureClient->post('/api/v1/merchant/auth/tokens/refresh', $req);
         $tokens = MerchantTokensRefreshResponse::fromArray(Json::decode((string) $resp->getBody()));
         $this->tokenStore->update($tokens->accessToken, $tokens->refreshToken);

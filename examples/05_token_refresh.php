@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use LionTech\SDK\DTOs\Request\RefreshTokenRequest;
-use LionTech\SDK\LionTechSDK;
+use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Requests\RefreshTokenRequest;
 
 // Initialize the SDK with refresh token
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
 ]);
 
@@ -26,7 +26,7 @@ $refreshRequest = new RefreshTokenRequest(
 
 try {
     // Refresh tokens and automatically apply them to the SDK
-    $response = $sdk->auth()
+    $response = $liontech->auth()
         ->refreshAndApply($refreshRequest);
 
     echo "Tokens refreshed successfully!\n";

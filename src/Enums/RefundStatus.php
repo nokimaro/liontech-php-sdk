@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Enums;
+namespace Nokimaro\LionTech\Enums;
 
 enum RefundStatus: string
 {

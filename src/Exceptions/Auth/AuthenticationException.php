@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Exceptions\Auth;
+namespace Nokimaro\LionTech\Exceptions\Auth;
 
-use LionTech\SDK\Exceptions\SdkException;
+use Nokimaro\LionTech\Exceptions\SdkException;
 
 class AuthenticationException extends SdkException
 {

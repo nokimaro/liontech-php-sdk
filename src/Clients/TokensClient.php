@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Clients;
+namespace Nokimaro\LionTech\Clients;
 
-use LionTech\SDK\DTOs\Response\SavedPaymentMethod;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Json;
+use Nokimaro\LionTech\Responses\SavedPaymentMethod;
 
 final readonly class TokensClient
 {

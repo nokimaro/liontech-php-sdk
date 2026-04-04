@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\ValueObjects;
+namespace Nokimaro\LionTech\ValueObjects;
 
 use JsonSerializable;
-use LionTech\SDK\DTOs\Request\SbpData;
-use LionTech\SDK\Enums\PaymentMethodType;
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Enums\PaymentMethodType;
+use Nokimaro\LionTech\Json;
+use Nokimaro\LionTech\Requests\SbpData;
 
 final readonly class PaymentData implements JsonSerializable
 {

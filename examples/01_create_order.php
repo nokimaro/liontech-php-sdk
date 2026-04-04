@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use LionTech\SDK\DTOs\Request\CreateOrderRequest;
-use LionTech\SDK\DTOs\Request\CustomerData;
-use LionTech\SDK\LionTechSDK;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Requests\CreateOrderRequest;
+use Nokimaro\LionTech\Requests\CustomerData;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 // Initialize the SDK
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
     // For sandbox environment:
     // 'base_url' => 'https://api.sandbox.liontechnology.ai',
@@ -39,7 +39,7 @@ $orderRequest = new CreateOrderRequest(
 );
 
 try {
-    $order = $sdk->orders()
+    $order = $liontech->orders()
         ->create($orderRequest);
 
     echo "Order created successfully!\n";
@@ -52,7 +52,7 @@ try {
     }
 
     // Retrieve the order
-    $retrievedOrder = $sdk->orders()
+    $retrievedOrder = $liontech->orders()
         ->get($order->orderId);
     echo "\nRetrieved order: {$retrievedOrder->orderId}\n";
 } catch (\Exception $e) {

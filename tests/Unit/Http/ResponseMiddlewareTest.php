@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Http\ResponseMiddleware;
+use Nokimaro\LionTech\Http\ResponseMiddleware;
 use Psr\Http\Message\ResponseInterface;
 
 it('invokes middleware handler', function (): void {

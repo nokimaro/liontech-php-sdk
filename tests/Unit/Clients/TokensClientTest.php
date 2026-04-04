@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\TokensClient;
-use LionTech\SDK\DTOs\Response\SavedPaymentMethod;
-use LionTech\SDK\Http\ApiClient;
+use Nokimaro\LionTech\Clients\TokensClient;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Responses\SavedPaymentMethod;
 
 function createTokensClient(): array
 {

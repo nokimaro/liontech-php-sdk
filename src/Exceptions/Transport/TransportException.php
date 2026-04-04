@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Exceptions\Transport;
+namespace Nokimaro\LionTech\Exceptions\Transport;
 
-use LionTech\SDK\Exceptions\SdkException;
+use Nokimaro\LionTech\Exceptions\SdkException;
 
 class TransportException extends SdkException
 {

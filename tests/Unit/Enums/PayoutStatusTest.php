@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Enums\PayoutStatus;
+use Nokimaro\LionTech\Enums\PayoutStatus;
 
 it('has correct values', function (): void {
     expect(PayoutStatus::PENDING->value)->toBe('PENDING');

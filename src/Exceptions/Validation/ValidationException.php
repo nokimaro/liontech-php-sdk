@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Exceptions\Validation;
+namespace Nokimaro\LionTech\Exceptions\Validation;
 
-use LionTech\SDK\Exceptions\SdkException;
+use Nokimaro\LionTech\Exceptions\SdkException;
 
 class ValidationException extends SdkException
 {

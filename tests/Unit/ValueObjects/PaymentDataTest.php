@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\DTOs\Request\SbpData;
-use LionTech\SDK\Enums\PaymentMethodType;
-use LionTech\SDK\ValueObjects\EncryptedCardData;
-use LionTech\SDK\ValueObjects\PaymentData;
+use Nokimaro\LionTech\Enums\PaymentMethodType;
+use Nokimaro\LionTech\Requests\SbpData;
+use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
+use Nokimaro\LionTech\ValueObjects\PaymentData;
 
 it('creates card payment data using factory', function (): void {
     $cardData = new EncryptedCardData(encryptedCardData: 'encrypted', cardHolder: 'John Doe');

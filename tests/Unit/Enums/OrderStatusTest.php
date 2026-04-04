@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Enums\OrderStatus;
+use Nokimaro\LionTech\Enums\OrderStatus;
 
 it('has correct order statuses', function (): void {
     expect(OrderStatus::cases())->toHaveCount(6);

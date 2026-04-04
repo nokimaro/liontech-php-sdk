@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Clients;
+namespace Nokimaro\LionTech\Clients;
 
-use LionTech\SDK\Http\HttpClient;
-use LionTech\SDK\Json;
+use Nokimaro\LionTech\Http\Transport;
+use Nokimaro\LionTech\Json;
 
 final readonly class SignatureClient
 {
     public function __construct(
-        private HttpClient $httpClient,
+        private Transport $httpClient,
     ) {
     }
 

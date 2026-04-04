@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Clients;
+namespace Nokimaro\LionTech\Clients;
 
-use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
-use LionTech\SDK\Http\ApiClient;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Responses\MerchantTokensRefreshResponse;
 
 final readonly class AuthClient
 {

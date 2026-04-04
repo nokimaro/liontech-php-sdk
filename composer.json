@@ -42,12 +42,12 @@
     },
     "autoload": {
         "psr-4": {
-            "LionTech\\SDK\\": "src/"
+            "Nokimaro\\LionTech\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LionTech\\SDK\\Tests\\": "tests/"
+            "Nokimaro\\LionTech\\Tests\\": "tests/"
         }
     },
     "config": {

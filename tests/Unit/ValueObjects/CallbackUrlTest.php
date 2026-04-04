@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\ValueObjects\CallbackUrl;
+use Nokimaro\LionTech\ValueObjects\CallbackUrl;
 
 it('creates valid callback URL', function (): void {
     $url = new CallbackUrl('https://example.com/callback');

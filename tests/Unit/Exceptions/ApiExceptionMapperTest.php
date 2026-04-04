@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Exceptions\ApiExceptionMapper;
-use LionTech\SDK\Exceptions\Auth\AuthenticationException;
-use LionTech\SDK\Exceptions\Auth\TokenExpiredException;
-use LionTech\SDK\Exceptions\Business\ConflictException;
-use LionTech\SDK\Exceptions\RateLimitException;
-use LionTech\SDK\Exceptions\ResourceNotFoundException;
-use LionTech\SDK\Exceptions\Transport\TransportException;
-use LionTech\SDK\Exceptions\Validation\ValidationException;
+use Nokimaro\LionTech\Exceptions\Auth\AuthenticationException;
+use Nokimaro\LionTech\Exceptions\Auth\TokenExpiredException;
+use Nokimaro\LionTech\Exceptions\Business\ConflictException;
+use Nokimaro\LionTech\Exceptions\RateLimitException;
+use Nokimaro\LionTech\Exceptions\ResourceNotFoundException;
+use Nokimaro\LionTech\Exceptions\Transport\TransportException;
+use Nokimaro\LionTech\Exceptions\Validation\ValidationException;
+use Nokimaro\LionTech\Http\ApiExceptionMapper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 

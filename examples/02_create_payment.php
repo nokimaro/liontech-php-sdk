@@ -13,21 +13,21 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use LionTech\SDK\DTOs\Request\CreatePaymentRequest;
-use LionTech\SDK\DTOs\Request\CustomerData;
-use LionTech\SDK\LionTechSDK;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\EncryptedCardData;
-use LionTech\SDK\ValueObjects\Money;
-use LionTech\SDK\ValueObjects\PaymentData;
+use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Requests\CreatePaymentRequest;
+use Nokimaro\LionTech\Requests\CustomerData;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
+use Nokimaro\LionTech\ValueObjects\Money;
+use Nokimaro\LionTech\ValueObjects\PaymentData;
 
 // Initialize the SDK
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
 ]);
 
 // Encrypt card data
-$encryptor = $sdk->cardEncryptor();
+$encryptor = $liontech->cardEncryptor();
 $encryptedCard = $encryptor->encryptForPayment([
     'pan' => '4405639704015096', // Test card (no 3DS)
     'cvv' => '123',
@@ -53,7 +53,7 @@ $paymentRequest = new CreatePaymentRequest(
 );
 
 try {
-    $payment = $sdk->payments()
+    $payment = $liontech->payments()
         ->create($paymentRequest);
 
     echo "Payment created!\n";

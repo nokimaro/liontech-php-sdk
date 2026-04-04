@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use LionTech\SDK\LionTechSDK;
+use Nokimaro\LionTech\Client;
 
 // Initialize the SDK
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
 ]);
 
@@ -25,7 +25,7 @@ try {
     echo "Account Balances:\n";
     echo str_repeat('-', 50) . "\n";
 
-    $balances = $sdk->balances()
+    $balances = $liontech->balances()
         ->list();
 
     foreach ($balances as $account) {
@@ -40,7 +40,7 @@ try {
     echo "\nSaved Payment Methods:\n";
     echo str_repeat('-', 50) . "\n";
 
-    $tokens = $sdk->tokens()
+    $tokens = $liontech->tokens()
         ->list(accountId: 'acc_123');
 
     foreach ($tokens as $token) {
@@ -54,7 +54,7 @@ try {
     }
 
     // Delete a saved payment method
-    // $sdk->tokens()->delete('token_id_here');
+    // $liontech->tokens()->delete('token_id_here');
     // echo "Token deleted successfully\n";
 
 } catch (\Exception $e) {

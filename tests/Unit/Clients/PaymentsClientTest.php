@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\PaymentsClient;
-use LionTech\SDK\DTOs\Request\CreatePaymentRequest;
-use LionTech\SDK\DTOs\Response\PaymentResponse;
-use LionTech\SDK\DTOs\Response\RefundResponse;
-use LionTech\SDK\Enums\PaymentStatus;
-use LionTech\SDK\Http\ApiClient;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\EncryptedCardData;
-use LionTech\SDK\ValueObjects\Money;
-use LionTech\SDK\ValueObjects\PaymentData;
+use Nokimaro\LionTech\Clients\PaymentsClient;
+use Nokimaro\LionTech\Enums\PaymentStatus;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Requests\CreatePaymentRequest;
+use Nokimaro\LionTech\Responses\PaymentResponse;
+use Nokimaro\LionTech\Responses\RefundResponse;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
+use Nokimaro\LionTech\ValueObjects\Money;
+use Nokimaro\LionTech\ValueObjects\PaymentData;
 
 function createPaymentsClient(): array
 {

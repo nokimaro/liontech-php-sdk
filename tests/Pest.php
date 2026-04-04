@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\DTOs\Response\OrderResponse;
-use LionTech\SDK\DTOs\Response\PaymentResponse;
-use LionTech\SDK\Enums\OrderStatus;
-use LionTech\SDK\Enums\PaymentStatus;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Enums\OrderStatus;
+use Nokimaro\LionTech\Enums\PaymentStatus;
+use Nokimaro\LionTech\Responses\OrderResponse;
+use Nokimaro\LionTech\Responses\PaymentResponse;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;

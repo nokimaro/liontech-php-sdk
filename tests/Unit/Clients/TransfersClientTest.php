@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\TransfersClient;
-use LionTech\SDK\Http\ApiClient;
+use Nokimaro\LionTech\Clients\TransfersClient;
+use Nokimaro\LionTech\Http\ApiClient;
 
 function createTransfersClient(): array
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\BalancesClient;
-use LionTech\SDK\DTOs\Response\MerchantAccount;
-use LionTech\SDK\Http\ApiClient;
+use Nokimaro\LionTech\Clients\BalancesClient;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Responses\MerchantAccount;
 
 function createBalancesClient(): array
 {

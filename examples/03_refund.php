@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use LionTech\SDK\DTOs\Request\CreateRefundRequest;
-use LionTech\SDK\LionTechSDK;
-use LionTech\SDK\ValueObjects\Currency;
-use LionTech\SDK\ValueObjects\Money;
+use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Requests\CreateRefundRequest;
+use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
 // Initialize the SDK
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
 ]);
 
@@ -31,7 +31,7 @@ $refundRequest = new CreateRefundRequest(
 );
 
 try {
-    $refund = $sdk->refunds()
+    $refund = $liontech->refunds()
         ->create($refundRequest);
 
     echo "Refund created!\n";
@@ -41,12 +41,12 @@ try {
     echo "Status: {$refund->status->value}\n";
 
     // Retrieve the refund
-    $retrievedRefund = $sdk->refunds()
+    $retrievedRefund = $liontech->refunds()
         ->get($refund->refundId);
     echo "\nRetrieved refund: {$retrievedRefund->refundId}\n";
 
     // List all refunds for the payment
-    $refunds = $sdk->payments()
+    $refunds = $liontech->payments()
         ->getRefunds('pay_123');
     echo "\nTotal refunds for payment: " . count($refunds) . "\n";
 

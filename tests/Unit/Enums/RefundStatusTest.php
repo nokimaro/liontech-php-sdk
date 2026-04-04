@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Enums\RefundStatus;
+use Nokimaro\LionTech\Enums\RefundStatus;
 
 it('has correct values', function (): void {
     expect(RefundStatus::PENDING->value)->toBe('PENDING');

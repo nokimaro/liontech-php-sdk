@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use LionTech\SDK\LionTechSDK;
+use Nokimaro\LionTech\Client;
 
 // Initialize the SDK
-$sdk = new LionTechSDK([
+$liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
 ]);
 
@@ -24,7 +24,7 @@ $payload = file_get_contents('php://input');
 $headers = getallheaders();
 
 // Verify the webhook signature
-$verifier = $sdk->webhookVerifier();
+$verifier = $liontech->webhookVerifier();
 
 try {
     if ($verifier->verify($headers, $payload)) {

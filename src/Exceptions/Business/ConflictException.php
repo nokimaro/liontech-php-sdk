@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LionTech\SDK\Exceptions\Business;
+namespace Nokimaro\LionTech\Exceptions\Business;
 
-use LionTech\SDK\Exceptions\SdkException;
+use Nokimaro\LionTech\Exceptions\SdkException;
 
 class ConflictException extends SdkException
 {

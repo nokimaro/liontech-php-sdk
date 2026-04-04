@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Clients\AuthClient;
-use LionTech\SDK\DTOs\Response\MerchantTokensRefreshResponse;
-use LionTech\SDK\Http\ApiClient;
+use Nokimaro\LionTech\Clients\AuthClient;
+use Nokimaro\LionTech\Http\ApiClient;
+use Nokimaro\LionTech\Responses\MerchantTokensRefreshResponse;
 
 function createAuthClient(): array
 {
@@ -39,7 +39,7 @@ it('refreshes tokens', function (): void {
 
 it('returns refresh token', function (): void {
     [$apiClient, $authClient] = createAuthClient();
-    $tokenStore = Mockery::mock(\LionTech\SDK\Http\TokenStore::class);
+    $tokenStore = Mockery::mock(\Nokimaro\LionTech\Http\TokenStore::class);
     $tokenStore->shouldReceive('refreshToken')
         ->andReturn('refresh_token_123');
     $apiClient->shouldReceive('tokenStore')
@@ -53,7 +53,7 @@ it('returns refresh token', function (): void {
 
 it('throws when no refresh token configured', function (): void {
     [$apiClient, $authClient] = createAuthClient();
-    $tokenStore = Mockery::mock(\LionTech\SDK\Http\TokenStore::class);
+    $tokenStore = Mockery::mock(\Nokimaro\LionTech\Http\TokenStore::class);
     $tokenStore->shouldReceive('refreshToken')
         ->andReturn(null);
     $apiClient->shouldReceive('tokenStore')

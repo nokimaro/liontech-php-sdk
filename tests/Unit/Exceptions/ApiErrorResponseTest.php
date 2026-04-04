@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LionTech\SDK\Exceptions\ApiErrorResponse;
+use Nokimaro\LionTech\Http\ApiErrorResponse;
 
 it('creates API error response', function (): void {
     $error = new ApiErrorResponse(
