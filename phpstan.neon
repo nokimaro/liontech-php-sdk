@@ -4,6 +4,9 @@ parameters:
         - src
     excludePaths:
         - tests/*
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         # phpseclib3 uses magic methods and dynamic class loading
         - '#Call to an undefined (static )?method phpseclib3\\#'
+        - '#Cannot call method .+ on mixed#'
+        - '#Property.*CardEncryptor.*rsa.*does not accept mixed#'

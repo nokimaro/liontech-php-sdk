@@ -16,10 +16,11 @@ final readonly class CardEncryptor
     ) {
         $key = PublicKeyLoader::load($this->publicKeyPem);
         assert($key instanceof RSA);
-        $this->rsa = $key;
-        $this->rsa->setEncryptionMode(RSA::ENCRYPTION_OAEP);
-        $this->rsa->setHash('sha256');
-        $this->rsa->setMGFHash('sha256');
+
+        // phpseclib3 PublicKey uses immutable fluent API for configuration
+        $this->rsa = $key->withPadding(RSA::ENCRYPTION_OAEP)
+            ->withHash('sha256')
+            ->withMGFHash('sha256');
     }
 
     /**
