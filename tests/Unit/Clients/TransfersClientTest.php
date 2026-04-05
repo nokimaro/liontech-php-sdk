@@ -21,7 +21,14 @@ it('creates a transfer', function (): void {
             'amount' => '100.00',
         ])
         ->andReturn(mockResponse([
-            'transferId' => 'tr_123',
+            'type' => 'TRANSFER',
+            'object' => [
+                'transferId' => 'tr_123',
+            ],
+            'error' => [
+                'code' => 0,
+                'description' => 'No error.',
+            ],
         ]));
 
     $result = $transfersClient->create([
@@ -40,7 +47,14 @@ it('gets a transfer', function (): void {
     $apiClient->shouldReceive('get')
         ->with('/api/v1/merchant/transfers/tr_123')
         ->andReturn(mockResponse([
-            'transferId' => 'tr_123',
+            'type' => 'TRANSFER',
+            'object' => [
+                'transferId' => 'tr_123',
+            ],
+            'error' => [
+                'code' => 0,
+                'description' => 'No error.',
+            ],
         ]));
 
     $result = $transfersClient->get('tr_123');

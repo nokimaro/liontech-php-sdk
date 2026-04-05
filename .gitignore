@@ -32,6 +32,15 @@ Thumbs.db
 # Coverage
 /.coverage
 /coverage/
+/docs/
+
+#ai
 AGENTS.md
 QWEN.md
-/docs/
+CLAUDE.md
+
+# E2E tests and local tooling — local only, never commit
+/tests/E2E/
+/phpunit.e2e.xml
+/storage/
+/bin/

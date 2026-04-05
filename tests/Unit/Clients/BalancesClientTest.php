@@ -26,7 +26,10 @@ it('lists balances', function (): void {
                     'accountTypeId' => 'type_1',
                     'mstId' => 'mst_1',
                     'currency' => 'USD',
-                    'balance' => '1000.00',
+                    'balance' => [
+                        'value' => '1000.00',
+                        'currency' => 'USD',
+                    ],
                     'createdAt' => '2024-01-01T00:00:00Z',
                     'updatedAt' => '2024-01-02T00:00:00Z',
                     'validOn' => '2024-01-01T00:00:00Z',
@@ -40,7 +43,7 @@ it('lists balances', function (): void {
         ->toHaveCount(1);
     expect($result[0])->toBeInstanceOf(MerchantAccount::class);
     expect($result[0]->accountId)->toBe('acc_123');
-    expect($result[0]->balance)->toBe('1000.00');
+    expect($result[0]->balance->amount)->toBe('1000.00');
 });
 
 it('handles empty balances', function (): void {

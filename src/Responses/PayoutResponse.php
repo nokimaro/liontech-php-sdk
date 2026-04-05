@@ -43,11 +43,11 @@ final readonly class PayoutResponse
      */
     public static function fromArray(array $data): self
     {
-        /** @var array<string, mixed>|string $statusRaw */
-        $statusRaw = $data['status'];
+        /** @var array<string, mixed>|string|null $statusRaw */
+        $statusRaw = $data['status'] ?? null;
         $status = is_array($statusRaw)
             ? ResponseStatus::fromArray($statusRaw)
-            : new ResponseStatus(value: $statusRaw);
+            : new ResponseStatus(value: is_string($statusRaw) ? $statusRaw : '');
 
         /** @var array<string, mixed>|null $amountRaw */
         $amountRaw = $data['amount'] ?? null;

@@ -21,15 +21,22 @@ function createPayoutsClient(): array
 
 function payoutData(array $overrides = []): array
 {
-    return array_merge([
-        'payoutId' => 'payout_123',
-        'amount' => [
-            'value' => '500.00',
-            'currency' => 'USD',
+    return [
+        'type' => 'PAYOUT',
+        'object' => array_merge([
+            'payoutId' => 'payout_123',
+            'amount' => [
+                'value' => '500.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'SUCCEEDED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ], $overrides),
+        'error' => [
+            'code' => 0,
+            'description' => 'No error.',
         ],
-        'status' => 'SUCCEEDED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ], $overrides);
+    ];
 }
 
 it('creates a payout', function (): void {

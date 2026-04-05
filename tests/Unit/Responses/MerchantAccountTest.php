@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 use Nokimaro\LionTech\Responses\MerchantAccount;
 use Nokimaro\LionTech\ValueObjects\Currency;
+use Nokimaro\LionTech\ValueObjects\Money;
 
-it('creates merchant account from array', function (): void {
+it('creates merchant account from array with object balance', function (): void {
     $data = [
         'accountId' => 'acc_123',
         'accountTypeId' => 'type_1',
         'mstId' => 'mst_1',
         'currency' => 'USD',
-        'balance' => '1000.00',
+        'balance' => [
+            'value' => '1000.00',
+            'currency' => 'USD',
+        ],
         'createdAt' => '2024-01-01T00:00:00Z',
         'updatedAt' => '2024-01-02T00:00:00Z',
         'validOn' => '2024-01-01T00:00:00Z',
@@ -28,7 +32,11 @@ it('creates merchant account from array', function (): void {
     expect($account->currency)
         ->toBe(Currency::USD);
     expect($account->balance)
+        ->toBeInstanceOf(Money::class);
+    expect($account->balance->amount)
         ->toBe('1000.00');
+    expect($account->balance->currency)
+        ->toBe(Currency::USD);
     expect($account->createdAt)
         ->toBeInstanceOf(DateTimeImmutable::class);
     expect($account->updatedAt)
@@ -37,13 +45,12 @@ it('creates merchant account from array', function (): void {
         ->toBeInstanceOf(DateTimeImmutable::class);
 });
 
-it('creates merchant account with different currency', function (): void {
+it('falls back to zero balance when balance field is missing', function (): void {
     $data = [
         'accountId' => 'acc_456',
         'accountTypeId' => 'type_2',
         'mstId' => 'mst_2',
         'currency' => 'EUR',
-        'balance' => '500.00',
         'createdAt' => '2024-01-01T00:00:00Z',
         'updatedAt' => '2024-01-02T00:00:00Z',
         'validOn' => '2024-01-01T00:00:00Z',
@@ -51,10 +58,12 @@ it('creates merchant account with different currency', function (): void {
 
     $account = MerchantAccount::fromArray($data);
 
+    expect($account->balance)
+        ->toBeInstanceOf(Money::class);
+    expect($account->balance->amount)
+        ->toBe('0');
     expect($account->currency)
         ->toBe(Currency::EUR);
-    expect($account->balance)
-        ->toBe('500.00');
 });
 
 it('is immutable', function (): void {
@@ -63,7 +72,10 @@ it('is immutable', function (): void {
         'accountTypeId' => 'type_1',
         'mstId' => 'mst_1',
         'currency' => 'USD',
-        'balance' => '1000.00',
+        'balance' => [
+            'value' => '1000.00',
+            'currency' => 'USD',
+        ],
         'createdAt' => '2024-01-01T00:00:00Z',
         'updatedAt' => '2024-01-02T00:00:00Z',
         'validOn' => '2024-01-01T00:00:00Z',

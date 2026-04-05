@@ -21,28 +21,28 @@ final readonly class PaymentsClient
     {
         $response = $this->apiClient->post('/api/v1/merchant/payments', $request);
 
-        return PaymentResponse::fromArray(Json::decode((string) $response->getBody()));
+        return PaymentResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function createWithId(string $paymentId, CreatePaymentRequest $request): PaymentResponse
     {
         $response = $this->apiClient->put('/api/v1/merchant/payments/' . $paymentId, $request);
 
-        return PaymentResponse::fromArray(Json::decode((string) $response->getBody()));
+        return PaymentResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function get(string $paymentId): PaymentResponse
     {
         $response = $this->apiClient->get('/api/v1/merchant/payments/' . $paymentId);
 
-        return PaymentResponse::fromArray(Json::decode((string) $response->getBody()));
+        return PaymentResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function confirm(string $paymentId): PaymentResponse
     {
         $response = $this->apiClient->post('/api/v1/merchant/payments/' . $paymentId . '/confirm');
 
-        return PaymentResponse::fromArray(Json::decode((string) $response->getBody()));
+        return PaymentResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     /**

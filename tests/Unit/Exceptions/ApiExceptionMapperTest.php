@@ -153,7 +153,7 @@ it('uses default message when body is not valid json', function (): void {
     $response = createErrorResponse(500, 'not json');
 
     ApiExceptionMapper::map($response);
-})->throws(JsonException::class);
+})->throws(\Nokimaro\LionTech\Exceptions\Transport\TransportException::class, 'Internal Server Error');
 
 it('throws ValidationException for 400 without body', function (): void {
     $response = createErrorResponse(400);

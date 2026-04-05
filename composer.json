@@ -75,7 +75,11 @@
         "fix": [
             "@ecs:fix",
             "@rector"
-        ]
+        ],
+        "e2e": "pest --configuration=phpunit.e2e.xml --compact --bail",
+        "e2e:update": "E2E_UPDATE_FIXTURES=true pest --configuration=phpunit.e2e.xml --compact --bail",
+        "api-report": "php bin/api-report.php",
+        "api-report:stdout": "php bin/api-report.php --stdout"
     },
     "authors": [
         {

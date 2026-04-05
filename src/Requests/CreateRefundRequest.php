@@ -12,13 +12,13 @@ final readonly class CreateRefundRequest implements JsonSerializable
     /**
      * @param Money $amount Refund amount
      * @param string $paymentId Payment ID to refund
-     * @param string|null $webhookUrl Webhook URL
+     * @param string $webhookUrl Webhook URL (required by the API)
      * @param array<string, mixed>|null $customFields Custom metadata
      */
     public function __construct(
         public Money $amount,
         public string $paymentId,
-        public ?string $webhookUrl = null,
+        public string $webhookUrl,
         public ?array $customFields = null,
     ) {
     }
@@ -31,11 +31,8 @@ final readonly class CreateRefundRequest implements JsonSerializable
         $data = [
             'amount' => $this->amount->jsonSerialize(),
             'paymentId' => $this->paymentId,
+            'webhookUrl' => $this->webhookUrl,
         ];
-
-        if ($this->webhookUrl !== null) {
-            $data['webhookUrl'] = $this->webhookUrl;
-        }
 
         if ($this->customFields !== null) {
             $data['customFields'] = $this->customFields;

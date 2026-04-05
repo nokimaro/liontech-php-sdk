@@ -20,34 +20,34 @@ final readonly class OrdersClient
     {
         $response = $this->apiClient->post('/api/v1/merchant/orders', $request);
 
-        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
+        return OrderResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function createWithId(string $orderId, CreateOrderRequest $request): OrderResponse
     {
         $response = $this->apiClient->put('/api/v1/merchant/orders/' . $orderId, $request);
 
-        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
+        return OrderResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function get(string $orderId): OrderResponse
     {
         $response = $this->apiClient->get('/api/v1/merchant/orders/' . $orderId);
 
-        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
+        return OrderResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function cancel(string $orderId): OrderResponse
     {
         $response = $this->apiClient->post('/api/v1/merchant/orders/' . $orderId . '/cancel');
 
-        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
+        return OrderResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function close(string $orderId): OrderResponse
     {
         $response = $this->apiClient->post('/api/v1/merchant/orders/' . $orderId . '/close');
 
-        return OrderResponse::fromArray(Json::decode((string) $response->getBody()));
+        return OrderResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 }

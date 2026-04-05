@@ -22,15 +22,22 @@ function createPaymentsClient(): array
 
 function paymentData(array $overrides = []): array
 {
-    return array_merge([
-        'paymentId' => 'pay_123',
-        'amount' => [
-            'value' => '100.00',
-            'currency' => 'USD',
+    return [
+        'type' => 'PAYMENT',
+        'object' => array_merge([
+            'paymentId' => 'pay_123',
+            'amount' => [
+                'value' => '100.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'RECONCILED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ], $overrides),
+        'error' => [
+            'code' => 0,
+            'description' => 'No error.',
         ],
-        'status' => 'RECONCILED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ], $overrides);
+    ];
 }
 
 it('creates a payment', function (): void {
