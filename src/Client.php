@@ -6,6 +6,7 @@ namespace Nokimaro\LionTech;
 
 use Nokimaro\LionTech\Clients\AuthClient;
 use Nokimaro\LionTech\Clients\BalancesClient;
+use Nokimaro\LionTech\Clients\EncryptionKeyClient;
 use Nokimaro\LionTech\Clients\OrdersClient;
 use Nokimaro\LionTech\Clients\PaymentsClient;
 use Nokimaro\LionTech\Clients\PayoutsClient;
@@ -39,6 +40,8 @@ final class Client
     private ?TransfersClient $transfersClient = null;
 
     private ?SignatureClient $signatureClient = null;
+
+    private ?EncryptionKeyClient $encryptionKeyClient = null;
 
     private ?CardEncryptor $cardEncryptor = null;
 
@@ -107,7 +110,12 @@ final class Client
 
     public function signature(): SignatureClient
     {
-        return $this->signatureClient ??= new SignatureClient($this->apiClient->secureClient());
+        return $this->signatureClient ??= new SignatureClient($this->apiClient->merchantClient());
+    }
+
+    public function encryptionKey(): EncryptionKeyClient
+    {
+        return $this->encryptionKeyClient ??= new EncryptionKeyClient($this->apiClient->secureClient());
     }
 
     public function cardEncryptor(?string $publicKeyPem = null): CardEncryptor
@@ -116,7 +124,7 @@ final class Client
             return $this->cardEncryptor;
         }
 
-        $pem = $publicKeyPem ?? $this->signature()
+        $pem = $publicKeyPem ?? $this->encryptionKey()
             ->getPublicKey();
 
         return $this->cardEncryptor = new CardEncryptor($pem);

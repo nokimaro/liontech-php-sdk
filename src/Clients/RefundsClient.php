@@ -20,20 +20,20 @@ final readonly class RefundsClient
     {
         $response = $this->apiClient->post('/api/v1/merchant/refunds', $request);
 
-        return RefundResponse::fromArray(Json::decode((string) $response->getBody()));
+        return RefundResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function createWithId(string $refundId, CreateRefundRequest $request): RefundResponse
     {
         $response = $this->apiClient->put('/api/v1/merchant/refunds/' . $refundId, $request);
 
-        return RefundResponse::fromArray(Json::decode((string) $response->getBody()));
+        return RefundResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function get(string $refundId): RefundResponse
     {
         $response = $this->apiClient->get('/api/v1/merchant/refunds/' . $refundId);
 
-        return RefundResponse::fromArray(Json::decode((string) $response->getBody()));
+        return RefundResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 }

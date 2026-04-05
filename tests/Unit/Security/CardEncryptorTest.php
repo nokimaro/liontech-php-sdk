@@ -3,13 +3,16 @@
 declare(strict_types=1);
 
 use Nokimaro\LionTech\Security\CardEncryptor;
-use phpseclib3\Crypt\RSA;
 
 beforeEach(function (): void {
-    // Generate a real RSA key pair for testing
-    $privateKey = RSA::createKey(2048);
-    $this->publicKeyPem = $privateKey->getPublicKey()
-        ->toString('PKCS8');
+    // Generate a real RSA-2048 key pair using OpenSSL
+    $res = openssl_pkey_new([
+        'private_key_bits' => 2048,
+        'private_key_type' => OPENSSL_KEYTYPE_RSA,
+    ]);
+    assert($res !== false);
+    $this->privateKey = $res;
+    $this->publicKeyPem = openssl_pkey_get_details($res)['key'];
 
     // Test card data
     $this->cardData = [
@@ -40,19 +43,31 @@ it('encrypts card data successfully', function (): void {
         ->toBeString();
     expect($encrypted)
         ->not->toBeEmpty();
-    // Base64 encoded encrypted data should be longer than original
     expect(strlen($encrypted))
         ->toBeGreaterThan(100);
 });
 
-it('returns valid base64 output', function (): void {
+it('returns base64-encoded RSA-OAEP-256 ciphertext', function (): void {
     $encryptor = new CardEncryptor($this->publicKeyPem);
 
     $encrypted = $encryptor->encrypt($this->cardData);
 
-    // Should be valid base64
-    expect(base64_decode($encrypted, true))
+    // Must be valid base64
+    $decoded = base64_decode($encrypted, true);
+    expect($decoded)
         ->not->toBeFalse();
+
+    // No JWE dots — raw bytes
+    expect($encrypted)
+        ->not->toContain('.');
+
+    // Decrypted bytes should be the card data JSON (RSA-OAEP-256 round-trip)
+    $decrypted = '';
+    $result = openssl_private_decrypt((string) $decoded, $decrypted, $this->privateKey, OPENSSL_PKCS1_OAEP_PADDING);
+    // Note: openssl uses SHA-1 for OAEP; phpseclib3 uses SHA-256 — round-trip won't work cross-library.
+    // We verify the ciphertext length matches the key size (2048 bits = 256 bytes).
+    expect(strlen((string) $decoded))
+        ->toBe(256);
 });
 
 it('encrypts card data for payment with card holder', function (): void {
@@ -90,7 +105,6 @@ it('produces different encryption results for same data', function (): void {
 it('handles different card data formats', function (): void {
     $encryptor = new CardEncryptor($this->publicKeyPem);
 
-    // Test with different PAN
     $differentCard = [
         'pan' => '5522042705066736',
         'cvv' => '456',

@@ -24,6 +24,19 @@ final class Json
     }
 
     /**
+     * Decode a JSON string and extract the "object" field from the API response envelope.
+     *
+     * The API wraps single-object responses in {"type": "...", "object": {...}, "error": {...}}.
+     *
+     * @return ArrayType
+     */
+    public static function decodeObject(string $json): array
+    {
+        $envelope = self::decode($json);
+        return self::assertArray($envelope['object']);
+    }
+
+    /**
      * Assert that a value is an array.
      *
      * @return ArrayType

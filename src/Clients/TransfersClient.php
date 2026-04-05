@@ -22,7 +22,8 @@ final readonly class TransfersClient
     {
         $response = $this->apiClient->post('/api/v1/merchant/transfers', $data);
 
-        return Json::decode((string) $response->getBody());
+        $envelope = Json::decode((string) $response->getBody());
+        return Json::assertArray($envelope['object']);
     }
 
     /**
@@ -32,6 +33,7 @@ final readonly class TransfersClient
     {
         $response = $this->apiClient->get('/api/v1/merchant/transfers/' . $transferId);
 
-        return Json::decode((string) $response->getBody());
+        $envelope = Json::decode((string) $response->getBody());
+        return Json::assertArray($envelope['object']);
     }
 }

@@ -17,17 +17,21 @@ final readonly class CardEncryptor
         $key = PublicKeyLoader::load($this->publicKeyPem);
         assert($key instanceof RSA);
 
-        // phpseclib3 PublicKey uses immutable fluent API for configuration
-        $this->rsa = $key->withPadding(RSA::ENCRYPTION_OAEP)
+        // RSA-OAEP-256: OAEP with SHA-256 hash and SHA-256 MGF1 (per RFC 7518 §4.3)
+        $this->rsa = $key
+            ->withPadding(RSA::ENCRYPTION_OAEP)
             ->withHash('sha256')
             ->withMGFHash('sha256');
     }
 
     /**
-     * Encrypt card data using RSA-OAEP-256.
+     * Encrypt card data using RSA-OAEP-256 (SHA-256 hash + MGF1-SHA-256).
      *
-     * @param array{pan: string, cvv: string, exp_month: int, exp_year: int, cardHolder?: string} $cardData
-     * @return string Base64-encoded encrypted card data
+     * The server uses the WebCrypto API: crypto.subtle.decrypt({name:"RSA-OAEP"}, key, bytes),
+     * so this returns raw RSA-OAEP-256 output encoded as base64 — not a JWE structure.
+     *
+     * @param array{pan: string, cvv: string, exp_month: int, exp_year: int, cardHolder?: string|null} $cardData
+     * @return string Base64-encoded RSA-OAEP-256 encrypted card data
      */
     public function encrypt(array $cardData): string
     {
@@ -41,7 +45,7 @@ final readonly class CardEncryptor
     /**
      * Encrypt card data and return in the format expected by payment requests.
      *
-     * @param array{pan: string, cvv: string, exp_month: int, exp_year: int, cardHolder?: string} $cardData
+     * @param array{pan: string, cvv: string, exp_month: int, exp_year: int, cardHolder?: string|null} $cardData
      * @return array{encryptedCardData: string, cardHolder?: string}
      */
     public function encryptForPayment(array $cardData): array
@@ -53,7 +57,7 @@ final readonly class CardEncryptor
             'encryptedCardData' => $encrypted,
         ];
 
-        if ($cardHolder !== null) {
+        if (is_string($cardHolder)) {
             $result['cardHolder'] = $cardHolder;
         }
 

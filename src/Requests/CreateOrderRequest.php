@@ -11,6 +11,7 @@ final readonly class CreateOrderRequest implements JsonSerializable
 {
     /**
      * @param Money $amount Order amount
+     * @param string $description Order description (required by the API)
      * @param CustomerData|null $customer Customer information
      * @param bool $autoApprove Auto-approve payments
      * @param array<string, mixed>|null $customFields Custom metadata
@@ -18,11 +19,11 @@ final readonly class CreateOrderRequest implements JsonSerializable
      * @param string|null $successUrl URL to redirect on success
      * @param string|null $webhookUrl Webhook URL for notifications
      * @param \DateTimeImmutable|null $expireAt Order expiration time
-     * @param string|null $description Order description
      * @param array<string, mixed>|null $options Additional options
      */
     public function __construct(
         public Money $amount,
+        public string $description,
         public ?CustomerData $customer = null,
         public bool $autoApprove = true,
         public ?array $customFields = null,
@@ -30,7 +31,6 @@ final readonly class CreateOrderRequest implements JsonSerializable
         public ?string $successUrl = null,
         public ?string $webhookUrl = null,
         public ?\DateTimeImmutable $expireAt = null,
-        public ?string $description = null,
         public ?array $options = null,
     ) {
     }
@@ -42,6 +42,7 @@ final readonly class CreateOrderRequest implements JsonSerializable
     {
         $data = [
             'amount' => $this->amount->jsonSerialize(),
+            'description' => $this->description,
             'autoApprove' => $this->autoApprove,
         ];
 
@@ -67,10 +68,6 @@ final readonly class CreateOrderRequest implements JsonSerializable
 
         if ($this->expireAt instanceof \DateTimeImmutable) {
             $data['expireAt'] = $this->expireAt->format('Y-m-d\TH:i:s\Z');
-        }
-
-        if ($this->description !== null) {
-            $data['description'] = $this->description;
         }
 
         if ($this->options !== null) {

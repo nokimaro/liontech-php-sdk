@@ -19,21 +19,31 @@ function createRefundsClient(): array
 
 function refundData(array $overrides = []): array
 {
-    return array_merge([
-        'refundId' => 'ref_123',
-        'paymentId' => 'pay_123',
-        'amount' => [
-            'value' => '50.00',
-            'currency' => 'USD',
+    return [
+        'type' => 'REFUND',
+        'object' => array_merge([
+            'refundId' => 'ref_123',
+            'paymentId' => 'pay_123',
+            'amount' => [
+                'value' => '50.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'SUCCEEDED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ], $overrides),
+        'error' => [
+            'code' => 0,
+            'description' => 'No error.',
         ],
-        'status' => 'SUCCEEDED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ], $overrides);
+    ];
 }
 
 it('creates a refund', function (): void {
     [$apiClient, $refundsClient] = createRefundsClient();
-    $request = new CreateRefundRequest(amount: new Money('50.00', Currency::USD), paymentId: 'pay_123');
+    $request = new CreateRefundRequest(amount: new Money(
+        '50.00',
+        Currency::USD
+    ), paymentId: 'pay_123', webhookUrl: 'https://example.com/webhook');
 
     $apiClient->shouldReceive('post')
         ->with('/api/v1/merchant/refunds', $request)
@@ -49,7 +59,10 @@ it('creates a refund', function (): void {
 
 it('creates a refund with merchant id', function (): void {
     [$apiClient, $refundsClient] = createRefundsClient();
-    $request = new CreateRefundRequest(amount: new Money('50.00', Currency::USD), paymentId: 'pay_123');
+    $request = new CreateRefundRequest(amount: new Money(
+        '50.00',
+        Currency::USD
+    ), paymentId: 'pay_123', webhookUrl: 'https://example.com/webhook');
 
     $apiClient->shouldReceive('put')
         ->with('/api/v1/merchant/refunds/ref_merchant_1', $request)

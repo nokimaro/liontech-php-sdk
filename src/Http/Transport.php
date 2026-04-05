@@ -67,7 +67,7 @@ class Transport
         $url = $this->buildUrl($path, $data);
         $request = $this->requestFactory->createRequest('GET', $url);
 
-        return $this->send($request);
+        return $this->send($this->applyHeaders($request));
     }
 
     public function post(string $path, mixed $data = null): ResponseInterface
@@ -114,6 +114,7 @@ class Transport
     {
         try {
             $response = $this->client->sendRequest($request);
+
         } catch (\Exception $e) {
             throw new TransportException('HTTP request failed: ' . $e->getMessage(), 0, $e);
         }

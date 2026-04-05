@@ -23,11 +23,15 @@ class ApiExceptionMapper
         $statusCode = $response->getStatusCode();
         $body = (string) $response->getBody();
         /** @var mixed $rawErrorData */
-        $rawErrorData = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        $rawErrorData = json_decode($body, true, 512);
         /** @var array<string, mixed> $errorData */
         $errorData = is_array($rawErrorData) ? $rawErrorData : [];
 
-        $apiError = empty($errorData) ? null : ApiErrorResponse::fromArray($errorData);
+        // API responses are wrapped in {type, object, error} envelope — extract inner error
+        /** @var array<string, mixed> $innerError */
+        $innerError = is_array($errorData['error'] ?? null) ? $errorData['error'] : $errorData;
+
+        $apiError = empty($innerError) ? null : ApiErrorResponse::fromArray($innerError);
 
         $message = $apiError instanceof \Nokimaro\LionTech\Http\ApiErrorResponse ? $apiError->description : match ($statusCode) {
             400 => 'Bad Request',

@@ -20,13 +20,13 @@ final readonly class PayoutsClient
     {
         $response = $this->apiClient->put('/api/v1/merchant/payouts/' . $payoutId, $request);
 
-        return PayoutResponse::fromArray(Json::decode((string) $response->getBody()));
+        return PayoutResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 
     public function get(string $payoutId): PayoutResponse
     {
         $response = $this->apiClient->get('/api/v1/merchant/payouts/' . $payoutId);
 
-        return PayoutResponse::fromArray(Json::decode((string) $response->getBody()));
+        return PayoutResponse::fromArray(Json::decodeObject((string) $response->getBody()));
     }
 }

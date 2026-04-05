@@ -19,20 +19,27 @@ function createOrdersClient(): array
 
 function orderData(array $overrides = []): array
 {
-    return array_merge([
-        'orderId' => 'ord_123',
-        'amount' => [
-            'value' => '100.00',
-            'currency' => 'USD',
+    return [
+        'type' => 'ORDER',
+        'object' => array_merge([
+            'orderId' => 'ord_123',
+            'amount' => [
+                'value' => '100.00',
+                'currency' => 'USD',
+            ],
+            'status' => 'CREATED',
+            'createdAt' => '2024-01-01T00:00:00Z',
+        ], $overrides),
+        'error' => [
+            'code' => 0,
+            'description' => 'No error.',
         ],
-        'status' => 'CREATED',
-        'createdAt' => '2024-01-01T00:00:00Z',
-    ], $overrides);
+    ];
 }
 
 it('creates an order', function (): void {
     [$apiClient, $ordersClient] = createOrdersClient();
-    $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD));
+    $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD), description: 'Test order');
 
     $apiClient->shouldReceive('post')
         ->with('/api/v1/merchant/orders', $request)
@@ -48,7 +55,7 @@ it('creates an order', function (): void {
 
 it('creates an order with merchant id', function (): void {
     [$apiClient, $ordersClient] = createOrdersClient();
-    $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD));
+    $request = new CreateOrderRequest(amount: new Money('100.00', Currency::USD), description: 'Test order');
 
     $apiClient->shouldReceive('put')
         ->with('/api/v1/merchant/orders/ord_merchant_1', $request)
