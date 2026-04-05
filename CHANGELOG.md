@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-04-05
+
+### Changed
+- Updated `examples/04_webhook_verification.php` to use `WebhookPayload::fromJson()` with typed DTO access
+- Updated README webhook section to showcase typed webhook handling with `isSuccessful()` / `isDeclined()` helpers
+
+## [1.1.2] - 2026-04-05
+
+### Added
+- `WebhookPayload` DTO — parse raw webhook JSON via `WebhookPayload::fromJson($json)` into typed objects
+- `WebhookError` value object with `hasError()` helper for error envelope field
+- `WebhookEventType` enum for webhook type discrimination
+
+## [1.1.1] - 2026-04-05
+
+### Added
+- `error.details[].description` values are now appended to exception messages for richer diagnostics
+  (e.g. `Invalid input parameters. Payment method is not enabled for this merchant site.`)
+
+### Fixed
+- `PaymentData::sbp()` now serializes `paymentData.object` as `{}` (empty JSON object) instead of `[]`, fixing Go unmarshal errors on the API gateway
+
+### Removed
+- `SbpData` class — replace `PaymentData::sbp(new SbpData(...))` with `PaymentData::sbp()`
+
+## [1.1.0] - 2026-04-05
+
+### Added
+- `EncryptionKeyClient` with the correct encryption key endpoint; encryption key retrieval moved out of `SignatureClient`
+- `Json::decodeObject()` helper for envelope-wrapped single-object responses
+
+### Changed
+- `CreateOrderRequest::$description` is now a **required** constructor parameter — the API returns 400 without it despite being marked optional in the OpenAPI spec
+- `CreateRefundRequest::$webhookUrl` is now a **required** constructor parameter — the API returns 400 without it; previously the SDK silently omitted it when `null`
+
+### Fixed
+- `ApiExceptionMapper` now correctly unwraps the `{type, object, error}` response envelope before reading error details
+- `Transport::get()` now applies auth headers on GET requests (were silently missing)
+
+## [1.0.1] - 2026-04-05
+
+### Added
+- `ResponseStatus` value object preserving `changedAt` and `description` fields from the API response; previously only `value` was kept
+
+### Changed
+- `PaymentResponse::$paymentMethod` changed from `PaymentData|null` to `?string` per OpenAPI spec
+- `PayoutResponse::$paymentMethod` changed from silently-nulling array to `?string` per OpenAPI spec
+- `isFinal()` / `isSuccessful()` / `isDeclined()` now delegate through `ResponseStatus`
+
 ### Removed
 - `php-http/multipart-stream-builder` production dependency — was never used; all API endpoints use `application/json`
 
@@ -26,5 +75,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPStan level max with 0 errors
 - CI workflow covering PHP 8.3, 8.4, 8.5
 
-[Unreleased]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.2...v1.1.3
+[1.1.2]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/nokimaro/liontech-php-sdk/releases/tag/v1.0.0
