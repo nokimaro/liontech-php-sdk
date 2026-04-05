@@ -168,25 +168,34 @@ echo "Refund ID: {$refund->refundId}\n";
 echo "Status: {$refund->status->value}\n";
 ```
 
-### Verify Webhook Signatures
+### Handle Webhooks
 
 ```php
 <?php
 
-// In your webhook endpoint
+use Nokimaro\LionTech\Webhooks\WebhookPayload;
+
 $payload = file_get_contents('php://input');
 $headers = getallheaders();
 
-$verifier = $liontech->webhookVerifier();
-
-if ($verifier->verify($headers, $payload)) {
-    $data = json_decode($payload, true);
-    // Process the payment status update...
-    http_response_code(200);
-} else {
+if (! $liontech->webhookVerifier()->verify($headers, $payload)) {
     http_response_code(401);
-    echo "Invalid webhook signature";
+    exit;
 }
+
+$webhook = WebhookPayload::fromJson($payload);
+$payment = $webhook->payment;
+
+if ($payment->isSuccessful()) {
+    // Payment confirmed — fulfil the order
+    echo "Order {$payment->orderId} paid (txn: {$payment->txnId})";
+} elseif ($payment->isDeclined()) {
+    // Payment declined — notify the customer
+    $reason = $webhook->error?->description ?? 'Unknown reason';
+    echo "Payment {$payment->paymentId} declined: {$reason}";
+}
+
+http_response_code(200);
 ```
 
 ### Token Refresh
