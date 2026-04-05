@@ -25,6 +25,7 @@ it('creates order request with minimal data', function (): void {
 it('creates order request with all data', function (): void {
     $request = new CreateOrderRequest(
         amount: new Money('100.00', Currency::USD),
+        description: 'Test order',
         customer: new CustomerData(email: 'test@example.com'),
         autoApprove: false,
         customFields: [
@@ -34,7 +35,6 @@ it('creates order request with all data', function (): void {
         successUrl: 'https://example.com/success',
         webhookUrl: 'https://example.com/webhook',
         expireAt: new DateTimeImmutable('2024-12-31'),
-        description: 'Test order',
         options: [
             'option1' => 'value1',
         ],
@@ -81,6 +81,7 @@ it('serializes all optional fields to JSON', function (): void {
     $expireAt = new DateTimeImmutable('2024-12-31T23:59:59Z');
     $request = new CreateOrderRequest(
         amount: new Money('100.00', Currency::USD),
+        description: 'Test order',
         autoApprove: false,
         customFields: [
             'order_number' => '12345',
@@ -89,7 +90,6 @@ it('serializes all optional fields to JSON', function (): void {
         successUrl: 'https://example.com/success',
         webhookUrl: 'https://example.com/webhook',
         expireAt: $expireAt,
-        description: 'Test order',
         options: [
             'option1' => 'value1',
         ],
