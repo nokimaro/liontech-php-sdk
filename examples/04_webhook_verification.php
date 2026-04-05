@@ -3,53 +3,40 @@
 declare(strict_types=1);
 
 /**
- * Example: Webhook Signature Verification
+ * Example: Webhook Handling
  *
  * This example demonstrates how to:
- * 1. Verify webhook signatures
- * 2. Process webhook payloads securely
+ * 1. Verify the webhook signature
+ * 2. Parse the payload into typed DTOs
+ * 3. Handle RECONCILED and DECLINED outcomes
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Nokimaro\LionTech\Client;
+use Nokimaro\LionTech\Webhooks\WebhookPayload;
 
 // Initialize the SDK
-$liontech = new Client([
-    'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
-]);
+$liontech = new Client(accessToken: $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here');
 
-// Get the raw webhook payload
 $payload = file_get_contents('php://input');
 $headers = getallheaders();
 
-// Verify the webhook signature
-$verifier = $liontech->webhookVerifier();
-
-try {
-    if ($verifier->verify($headers, $payload)) {
-        // Signature is valid, process the webhook
-        $data = json_decode($payload, true);
-
-        echo "Webhook signature verified successfully!\n";
-        echo 'Payload: ' . json_encode($data, JSON_PRETTY_PRINT) . "\n";
-
-        // Process the payment status update
-        // Example: Update your database with the payment status
-        // if ($data['status']['value'] === 'RECONCILED') {
-        //     // Payment successful, fulfill the order
-        // }
-
-        // Respond with 200 OK to acknowledge receipt
-        http_response_code(200);
-        echo "Webhook processed successfully\n";
-    } else {
-        // Invalid signature, reject the request
-        http_response_code(401);
-        echo "Invalid webhook signature\n";
-    }
-} catch (\Exception $e) {
-    // Error during verification
-    http_response_code(500);
-    echo "Error verifying webhook: {$e->getMessage()}\n";
+if (! $liontech->webhookVerifier()->verify($headers, $payload)) {
+    http_response_code(401);
+    exit;
 }
+
+$webhook = WebhookPayload::fromJson($payload);
+$payment = $webhook->payment;
+
+if ($payment->isSuccessful()) {
+    // Payment confirmed — fulfil the order
+    echo "Order {$payment->orderId} paid successfully (txn: {$payment->txnId})\n";
+} elseif ($payment->isDeclined()) {
+    // Payment declined — notify the customer
+    $reason = $webhook->error?->description ?? 'Unknown reason';
+    echo "Payment {$payment->paymentId} declined: {$reason}\n";
+}
+
+http_response_code(200);
