@@ -37,6 +37,16 @@ If you don't have an HTTP client installed, we recommend Guzzle:
 composer require guzzlehttp/guzzle
 ```
 
+## Laravel Integration
+
+If you're using Laravel, there's a dedicated package that wraps this SDK with Laravel-native features (service provider, facade, config file):
+
+```bash
+composer require nokimaro/liontech-laravel
+```
+
+See [nokimaro/liontech-laravel](https://github.com/nokimaro/liontech-laravel) for installation and usage instructions.
+
 ## Quick Start
 
 ### Basic Setup
