@@ -33,7 +33,7 @@ class ApiExceptionMapper
 
         $apiError = empty($innerError) ? null : ApiErrorResponse::fromArray($innerError);
 
-        $message = $apiError instanceof \Nokimaro\LionTech\Http\ApiErrorResponse ? $apiError->description : match ($statusCode) {
+        $message = $apiError instanceof \Nokimaro\LionTech\Http\ApiErrorResponse ? $apiError->getFullMessage() : match ($statusCode) {
             400 => 'Bad Request',
             401 => 'Unauthorized',
             403 => 'Forbidden',

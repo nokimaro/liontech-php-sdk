@@ -19,6 +19,24 @@ final readonly class ApiErrorResponse
     ) {
     }
 
+    public function getFullMessage(): string
+    {
+        $detailMessages = array_filter(array_map(
+            static fn (mixed $detail): string => is_array($detail) && isset($detail['description']) && is_string(
+                $detail['description']
+            )
+                ? $detail['description']
+                : '',
+            $this->details,
+        ));
+
+        if ($detailMessages === []) {
+            return $this->description;
+        }
+
+        return $this->description . ' ' . implode(' ', $detailMessages);
+    }
+
     /**
      * @param array<string, mixed> $data
      */

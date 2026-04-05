@@ -30,12 +30,12 @@ $liontech = new Client([
 // Create an order
 $orderRequest = new CreateOrderRequest(
     amount: new Money('100.00', Currency::USD),
+    description: 'Order #12345',
     customer: new CustomerData(email: 'customer@example.com', fullName: 'John Doe', ip: '192.168.1.1'),
     autoApprove: true,
     declineUrl: 'https://your-site.com/decline',
     successUrl: 'https://your-site.com/success',
     webhookUrl: 'https://your-site.com/webhook',
-    description: 'Order #12345',
 );
 
 try {
