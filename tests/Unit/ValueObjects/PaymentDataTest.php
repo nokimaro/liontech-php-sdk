@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Nokimaro\LionTech\Enums\PaymentMethodType;
-use Nokimaro\LionTech\Requests\SbpData;
 use Nokimaro\LionTech\ValueObjects\EncryptedCardData;
 use Nokimaro\LionTech\ValueObjects\PaymentData;
 
@@ -18,13 +17,12 @@ it('creates card payment data using factory', function (): void {
 });
 
 it('creates sbp payment data using factory', function (): void {
-    $sbpData = new SbpData(bank: 'sberbank');
-    $paymentData = PaymentData::sbp($sbpData);
+    $paymentData = PaymentData::sbp();
 
     expect($paymentData->type)
         ->toBe(PaymentMethodType::SBP);
     expect($paymentData->object)
-        ->toBe($sbpData);
+        ->toBeNull();
 });
 
 it('serializes card payment data', function (): void {
@@ -43,19 +41,13 @@ it('serializes card payment data', function (): void {
         ]);
 });
 
-it('serializes sbp payment data', function (): void {
-    $sbpData = new SbpData(bank: 'sberbank');
-    $paymentData = PaymentData::sbp($sbpData);
+it('serializes sbp payment data as empty object', function (): void {
+    $paymentData = PaymentData::sbp();
 
-    $json = $paymentData->jsonSerialize();
+    $json = json_encode($paymentData);
 
     expect($json)
-        ->toBe([
-            'type' => 'sbp',
-            'object' => [
-                'bank' => 'sberbank',
-            ],
-        ]);
+        ->toBe('{"type":"sbp","object":{}}');
 });
 
 it('creates from array with card type', function (): void {
@@ -82,9 +74,7 @@ it('creates from array with card type', function (): void {
 it('creates from array with sbp type', function (): void {
     $data = [
         'type' => 'sbp',
-        'object' => [
-            'bank' => 'tinkoff',
-        ],
+        'object' => [],
     ];
 
     $paymentData = PaymentData::fromArray($data);
@@ -92,9 +82,7 @@ it('creates from array with sbp type', function (): void {
     expect($paymentData->type)
         ->toBe(PaymentMethodType::SBP);
     expect($paymentData->object)
-        ->toBeInstanceOf(SbpData::class);
-    expect($paymentData->object->bank)
-        ->toBe('tinkoff');
+        ->toBeNull();
 });
 
 it('creates from array with type as object', function (): void {
