@@ -26,7 +26,7 @@ it('verifies valid signature', function (): void {
     $verifier = new WebhookSignatureVerifier($publicKeyPem);
 
     $payload = 'test payload';
-    $signature = $privateKey->sign($payload);
+    $signature = $privateKey->withPadding(RSA::SIGNATURE_PKCS1)->sign($payload);
     $signatureBase64 = base64_encode($signature);
 
     $headers = [
@@ -94,7 +94,7 @@ it('handles signature header as array', function (): void {
     $verifier = new WebhookSignatureVerifier($publicKeyPem);
 
     $payload = 'test payload';
-    $signature = $privateKey->sign($payload);
+    $signature = $privateKey->withPadding(RSA::SIGNATURE_PKCS1)->sign($payload);
     $signatureBase64 = base64_encode($signature);
 
     $headers = [

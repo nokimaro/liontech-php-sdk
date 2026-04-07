@@ -6,6 +6,7 @@ namespace Nokimaro\LionTech\Security;
 
 use phpseclib3\Crypt\Common\PublicKey;
 use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Crypt\RSA;
 
 final readonly class WebhookSignatureVerifier
 {
@@ -17,7 +18,10 @@ final readonly class WebhookSignatureVerifier
     {
         $key = PublicKeyLoader::load($publicKeyPem);
         assert($key instanceof PublicKey);
-        $this->publicKey = $key;
+
+        /** @var PublicKey $pkcs1Key */
+        $pkcs1Key = $key->withPadding(RSA::SIGNATURE_PKCS1);
+        $this->publicKey = $pkcs1Key;
     }
 
     /**
