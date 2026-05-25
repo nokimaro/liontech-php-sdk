@@ -14,9 +14,9 @@ final class ClientBuilder
 
     private ?Transport $httpClient = null;
 
-    private string $baseUrl = 'https://api.liontechnology.ai';
+    private string $baseUrl = 'https://api.fusionpayments.io';
 
-    private string $secureUrl = 'https://secure.liontechnology.ai';
+    private string $secureUrl = 'https://secure.fusionpayments.io';
 
     public function accessToken(string $token): self
     {
@@ -55,8 +55,8 @@ final class ClientBuilder
 
     public function sandbox(): self
     {
-        $this->baseUrl = 'https://api.sandbox.liontechnology.ai';
-        $this->secureUrl = 'https://secure.sandbox.liontechnology.ai';
+        $this->baseUrl = 'https://api.sandbox.fusionpayments.io';
+        $this->secureUrl = 'https://secure.sandbox.fusionpayments.io';
 
         return $this;
     }

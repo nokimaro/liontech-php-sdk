@@ -32,18 +32,18 @@ class ApiClient
         ?string $secureUrl = null,
         ?Transport $httpClient = null
     ): self {
-        $base = $httpClient ?? new Transport($baseUrl ?? 'https://api.liontechnology.ai');
+        $base = $httpClient ?? new Transport($baseUrl ?? 'https://api.fusionpayments.io');
         $client = $base->client();
         $rf = $base->requestFactory();
         $sf = $base->streamFactory();
         $merchant = new Transport(
-            baseUrl: $baseUrl ?? 'https://api.liontechnology.ai',
+            baseUrl: $baseUrl ?? 'https://api.fusionpayments.io',
             client: $client,
             requestFactory: $rf,
             streamFactory: $sf
         );
         $secure = new Transport(
-            baseUrl: $secureUrl ?? 'https://secure.liontechnology.ai',
+            baseUrl: $secureUrl ?? 'https://secure.fusionpayments.io',
             client: $client,
             requestFactory: $rf,
             streamFactory: $sf

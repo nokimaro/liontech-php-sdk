@@ -57,8 +57,8 @@ final class Client
         $this->apiClient = ApiClient::create(
             accessToken: $accessToken,
             refreshToken: $refreshToken,
-            baseUrl: $baseUrl ?? 'https://api.liontechnology.ai',
-            secureUrl: $secureUrl ?? 'https://secure.liontechnology.ai',
+            baseUrl: $baseUrl ?? 'https://api.fusionpayments.io',
+            secureUrl: $secureUrl ?? 'https://secure.fusionpayments.io',
             httpClient: $httpClient,
         );
     }
