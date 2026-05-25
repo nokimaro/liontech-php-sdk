@@ -1,6 +1,6 @@
 {
     "name": "nokimaro/liontech-php-sdk",
-    "description": "Community-maintained PHP SDK for LionTech Payment Gateway",
+    "description": "Community-maintained PHP SDK for FusionPayments (formerly LionTech) Payment Gateway",
     "type": "library",
     "license": "MIT",
     "keywords": [
