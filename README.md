@@ -8,7 +8,7 @@
 
 Community-maintained PHP SDK for the [FusionPayments Payment Gateway](https://fusionpayments.io) (formerly LionTech). This SDK provides a type-safe, domain-oriented interface for integrating FusionPayments' payment processing capabilities into your PHP applications.
 
-> **Note:** This is an unofficial, community-maintained library. LionTech has no official PHP SDK.
+> **Note:** This is an unofficial, community-maintained library. FusionPayments has no official PHP SDK.
 
 ## Features
 
