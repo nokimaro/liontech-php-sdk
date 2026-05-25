@@ -6,7 +6,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=flat-square&logo=php)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
 
-Community-maintained PHP SDK for the [LionTech Payment Gateway](https://liontechnology.ai). This SDK provides a type-safe, domain-oriented interface for integrating LionTech's payment processing capabilities into your PHP applications.
+Community-maintained PHP SDK for the [FusionPayments Payment Gateway](https://fusionpayments.io) (formerly LionTech). This SDK provides a type-safe, domain-oriented interface for integrating FusionPayments' payment processing capabilities into your PHP applications.
 
 > **Note:** This is an unofficial, community-maintained library. LionTech has no official PHP SDK.
 
@@ -61,7 +61,7 @@ use Nokimaro\LionTech\Client;
 $liontech = new Client(
     accessToken: 'your_access_token_here',
     // refreshToken: 'your_refresh_token',
-    // baseUrl: 'https://api.sandbox.liontechnology.ai',
+    // baseUrl: 'https://api.sandbox.fusionpayments.io',
 );
 ```
 
@@ -293,7 +293,7 @@ use Nokimaro\LionTech\Client;
 use Nokimaro\LionTech\Http\Transport;
 
 $transport = new Transport(
-    baseUrl: 'https://api.liontechnology.ai',
+    baseUrl: 'https://api.fusionpayments.io',
     client: new GuzzleClient(),
     requestFactory: new HttpFactory(),
     streamFactory: new HttpFactory(),
@@ -313,8 +313,8 @@ use Nokimaro\LionTech\Client;
 // Via constructor
 $liontech = new Client(
     accessToken: 'your_sandbox_token',
-    baseUrl: 'https://api.sandbox.liontechnology.ai',
-    secureUrl: 'https://secure.sandbox.liontechnology.ai',
+    baseUrl: 'https://api.sandbox.fusionpayments.io',
+    secureUrl: 'https://secure.sandbox.fusionpayments.io',
 );
 
 // Via builder

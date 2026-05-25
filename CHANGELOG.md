@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-25
+
+### Changed
+- Default `baseUrl` switched from `https://api.liontechnology.ai` to `https://api.fusionpayments.io`
+- Default `secureUrl` switched from `https://secure.liontechnology.ai` to `https://secure.fusionpayments.io`
+- `ClientBuilder::sandbox()` now points to `https://api.sandbox.fusionpayments.io` and `https://secure.sandbox.fusionpayments.io`
+- README, examples, and `composer.json` description updated to reflect the FusionPayments brand
+
+### Notes
+- Provider rebranded from LionTech to FusionPayments and decommissioned the old domain
+- Fully backward-compatible for callers that pass their own `baseUrl`/`secureUrl`
+- Package name (`nokimaro/liontech-php-sdk`) and namespace (`Nokimaro\LionTech`) are unchanged in this release
+
 ## [1.1.3] - 2026-04-05
 
 ### Changed
@@ -75,7 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPStan level max with 0 errors
 - CI workflow covering PHP 8.3, 8.4, 8.5
 
-[Unreleased]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/nokimaro/liontech-php-sdk/compare/v1.1.0...v1.1.1

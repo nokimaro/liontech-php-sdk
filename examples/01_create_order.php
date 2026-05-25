@@ -23,8 +23,8 @@ use Nokimaro\LionTech\ValueObjects\Money;
 $liontech = new Client([
     'access_token' => $_ENV['LIONTECH_ACCESS_TOKEN'] ?? 'your_access_token_here',
     // For sandbox environment:
-    // 'base_url' => 'https://api.sandbox.liontechnology.ai',
-    // 'secure_url' => 'https://secure.sandbox.liontechnology.ai',
+    // 'base_url' => 'https://api.sandbox.fusionpayments.io',
+    // 'secure_url' => 'https://secure.sandbox.fusionpayments.io',
 ]);
 
 // Create an order
